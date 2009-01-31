@@ -7,6 +7,6 @@ import ctypes
 def ensure_unicode(param):
 	try:
 		param = ctypes.create_unicode_buffer(param)
-	except ValueError:
+	except TypeError:
 		pass # just return the param as is
 	return param
