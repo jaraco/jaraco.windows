@@ -39,6 +39,17 @@ class WindowsError(Exception):
 	def __str__(self):
 		return win32api.FormatMessage(self.value)
 
+def make_wide(param):
+	"""
+	Take a parameter and if it's a narrow string, make it a wide
+	string.
+	"""
+	if isinstance(param, basestring) and not isinstance(param, unicode):
+		return unicode(param)
+	return param
+
+make_wide = lambda p: p
+
 def AddConnection(
 	remote_name,
 	type=win32netcon.RESOURCETYPE_ANY,
@@ -57,8 +68,8 @@ def AddConnection(
 	
 	result = mpr.WNetAddConnection2W(
 		ctypes.byref(resource),
-		password,
-		user,
+		make_wide(password),
+		make_wide(user),
 		flags,
 		)
 
