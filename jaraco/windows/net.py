@@ -11,12 +11,13 @@ __all__ = ('AddConnection')
 import ctypes
 import ctypes.wintypes
 
-# TODO: remove dependency on pywin32
-import win32api
-import win32netcon
+from jaraco.windows.util import ensure_unicode
+from jaraco.windows.error import WindowsError
 
 # MPR - Multiple Provider Router
 mpr = ctypes.windll.mpr
+
+RESOURCETYPE_ANY = 0
 
 class NETRESOURCE(ctypes.Structure):
 	_fields_ = [
@@ -30,34 +31,15 @@ class NETRESOURCE(ctypes.Structure):
 		('provider', ctypes.wintypes.LPWSTR),
 		]
 
-class WindowsError(Exception):
-	"more info about errors at http://msdn.microsoft.com/en-us/library/ms681381(VS.85).aspx"
-
-	def __init__(self, value):
-		self.value = value
-
-	def __str__(self):
-		return win32api.FormatMessage(self.value)
-
-def make_wide(param):
-	"""
-	Take a parameter and if it's a narrow string, make it a wide
-	string.
-	"""
-	if isinstance(param, basestring) and not isinstance(param, unicode):
-		return unicode(param)
-	return param
-
-make_wide = lambda p: p
-
 def AddConnection(
 	remote_name,
-	type=win32netcon.RESOURCETYPE_ANY,
+	type=RESOURCETYPE_ANY,
 	local_name=None,
 	provider_name=None,
 	user=None,
 	password=None,
 	flags=0):
+	user, password = map(ensure_unicode, (user, password))
 	resource = NETRESOURCE(
 		type=type,
 		remote_name=remote_name,
@@ -68,8 +50,8 @@ def AddConnection(
 	
 	result = mpr.WNetAddConnection2W(
 		ctypes.byref(resource),
-		make_wide(password),
-		make_wide(user),
+		password,
+		user,
 		flags,
 		)
 
