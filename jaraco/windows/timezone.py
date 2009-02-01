@@ -2,9 +2,20 @@
 
 # $Id$
 
+import operator
 import ctypes
 from ctypes.wintypes import WORD, WCHAR, BOOL, LONG
 from jaraco.windows.util import Extended
+from jaraco.util.dictlib import RangeMap
+
+class AnyDict(object):
+	"A dictionary that returns the same value regardless of key"
+	
+	def __init__(self, value):
+		self.value = value
+
+	def __getitem__(self, key):
+		return value
 
 class SYSTEMTIME(Extended, ctypes.Structure):
 	_fields_ = [
@@ -168,10 +179,26 @@ class Info(DYNAMIC_TIME_ZONE_INFORMATION):
 		return self._locate_day(year, info.daylight_start)
 
 	def locate_standard_start(self, year):
-		return self._locate_day(year, self.standard_start)
+		info = self.get_info_for_year(year)
+		return self._locate_day(year, info.standard_start)
 
 	def get_info_for_year(self, year):
+		return self.dynamic_info[year]
+	
+	@property
+	def dynamic_info(self):
+		"Return a map that for a given year will return the correct Info"
 		if self.key_name:
+			dyn_key = self.get_key().subkey('Dynamic DST')
+			del dyn_key['FirstEntry']
+			del dyn_key['LastEntry']
+			years = map(int, dyn_key.keys())
+			values = map(Info, info.values())
+			# create a range mapping that searches by descending year and matches
+			# if the target year is greater or equal.
+			return RangeMap(zip(years, values), descending, operator.ge)
+		else:
+			return AnyDict(self)
 
 	@staticmethod
 	def _locate_day(year, cutoff):
