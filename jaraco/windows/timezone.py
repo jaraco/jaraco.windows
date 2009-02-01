@@ -94,39 +94,37 @@ class Info(DYNAMIC_TIME_ZONE_INFORMATION):
 		"""
 		Try to construct a TimeZoneDefinition from
 		a) [DYNAMIC_]TIME_ZONE_INFORMATION args
-		b) another TimeZoneDefinition
-		c) a byte structure (using _from_bytes)
+		b) another Info
+		c) a REG_TZI_FORMAT
+		d) a byte structure
 		"""
-		try:
-			super(Info, self).__init__(*args, **kwargs)
-			return
-		except TypeError:
-			pass
-		
-		try:
-			self.__init_from_other(*args, **kwargs)
-			return
-		except TypeError:
-			pass
-			
-		try:
-			self.__init_from_bytes(*args, **kwargs)
-			return
-		except TypeError:
-			pass
-			
+		funcs = (
+			super(Info, self).__init__,
+			self.__init_from_other,
+			self.__init_from_reg_tzi,
+			self.__init_from_bytes,
+			)
+		for func in funcs:
+			try:
+				func(*args, **kwargs)
+				return
+			except TypeError:
+				pass
 		raise TypeError("Invalid arguments for %s" % self.__class__)
 
-	def __init_from_bytes(self, bytes, standard_name='', daylight_name='', key_name='', daylight_disabled=False):
-		format = '3l8h8h'
-		components = struct.unpack(format, bytes)
-		bias, standard_bias, daylight_bias = components[:3]
-		standard_start = SYSTEMTIME(*components[3:11])
-		daylight_start = SYSTEMTIME(*components[11:19])
-		super(Info, self).__init__(bias,
-			standard_name, standard_start, standard_bias,
-			daylight_name, daylight_start, daylight_bias,
-			key_name, daylight_disabled,)
+	def __init_from_bytes(self, bytes, **kwargs):
+		reg_tzi = REG_TZI_FORMAT()
+		buffer = buffer(bytes)
+		ctypes.memmove(ctypes.addressof(reg_tzi), buffer, len(buffer))
+		self.__init_from_reg_tzi(self, reg_tzi, **kwargs):
+
+	def __init_from_reg_tzi(self, reg_tzi, **kwargs):
+		if not isinstance(reg_tzi, REG_TZI_FORMAT):
+			raise TypeError("Not a REG_TZI_FORMAT")
+		for field_name, type in reg_tzi._fields_:
+			setattr(self, field_name, getattr(reg_tzi, field_name))
+		for name, value in kwargs.items():
+			setattr(self, name, value)
 
 	def __init_from_other(self, other):
 		if not isinstance(other, TIME_ZONE_INFORMATION):
