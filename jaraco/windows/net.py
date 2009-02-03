@@ -11,7 +11,6 @@ __all__ = ('AddConnection')
 import ctypes
 import ctypes.wintypes
 
-from jaraco.windows.util import ensure_unicode
 from jaraco.windows.error import WindowsError
 
 # MPR - Multiple Provider Router
@@ -30,6 +29,15 @@ class NETRESOURCE(ctypes.Structure):
 		('comment', ctypes.wintypes.LPWSTR),
 		('provider', ctypes.wintypes.LPWSTR),
 		]
+LPNETRESOURCE = ctypes.POINTER(NETRESOURCE)
+
+WNetAddConnection2 = mpr.WNetAddConnection2W
+WNetAddConnection2.argtypes = (
+	LPNETRESOURCE,
+	ctypes.wintypes.LPCWSTR,
+	ctypes.wintypes.LPCWSTR,
+	ctypes.wintypes.DWORD,
+	)
 
 def AddConnection(
 	remote_name,
@@ -39,7 +47,6 @@ def AddConnection(
 	user=None,
 	password=None,
 	flags=0):
-	user, password = map(ensure_unicode, (user, password))
 	resource = NETRESOURCE(
 		type=type,
 		remote_name=remote_name,
@@ -48,8 +55,8 @@ def AddConnection(
 		# WNetAddConnection2 ignores the other members of NETRESOURCE
 		)
 	
-	result = mpr.WNetAddConnection2W(
-		ctypes.byref(resource),
+	result = WNetAddConnection2(
+		resource,
 		password,
 		user,
 		flags,
