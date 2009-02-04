@@ -49,7 +49,9 @@ def format_system_message(value):
 class WindowsError(Exception):
 	"more info about errors at http://msdn.microsoft.com/en-us/library/ms681381(VS.85).aspx"
 
-	def __init__(self, value):
+	def __init__(self, value=None):
+		if value is None:
+			value = ctypes.windll.kernel32.GetLastError()
 		self.value = value
 
 	@property
