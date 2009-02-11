@@ -36,11 +36,10 @@ def format_system_message(value):
 		buffer_size,
 		arguments,
 		)
-	if bytes == 0:
-		# note this will cause an infinite loop if GetLastError repeatedly
-		#  returns an error that cannot be formatted, although this
-		#  should not happen.
-		raise WindowsError(ctypes.windll.kernel32.GetLastError())
+	# note the following will cause an infinite loop if GetLastError
+	#  repeatedly returns an error that cannot be formatted, although
+	#  this should not happen.
+	handle_nonzero_success(bytes)
 	message = result_buffer.value
 	ctypes.windll.kernel32.LocalFree(result_buffer)
 	return message
@@ -58,4 +57,6 @@ class WindowsError(Exception):
 	def message(self):
 		return format_system_message(self.value)
 
-
+def handle_nonzero_success(result):
+	if result == 0:
+		raise WindowsError(ctypes.windll.kernel32.GetLastError())
