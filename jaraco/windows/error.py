@@ -59,4 +59,4 @@ class WindowsError(Exception):
 
 def handle_nonzero_success(result):
 	if result == 0:
-		raise WindowsError(ctypes.windll.kernel32.GetLastError())
+		raise WindowsError()
