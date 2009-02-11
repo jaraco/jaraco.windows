@@ -56,6 +56,9 @@ class WindowsError(Exception):
 	@property
 	def message(self):
 		return format_system_message(self.value)
+	
+	def __str__(self):
+		return self.message
 
 def handle_nonzero_success(result):
 	if result == 0:
