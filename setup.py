@@ -32,6 +32,7 @@ setup (name = 'jaraco.windows',
 		entry_points = dict(
 			console_scripts = [
 				'xmouse = jaraco.windows.xmouse:run',
+				'mklink = jaraco.windows.filesystem:mklink',
 			],
 		),
 		install_requires=[
