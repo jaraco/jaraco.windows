@@ -15,6 +15,10 @@ CreateSymbolicLink.argtypes = (
 CreateSymbolicLink.restype = BOOLEAN
 
 def mklink():
+	"""
+	Like cmd.exe's mklink except it will infer directory status of the
+	target.
+	"""
 	from optparse import OptionParser
 	parser = OptionParser(usage="usage: %prog [options] link target")
 	parser.add_option('-d', '--directory',
@@ -25,6 +29,12 @@ def mklink():
 		link, target = args
 	except ValueError:
 		parser.error("incorrect number of arguments")
-	is_directory = options.directory or os.path.isdir(target)
-	handle_nonzero_success(CreateSymbolicLink(link, target, is_directory))
+	symlink(link, target, options.directory)
 	sys.stdout.write("Symbolic link created: %(link)s --> %(target)s\n" % vars())
+
+def symlink(link, target, target_is_directory = False):
+	"""
+	An implementation of os.symlink for Windows (Vista and greater)
+	"""
+	target_is_directory = target_is_directory or os.path.isdir(target)
+	handle_nonzero_success(CreateSymbolicLink(link, target, target_is_directory))
