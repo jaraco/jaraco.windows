@@ -14,9 +14,7 @@ except ImportError:
 	import _winreg as winreg
 
 from jaraco.windows import error
-
-# TODO: remove dependency on pywin32
-import win32gui, win32con
+from jaraco.windows.message import SendMessage, HWND_BROADCAST, WM_SETTINGCHANGE
 
 _SetEnvironmentVariable = ctypes.windll.kernel32.SetEnvironmentVariableW
 _SetEnvironmentVariable.restype = ctypes.wintypes.BOOL
@@ -83,13 +81,14 @@ class RegisteredEnvironment(object):
 	
 	@classmethod
 	def notify(class_):
-		win32gui.SendMessage(win32con.HWND_BROADCAST, win32con.WM_SETTINGCHANGE, 0, 'Environment')
+		# TODO: Implement Microsoft UIPI (User Interface Privilege Isolation) to
+		#  elevate privilege to system level so the system gets this notification
+		# for now, this must be run as admin to work as expected
+		SendMessage(HWND_BROADCAST, WM_SETTINGCHANGE, 0, 'Environment')
 
 def enver():
 	from optparse import OptionParser
 	usage = """
-Usage:
-
 Show all environment variables - %prog
 Add/Modify/Delete environment variable - %prog <name>=[value]
 
