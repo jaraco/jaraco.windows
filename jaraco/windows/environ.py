@@ -92,7 +92,7 @@ class RegisteredEnvironment(object):
 		# TODO: Implement Microsoft UIPI (User Interface Privilege Isolation) to
 		#  elevate privilege to system level so the system gets this notification
 		# for now, this must be run as admin to work as expected
-		SendMessage(HWND_BROADCAST, WM_SETTINGCHANGE, 0, 'Environment')
+		SendMessage(HWND_BROADCAST, WM_SETTINGCHANGE, 0, u'Environment')
 
 def enver():
 	from optparse import OptionParser
