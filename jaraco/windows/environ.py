@@ -63,8 +63,11 @@ class RegisteredEnvironment(object):
 
 	@classmethod
 	def get(class_, name):
-		value, type = winreg.QueryValue(class_.key, name)
-		return value
+		try:
+			value, type = winreg.QueryValueEx(class_.key, name)
+			return value
+		except WindowsError:
+			raise ValueError("No such key", name)
 			
 	@classmethod
 	def set(class_, name, value):
@@ -75,7 +78,7 @@ class RegisteredEnvironment(object):
 			return class_.delete(name)
 		if name.upper() in ('PATH', 'PATHEXT'):
 			existing_value = class_.get(name.upper())
-			value = ';'.join(existing_value, value)
+			value = ';'.join((existing_value, value))
 		winreg.SetValueEx(class_.key, name, 0, winreg.REG_EXPAND_SZ, value)
 		class_.notify()
 	
