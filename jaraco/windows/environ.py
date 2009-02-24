@@ -60,6 +60,11 @@ class RegisteredEnvironment(object):
 	def show(class_):
 		for name, value, type in registry_key_values(class_.key):
 			sys.stdout.write('='.join((name, value)) + '\n')
+
+	@classmethod
+	def get(class_, name):
+		value, type = winreg.QueryValue(class_.key, name)
+		return value
 			
 	@classmethod
 	def set(class_, name, value):
@@ -69,7 +74,7 @@ class RegisteredEnvironment(object):
 		if not value:
 			return class_.delete(name)
 		if name.upper() in ('PATH', 'PATHEXT'):
-			existing_value = class_.get(name)
+			existing_value = class_.get(name.upper())
 			value = ';'.join(existing_value, value)
 		winreg.SetValueEx(class_.key, name, 0, winreg.REG_EXPAND_SZ, value)
 		class_.notify()
