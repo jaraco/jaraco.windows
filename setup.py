@@ -35,6 +35,7 @@ setup (name = 'jaraco.windows',
 			console_scripts = [
 				'xmouse = jaraco.windows.xmouse:run',
 				'mklink = jaraco.windows.filesystem:mklink',
+				'enver = jaraco.windows.environ:enver',
 			],
 		),
 		install_requires=[
