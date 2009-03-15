@@ -16,9 +16,9 @@ __date__ = '$Date$'[7:-2]
 name = 'jaraco.windows'
 
 setup (name = name,
-		version = '1.2',
+		version = '1.3',
 		description = 'Windows Routines by Jason R. Coombs',
-		long_description = read_long_description(__file__),
+		long_description = read_long_description(),
 		author = 'Jason R. Coombs',
 		author_email = 'jaraco@jaraco.com',
 		url = 'http://pypi.python.org/pypi'+name,
