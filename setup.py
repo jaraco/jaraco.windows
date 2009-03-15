@@ -5,21 +5,23 @@
 Copyright © 2009 Jason R. Coombs
 """
 
-from ez_setup import use_setuptools
-use_setuptools()
 from setuptools import setup, find_packages
+from jaraco.util.package import read_long_description
 
 __author__ = 'Jason R. Coombs <jaraco@jaraco.com>'
 __version__ = '$Rev$'[6:-2]
 __svnauthor__ = '$Author$'[9:-2]
 __date__ = '$Date$'[7:-2]
 
-setup (name = 'jaraco.windows',
+name = 'jaraco.windows'
+
+setup (name = name,
 		version = '1.2',
 		description = 'Windows Routines by Jason R. Coombs',
+		long_description = read_long_description(__file__),
 		author = 'Jason R. Coombs',
 		author_email = 'jaraco@jaraco.com',
-		url = 'http://www.jaraco.com/projects/jaraco.windows',
+		url = 'http://pypi.python.org/pypi'+name,
 		packages = find_packages(exclude=['ez_setup', 'tests', 'examples']),
 		zip_safe=True,
 		namespace_packages = ['jaraco',],
