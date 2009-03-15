@@ -7,7 +7,8 @@ Status and License
 ------------------
 
 ``jaraco.windows`` aims to provide a pure-python interface to Windows
-APIs using ctypes.
+APIs using ctypes. This package is not designed to be exhaustive, but
+rather to supply interfaces as they are needed by the contributors.
 
 ``jaraco.windows`` is written by Jason R. Coombs.  It is licensed under an
 `MIT-style permissive license
@@ -17,6 +18,13 @@ You can install it with ``easy_install jaraco.windows``, or from the
 `subversion repository
 <https://svn.jaraco.com/jaraco/python/jaraco.windows#egg=jaraco.windows-dev>`_ with
 ``easy_install jaraco.windows==dev``.
+
+Contribute
+----------
+
+If jaraco.windows doesn't supply the interface you require for your
+application, consider creating the interface and providing a patch
+to the author.
 
 Changes
 -------
