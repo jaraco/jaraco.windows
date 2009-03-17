@@ -52,9 +52,6 @@ class RegisteredEnvironment(object):
 	"""
 	Manages the environment variables as set in the Windows Registry.
 	"""
-	path = r'SYSTEM\CurrentControlSet\Control\Session Manager\Environment'
-	hklm = winreg.ConnectRegistry(None, winreg.HKEY_LOCAL_MACHINE)
-	key = winreg.OpenKey(hklm, path, 0, winreg.KEY_READ | winreg.KEY_WRITE)
 	
 	@classmethod
 	def show(class_):
@@ -94,6 +91,16 @@ class RegisteredEnvironment(object):
 		# for now, this must be run as admin to work as expected
 		SendMessage(HWND_BROADCAST, WM_SETTINGCHANGE, 0, u'Environment')
 
+class MachineRegisteredEnvironment(RegisteredEnvironment):
+	path = r'SYSTEM\CurrentControlSet\Control\Session Manager\Environment'
+	hklm = winreg.ConnectRegistry(None, winreg.HKEY_LOCAL_MACHINE)
+	key = winreg.OpenKey(hklm, path, 0, winreg.KEY_READ | winreg.KEY_WRITE)
+
+class UserRegisteredEnvironment(RegisteredEnvironment):
+	hkcu = winreg.ConnectRegistry(None, winreg.HKEY_CURRENT_USER)
+	key = winreg.OpenKey(hkcu, 'Environment', 0, winreg.KEY_READ | winreg.KEY_WRITE)
+
+
 def enver():
 	from optparse import OptionParser
 	usage = """
@@ -105,10 +112,17 @@ If <name> is PATH or PATHEXT, %prog will append the value prefixed with ;
 If there is no value, %prog will delete the <name> environment variable
 
 Note that %prog does not affect the current running environment, and can
-only affect new command windows.
+only affect subsequently spawned applications.
 """
 	parser = OptionParser(usage=usage)
+	parser.add_option('-U', '--user-environment',
+		action='store_const', const=UserRegisteredEnvironment,
+		default=MachineRegisteredEnvironment,
+		dest='class_',
+		help="Use the current user's environment",
+		)
 	options, args = parser.parse_args()
+	
 	try:
 		param = args.pop()
 		if args:
@@ -117,6 +131,6 @@ only affect new command windows.
 		if not '=' in param:
 			parser.parser_error("Expected <name>= or <name>=<value>")
 			raise Exception("need to exit here")
-		RegisteredEnvironment.set(*param.split('='))
+		options.class_.set(*param.split('='))
 	except IndexError:
-		RegisteredEnvironment.show()
+		options.class_.show()
