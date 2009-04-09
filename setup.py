@@ -16,7 +16,7 @@ __date__ = '$Date$'[7:-2]
 name = 'jaraco.windows'
 
 setup (name = name,
-		version = '1.3',
+		version = '1.4',
 		description = 'Windows Routines by Jason R. Coombs',
 		long_description = read_long_description(),
 		author = 'Jason R. Coombs',
