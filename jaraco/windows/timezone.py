@@ -127,7 +127,7 @@ class Info(DYNAMIC_TIME_ZONE_INFORMATION):
 		reg_tzi = REG_TZI_FORMAT()
 		buffer = buffer(bytes)
 		ctypes.memmove(ctypes.addressof(reg_tzi), buffer, len(buffer))
-		self.__init_from_reg_tzi(self, reg_tzi, **kwargs):
+		self.__init_from_reg_tzi(self, reg_tzi, **kwargs)
 
 	def __init_from_reg_tzi(self, reg_tzi, **kwargs):
 		if not isinstance(reg_tzi, REG_TZI_FORMAT):
