@@ -73,6 +73,7 @@ class RegisteredEnvironment(object):
 		# and follow up by closing it.
 		if not value:
 			return class_.delete(name)
+		# @todo: make this an option and not hard-coded
 		if name.upper() in ('PATH', 'PATHEXT'):
 			existing_value = class_.get(name.upper())
 			value = ';'.join((existing_value, value))

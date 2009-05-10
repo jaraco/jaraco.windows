@@ -3,7 +3,7 @@
 import os
 import sys
 from ctypes import Structure, windll
-from ctypes.wintypes import BOOLEAN, LPWSTR, DWORD
+from ctypes.wintypes import BOOLEAN, LPWSTR, DWORD, LPVOID
 from jaraco.windows.error import handle_nonzero_success, WindowsError
 
 CreateSymbolicLink = windll.kernel32.CreateSymbolicLinkW
@@ -13,6 +13,14 @@ CreateSymbolicLink.argtypes = (
 	DWORD,
 	)
 CreateSymbolicLink.restype = BOOLEAN
+
+CreateHardLink = windll.kernel32.CreateHardLinkW
+CreateHardLink.argtypes = (
+	LPWSTR,
+	LPWSTR,
+	LPVOID, # reserved for LPSECURITY_ATTRIBUTES
+	)
+CreateHardLink.restype = BOOLEAN
 
 GetFileAttributes = windll.kernel32.GetFileAttributesW
 GetFileAttributes.argtypes = (LPWSTR,)
@@ -42,6 +50,12 @@ def symlink(link, target, target_is_directory = False):
 	"""
 	target_is_directory = target_is_directory or os.path.isdir(target)
 	handle_nonzero_success(CreateSymbolicLink(link, target, target_is_directory))
+
+def link(link, target):
+	"""
+	Establishes a hard link between an existing file and a new file.
+	"""
+	handle_nonzero_success(CreateHardLink(link, target, None))
 
 def islink(path):
 	"""
