@@ -2,7 +2,10 @@
 
 import os
 import sys
-from ctypes import Structure, windll, POINTER, byref, cast
+from ctypes import (
+	Structure, windll, POINTER, byref, cast, create_unicode_buffer,
+	c_size_t
+	)
 from ctypes.wintypes import (
 	BOOLEAN, LPWSTR, DWORD, LPVOID, HANDLE, FILETIME,
 	c_uint64, WCHAR,
@@ -30,6 +33,45 @@ GetFileAttributes.argtypes = (LPWSTR,)
 GetFileAttributes.restype = DWORD
 
 MAX_PATH = 260
+
+GetFinalPathNameByHandle = windll.kernel32.GetFinalPathNameByHandleW
+GetFinalPathNameByHandle.argtypes = (
+	HANDLE, LPWSTR, DWORD, DWORD,
+	)
+GetFinalPathNameByHandle.restype = DWORD
+
+class SECURITY_ATTRIBUTES(Structure):
+	_fields_ = (
+		('length', DWORD),
+		('p_security_descriptor', LPVOID),
+		('inherit_handle', BOOLEAN),
+		)
+LPSECURITY_ATTRIBUTES = POINTER(SECURITY_ATTRIBUTES)
+
+CreateFile = windll.kernel32.CreateFileW
+CreateFile.argtypes = (
+	LPWSTR,
+	DWORD,
+	DWORD,
+	LPSECURITY_ATTRIBUTES,
+	DWORD,
+	DWORD,
+	HANDLE,
+	)
+CreateFile.restype = HANDLE
+FILE_SHARE_READ = 1
+FILE_SHARE_WRITE = 2
+FILE_SHARE_DELETE = 4
+FILE_FLAG_BACKUP_SEMANTICS = 0x2000000
+NULL = 0
+OPEN_EXISTING = 3
+FILE_ATTRIBUTE_NORMAL = 0x80
+GENERIC_READ = 0x80000000
+INVALID_HANDLE_VALUE = HANDLE(-1).value
+
+CloseHandle = windll.kernel32.CloseHandle
+CloseHandle.argtypes = (HANDLE,)
+CloseHandle.restype = BOOLEAN
 
 class WIN32_FIND_DATA(Structure):
 	_fields_ = [
@@ -126,7 +168,6 @@ def find_files(spec):
 	True
 	"""
 	fd = WIN32_FIND_DATA()
-	INVALID_FILE_HANDLE = 0xFFFFFFFF
 	ERROR_NO_MORE_FILES = 0x12
 	handle = FindFirstFile(spec, byref(fd))
 	while True:
@@ -143,3 +184,36 @@ def find_files(spec):
 	# todo: how to close handle when generator is destroyed?
 	# hint: catch GeneratorExit
 	windll.kernel32.FindClose(handle)
+
+def GetFinalPath(path):
+	"""
+	For a given path, determine the ultimate location of that path.
+	Useful for resolving symlink targets.
+	This functions wraps the GetFinalPathNameByHandle from the Windows
+	SDK.
+	"""
+	hFile = CreateFile(
+		path,
+		NULL, # desired access
+		FILE_SHARE_READ|FILE_SHARE_WRITE|FILE_SHARE_DELETE, # share mode
+		LPSECURITY_ATTRIBUTES(), # NULL pointer
+		OPEN_EXISTING,
+		FILE_ATTRIBUTE_NORMAL|FILE_FLAG_BACKUP_SEMANTICS,
+		NULL,
+		)
+
+	if hFile == INVALID_HANDLE_VALUE:
+		raise WindowsError()
+
+	VOLUME_NAME_DOS = 0
+
+	buf_size = GetFinalPathNameByHandle(hFile, LPWSTR(), 0, VOLUME_NAME_DOS)
+	handle_nonzero_success(buf_size)
+	buf = create_unicode_buffer(buf_size)
+	result_length = GetFinalPathNameByHandle(hFile, buf, len(buf), VOLUME_NAME_DOS)
+
+	assert result_length < len(buf)
+	handle_nonzero_success(result_length)
+	handle_nonzero_success(CloseHandle(hFile))
+
+	return buf[:result_length]
