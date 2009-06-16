@@ -171,7 +171,7 @@ def find_files(spec):
 	ERROR_NO_MORE_FILES = 0x12
 	handle = FindFirstFile(spec, byref(fd))
 	while True:
-		if handle == INVALID_FILE_HANDLE:
+		if handle == INVALID_HANDLE_VALUE:
 			raise WindowsError()
 		yield fd
 		fd = WIN32_FIND_DATA()
