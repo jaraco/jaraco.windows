@@ -67,14 +67,16 @@ class RegisteredEnvironment(object):
 			raise ValueError("No such key", name)
 			
 	@classmethod
-	def set(class_, name, value):
+	def set(class_, name, value, options):
 		# consider opening the key read-only except for here
 		# key = winreg.OpenKey(class_.key, None, 0, winreg.KEY_WRITE)
 		# and follow up by closing it.
 		if not value:
 			return class_.delete(name)
-		# @todo: make this an option and not hard-coded
-		if name.upper() in ('PATH', 'PATHEXT'):
+		do_append = options.append or (
+			name.upper() in ('PATH', 'PATHEXT') and not options.replace
+			)
+		if do_append:
 			existing_value = class_.get(name.upper())
 			value = ';'.join((existing_value, value))
 		winreg.SetValueEx(class_.key, name, 0, winreg.REG_EXPAND_SZ, value)
@@ -101,26 +103,40 @@ class UserRegisteredEnvironment(RegisteredEnvironment):
 	hkcu = winreg.ConnectRegistry(None, winreg.HKEY_CURRENT_USER)
 	key = winreg.OpenKey(hkcu, 'Environment', 0, winreg.KEY_READ | winreg.KEY_WRITE)
 
+def trim(s):
+	from textwrap import dedent
+	return dedent(s).strip()
 
 def enver():
+	"""
+	%prog [<name>=[value]]
+	
+	To show all environment variables, call with no parameters:
+	 %prog
+	To Add/Modify/Delete environment variable:
+	 %prog <name>=[value]
+
+	If <name> is PATH or PATHEXT, %prog will append the value prefixed with ;
+
+	If there is no value, %prog will delete the <name> environment variable
+
+	Note that %prog does not affect the current running environment, and can
+	only affect subsequently spawned applications.
+	"""
 	from optparse import OptionParser
-	usage = """
-Show all environment variables - %prog
-Add/Modify/Delete environment variable - %prog <name>=[value]
-
-If <name> is PATH or PATHEXT, %prog will append the value prefixed with ;
-
-If there is no value, %prog will delete the <name> environment variable
-
-Note that %prog does not affect the current running environment, and can
-only affect subsequently spawned applications.
-"""
-	parser = OptionParser(usage=usage)
+	parser = OptionParser(usage=trim(enver.__doc__))
 	parser.add_option('-U', '--user-environment',
 		action='store_const', const=UserRegisteredEnvironment,
 		default=MachineRegisteredEnvironment,
 		dest='class_',
 		help="Use the current user's environment",
+		)
+	parser.add_option('-a', '--append',
+		action='store_true', default=False,
+		help="Append the value to any existing value (default for PATH and PATHEXT)",)
+	parser.add_option('-r', '--replace',
+		action='store_true', default=False,
+		help="Replace any existing value (used to override default append for PATH and PATHEXT)",
 		)
 	options, args = parser.parse_args()
 	
@@ -128,10 +144,11 @@ only affect subsequently spawned applications.
 		param = args.pop()
 		if args:
 			parser.parser_error("Too many parameters specified")
-			raise Exception("need to exit here")
+			raise SystemExit(1)
 		if not '=' in param:
 			parser.parser_error("Expected <name>= or <name>=<value>")
-			raise Exception("need to exit here")
-		options.class_.set(*param.split('='))
+			raise SystemExit(2)
+		name, value = param.split('=')
+		options.class_.set(name, value, options)
 	except IndexError:
 		options.class_.show()
