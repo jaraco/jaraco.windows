@@ -8,7 +8,7 @@ from ctypes import (
 	)
 from ctypes.wintypes import (
 	BOOLEAN, LPWSTR, DWORD, LPVOID, HANDLE, FILETIME,
-	c_uint64, WCHAR,
+	c_uint64, WCHAR, BOOL,
 	)
 from jaraco.windows.error import handle_nonzero_success, WindowsError
 
@@ -217,3 +217,20 @@ def GetFinalPath(path):
 	handle_nonzero_success(CloseHandle(hFile))
 
 	return buf[:result_length]
+
+SCS_32BIT_BINARY = 0 # A 32-bit Windows-based application
+SCS_64BIT_BINARY = 6 # A 64-bit Windows-based application
+SCS_DOS_BINARY = 1 # An MS-DOS-based application
+SCS_OS216_BINARY = 5 # A 16-bit OS/2-based application
+SCS_PIF_BINARY = 3 # A PIF file that executes an MS-DOS-based application
+SCS_POSIX_BINARY = 4 # A POSIX-based application
+SCS_WOW_BINARY = 2 # A 16-bit Windows-based application
+
+_GetBinaryType = windll.kernel32.GetBinaryTypeW
+_GetBinaryType.argtypes = (LPWSTR, POINTER(DWORD))
+_GetBinaryType.restype = BOOL
+
+def GetBinaryType(filepath):
+	res = DWORD()
+	handle_nonzero_success(_GetBinaryType(filepath, res))
+	return res
