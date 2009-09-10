@@ -2,13 +2,14 @@
 
 import os
 import sys
+import operator
 from ctypes import (
 	Structure, windll, POINTER, byref, cast, create_unicode_buffer,
-	c_size_t
+	c_size_t, c_int,
 	)
 from ctypes.wintypes import (
 	BOOLEAN, LPWSTR, DWORD, LPVOID, HANDLE, FILETIME,
-	c_uint64, WCHAR, BOOL,
+	c_uint64, WCHAR, BOOL, HWND, WORD, UINT,
 	)
 from jaraco.windows.error import handle_nonzero_success, WindowsError
 
@@ -234,3 +235,45 @@ def GetBinaryType(filepath):
 	res = DWORD()
 	handle_nonzero_success(_GetBinaryType(filepath, res))
 	return res
+
+FILEOP_FLAGS = WORD
+class SHFILEOPSTRUCT(Structure):
+	_fields_ = [
+		('status_dialog', HWND),
+		('operation', UINT),
+		('from_', LPWSTR),
+		('to', LPWSTR),
+		('flags', FILEOP_FLAGS),
+		('operations_aborted', BOOL),
+		('name_mapping_handles', LPVOID),
+		('progress_title', LPWSTR),
+	]
+_SHFileOperation = windll.shell32.SHFileOperationW
+_SHFileOperation.argtypes = [POINTER(SHFILEOPSTRUCT)]
+_SHFileOperation.restype = c_int
+
+FOF_ALLOWUNDO = 64
+FOF_NOCONFIRMATION = 16
+FO_DELETE = 3
+
+def _make_null_terminated_list(obs):
+	obs = _makelist(obs)
+	if obs is None: return
+	return u'\x00'.join(obs) + u'\x00\x00'
+
+def _makelist(ob):
+	if ob is None: return
+	if not isinstance(ob, (list, tuple, set)):
+		return [ob]
+	return ob
+
+def SHFileOperation(operation, from_, to=None, flags=[]):
+	flags = reduce(operator.or_, flags, 0)
+	from_ = _make_null_terminated_list(from_)
+	to = _make_null_terminated_list(to)
+	params = SHFILEOPSTRUCT(0, operation, from_, to, flags)
+	import pdb
+	pdb.set_trace()
+	res = _SHFileOperation(params)
+	if res != 0:
+		raise RuntimeError("SHFileOperation returned %d" % res)
