@@ -272,8 +272,6 @@ def SHFileOperation(operation, from_, to=None, flags=[]):
 	from_ = _make_null_terminated_list(from_)
 	to = _make_null_terminated_list(to)
 	params = SHFILEOPSTRUCT(0, operation, from_, to, flags)
-	import pdb
-	pdb.set_trace()
 	res = _SHFileOperation(params)
 	if res != 0:
 		raise RuntimeError("SHFileOperation returned %d" % res)
