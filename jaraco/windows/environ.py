@@ -58,13 +58,26 @@ class RegisteredEnvironment(object):
 		for name, value, type in registry_key_values(class_.key):
 			sys.stdout.write('='.join((name, value)) + '\n')
 
+	NoDefault = type('NoDefault', (object,), dict())
+
 	@classmethod
-	def get(class_, name):
+	def get(class_, name, default=NoDefault):
 		try:
 			value, type = winreg.QueryValueEx(class_.key, name)
 			return value
 		except WindowsError:
+			if default is not class_.NoDefault:
+				return default
 			raise ValueError("No such key", name)
+
+	@classmethod
+	def get_values_list(class_, name, sep):
+		res = class_.get(name.upper(), [])
+		if isinstance(res, basestring):
+			res = res.split(sep)
+		return res
+		
+
 			
 	@classmethod
 	def set(class_, name, value, options):
@@ -77,8 +90,9 @@ class RegisteredEnvironment(object):
 			name.upper() in ('PATH', 'PATHEXT') and not options.replace
 			)
 		if do_append:
-			existing_value = class_.get(name.upper())
-			value = ';'.join((existing_value, value))
+			sep = ';'
+			values = class_.get_values_list(name, sep) + [value]
+			value = ';'.join(values)
 		winreg.SetValueEx(class_.key, name, 0, winreg.REG_EXPAND_SZ, value)
 		class_.notify()
 	
@@ -116,9 +130,15 @@ def enver():
 	To Add/Modify/Delete environment variable:
 	 %prog <name>=[value]
 
-	If <name> is PATH or PATHEXT, %prog will append the value prefixed with ;
+	If <name> is PATH or PATHEXT, %prog will by default append the value using
+	a semicolon as a separator. Use -r to disable this behavior or -a to force
+	it for variables other than PATH and PATHEXT.
 
-	If there is no value, %prog will delete the <name> environment variable
+	If append is prescribed, but the value doesn't exist, the value will be
+	created.
+
+	If there is no value, %prog will delete the <name> environment variable.
+	i.e. "PATH="
 
 	Note that %prog does not affect the current running environment, and can
 	only affect subsequently spawned applications.
