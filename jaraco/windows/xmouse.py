@@ -35,6 +35,13 @@ def set(value):
 			set_constant, 0, ctypes.cast(value, ctypes.c_void_p), 0
 	)	)
 
+def get():
+	value = ctypes.wintypes.BOOL()
+	handle_result(
+		SystemParametersInfo(get_constant, 0, ctypes.byref(value), 0)
+	)
+	return bool(value)
+
 def enable():
 	print "enabling xmouse"
 	set(True)
@@ -44,14 +51,13 @@ def disable():
 	set(False)
 
 def toggle():
-	value = ctypes.wintypes.BOOL()
-	handle_result(
-		SystemParametersInfo(get_constant, 0, ctypes.byref(value), 0)
-	)
-	value = bool(value)
+	value = get()
 	print "xmouse: %s -> %s" % (value, not value)
 	set(not value)
-	
+
+def show():
+	print "xmouse: %s" % get()
+
 def run():
 	try:
 		action = sys.argv[1]
