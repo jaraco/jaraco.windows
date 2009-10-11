@@ -1,4 +1,5 @@
-from win32file import CreateFile, ReadFile, DeviceIoControl
+from win32file import CreateFile
+from jaraco.windows.reparse import DeviceIoControl
 from win32con import *
 import ctypes, ctypes.wintypes
 import winioctlcon
@@ -88,10 +89,9 @@ def trace_symlink_target(link):
 	except:
 		return link
 		
-	#dat = ReadFile(hnd, 10240)
-
 	try:
-		res = DeviceIoControl(hnd, winioctlcon.FSCTL_GET_REPARSE_POINT, None, 10240)
+		handle = hnd.handle
+		res = DeviceIoControl(handle, winioctlcon.FSCTL_GET_REPARSE_POINT, None, 10240)
 	except:
 		return link
 
