@@ -5,13 +5,15 @@ import sys
 import operator
 from ctypes import (
 	Structure, windll, POINTER, byref, cast, create_unicode_buffer,
-	c_size_t, c_int,
+	c_size_t, c_int, create_string_buffer,
 	)
 from ctypes.wintypes import (
 	BOOLEAN, LPWSTR, DWORD, LPVOID, HANDLE, FILETIME,
 	c_uint64, WCHAR, BOOL, HWND, WORD, UINT,
 	)
 from jaraco.windows.error import handle_nonzero_success, WindowsError
+from jaraco.windows.reparse import IO_REPARSE_TAG_SYMLINK, FSCTL_GET_REPARSE_POINT, REPARSE_DATA_BUFFER
+from jaraco.windows.reparse import DeviceIoControl
 
 CreateSymbolicLink = windll.kernel32.CreateSymbolicLinkW
 CreateSymbolicLink.argtypes = (
@@ -153,7 +155,6 @@ def is_symlink(path):
 	return _is_symlink(next(find_files(path)))
 
 def _is_symlink(find_data):
-	IO_REPARSE_TAG_SYMLINK = 0xA000000C
 	return find_data.reserved[0] == IO_REPARSE_TAG_SYMLINK
 
 def find_files(spec):
@@ -188,12 +189,16 @@ def find_files(spec):
 	# hint: catch GeneratorExit
 	windll.kernel32.FindClose(handle)
 
-def GetFinalPath(path):
+def get_final_path(path):
 	"""
 	For a given path, determine the ultimate location of that path.
 	Useful for resolving symlink targets.
 	This functions wraps the GetFinalPathNameByHandle from the Windows
 	SDK.
+	
+	Note, this function fails if a handle cannot be obtained (such as
+	for C:\Pagefile.sys on a stock windows system). Consider using
+	trace_symlink_target instead.
 	"""
 	hFile = CreateFile(
 		path,
@@ -201,7 +206,7 @@ def GetFinalPath(path):
 		FILE_SHARE_READ|FILE_SHARE_WRITE|FILE_SHARE_DELETE, # share mode
 		LPSECURITY_ATTRIBUTES(), # NULL pointer
 		OPEN_EXISTING,
-		FILE_FLAG_OPEN_REPARSE_POINT|FILE_FLAG_BACKUP_SEMANTICS,
+		FILE_FLAG_BACKUP_SEMANTICS,
 		NULL,
 		)
 
@@ -277,3 +282,38 @@ def SHFileOperation(operation, from_, to=None, flags=[]):
 	res = _SHFileOperation(params)
 	if res != 0:
 		raise RuntimeError("SHFileOperation returned %d" % res)
+
+def trace_symlink_target(link):
+	"""
+	Given a file that is known to be a symlink, trace it to its ultimate
+	target.
+	
+	Raises TargetNotPresent when the target cannot be determined.
+	Raises ValueError when the specified link is not a symlink.
+	"""
+
+	if not is_symlink(link):
+		raise ValueError("link must point to a symlink on the system")
+	while is_symlink(link):
+		link = _trace_symlink_immediate_target(link)
+	return link
+
+def _trace_symlink_immediate_target(link):
+	handle = CreateFile(
+		link,
+		0,
+		FILE_SHARE_READ|FILE_SHARE_WRITE|FILE_SHARE_DELETE,
+		None,
+		OPEN_EXISTING,
+		FILE_FLAG_OPEN_REPARSE_POINT|FILE_FLAG_BACKUP_SEMANTICS,
+		None,
+		)
+
+	res = DeviceIoControl(handle, FSCTL_GET_REPARSE_POINT, None, 10240)
+
+	bytes = create_string_buffer(res)
+	p_rdb = cast(bytes, POINTER(REPARSE_DATA_BUFFER))
+	rdb = p_rdb.contents
+	if not rdb.tag == IO_REPARSE_TAG_SYMLINK:
+		raise RuntimeError("Expected IO_REPARSE_TAG_SYMLINK, but got %d" % rdb.tag)
+	return rdb.get_print_name()
