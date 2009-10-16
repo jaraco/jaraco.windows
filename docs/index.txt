@@ -29,6 +29,24 @@ to the author.
 Changes
 -------
 
+1.4
+~~~
+
+* Added more robust support for symlink support (including a symlink traversal
+  routine that works even when the target is locked). This method uses explicit
+  reparse point parsing, using the new reparse module.
+* Added support for hardlinks.
+* Added jaraco.windows.lib for locating loaded modules.
+* Added command line parameters to environ to allow override of default
+  append/replace behavior.
+* Added power monitoring utilities.
+* Began work on GUI testing objects in jaraco.windows.gui.test, based on watsup.
+* Added filesystem.GetBinaryType
+* Added filesystem.SHFileOperation (useful for sending items to a Recycle Bin).
+* Updated enver to support appending to a non-existent variable.
+* Added a 'show' option to xmouse
+* Added routines to support the Microsoft Data Protection API (DPAPI).
+
 1.3
 ~~~
 
