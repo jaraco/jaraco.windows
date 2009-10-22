@@ -7,10 +7,6 @@ import ctypes
 import ctypes.wintypes
 from jaraco.windows.error import WindowsError
 
-"""
-Usage: %s {enable, disable, toggle}
-"""
-
 SystemParametersInfo = ctypes.windll.user32.SystemParametersInfoW
 SystemParametersInfo.argtypes = (
 	ctypes.wintypes.UINT,
