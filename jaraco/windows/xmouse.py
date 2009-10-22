@@ -58,16 +58,29 @@ def toggle():
 def show():
 	print "xmouse: %s" % get()
 
-def run():
+def get_options():
+	"""
+	%prog [<command>]
+	
+		command: show, enable, disable, toggle (defaults to toggle)
+	"""
+	from textwrap import dedent
+	usage = dedent(get_options.__doc__).strip()
+	from optparse import OptionParser
+	parser = OptionParser(usage=usage)
+	options, args = parser.parse_args()
 	try:
-		action = sys.argv[1]
+		options.action = args.pop()
 	except IndexError:
-		action = 'toggle'
+		options.action = 'toggle'
+	if not options.action in globals():
+		parser.error("Unrecognized command {0}".format(options.action))
+	if args: parser.error("Too many arguments specified")
+	return options
 
-	try:
-		globals()[action]()
-	except KeyError:
-		print >> sys.stderr, usage
+def run():
+	options = get_options()
+	globals()[options.action]()
 
 if __name__ == '__main__':
 	run()
