@@ -18,8 +18,14 @@ MAXLEN_IFDESCR = 2**8
 # from error.h
 NO_ERROR = 0
 ERROR_INSUFFICIENT_BUFFER = 122
+ERROR_BUFFER_OVERFLOW = 111
+ERROR_NO_DATA = 232
 ERROR_INVALID_PARAMETER = 87
 ERROR_NOT_SUPPORTED = 50
+
+# from iptypes.h
+MAX_ADAPTER_ADDRESS_LENGTH = 8
+MAX_DHCPV6_DUID_LENGTH = 130
 
 class MIB_IFROW(ctypes.Structure):
 	_fields_ = (
@@ -95,6 +101,96 @@ class MIB_IPADDRTABLE(ctypes.Structure):
 		('entries', MIB_IPADDRROW*0),
 	)
 
+class SOCKADDR(ctypes.Structure):
+	_fields_ = (
+		('family', ctypes.c_ushort),
+		('data', ctypes.c_byte*14),
+		)
+LPSOCKADDR = ctypes.POINTER(SOCKADDR)
+
+class SOCKET_ADDRESS(ctypes.Structure):
+	_fields_ = [
+		('address', LPSOCKADDR),
+		('length', ctypes.c_int),
+		]
+
+class _IP_ADAPTER_ADDRESSES_METRIC(ctypes.Structure):
+	_fields_ = [
+		('length', ctypes.c_ulong),
+		('interface_index', DWORD),
+		]
+
+class _IP_ADAPTER_ADDRESSES_U1(ctypes.Union):
+	_fields_ = [
+		('alignment', ctypes.c_ulonglong),
+		('metric', _IP_ADAPTER_ADDRESSES_METRIC),
+		]
+
+class IP_ADAPTER_ADDRESSES(ctypes.Structure):
+	pass#_anonymous_ = ('u',)
+
+LP_IP_ADAPTER_ADDRESSES = ctypes.POINTER(IP_ADAPTER_ADDRESSES)
+
+# for now, just use void * for pointers to unused structures
+PIP_ADAPTER_UNICAST_ADDRESS = ctypes.c_void_p
+PIP_ADAPTER_ANYCAST_ADDRESS = ctypes.c_void_p
+PIP_ADAPTER_MULTICAST_ADDRESS = ctypes.c_void_p
+PIP_ADAPTER_DNS_SERVER_ADDRESS = ctypes.c_void_p
+PIP_ADAPTER_PREFIX = ctypes.c_void_p
+PIP_ADAPTER_WINS_SERVER_ADDRESS_LH = ctypes.c_void_p
+PIP_ADAPTER_GATEWAY_ADDRESS_LH = ctypes.c_void_p
+PIP_ADAPTER_DNS_SUFFIX = ctypes.c_void_p
+
+IF_OPER_STATUS = ctypes.c_uint # this is an enum, consider http://code.activestate.com/recipes/576415/
+IF_LUID = ctypes.c_uint64
+
+NET_IF_COMPARTMENT_ID = ctypes.c_uint32
+GUID = ctypes.c_byte*16
+NET_IF_NETWORK_GUID = GUID
+NET_IF_CONNECTION_TYPE = ctypes.c_uint # enum
+TUNNEL_TYPE = ctypes.c_uint # enum
+
+IP_ADAPTER_ADDRESSES._fields_ = [
+	#('u', _IP_ADAPTER_ADDRESSES_U1),
+		('length', ctypes.c_ulong),
+		('interface_index', DWORD),
+	('next', LP_IP_ADAPTER_ADDRESSES),
+	('adapter_name', ctypes.c_char_p),
+	('first_unicast_address', PIP_ADAPTER_UNICAST_ADDRESS),
+	('first_anycast_address', PIP_ADAPTER_ANYCAST_ADDRESS),
+	('first_multicast_address', PIP_ADAPTER_MULTICAST_ADDRESS),
+	('first_dns_server_address', PIP_ADAPTER_DNS_SERVER_ADDRESS),
+	('dns_suffix', ctypes.c_wchar_p),
+	('description', ctypes.c_wchar_p),
+	('friendly_name', ctypes.c_wchar_p),
+	('byte', BYTE*MAX_ADAPTER_ADDRESS_LENGTH),
+	('physical_address_length', DWORD),
+	('flags', DWORD),
+	('mtu', DWORD),
+	('interface_type', DWORD),
+	('oper_status', IF_OPER_STATUS),
+	('ipv6_interface_index', DWORD),
+	('zone_indices', DWORD),
+	('first_prefix', PIP_ADAPTER_PREFIX),
+	('transmit_link_speed', ctypes.c_uint64),
+	('receive_link_speed', ctypes.c_uint64),
+	('first_wins_server_address', PIP_ADAPTER_WINS_SERVER_ADDRESS_LH),
+	('first_gateway_address', PIP_ADAPTER_GATEWAY_ADDRESS_LH),
+	('ipv4_metric', ctypes.c_ulong),
+	('ipv6_metric', ctypes.c_ulong),
+	('luid', IF_LUID),
+	('dhcpv4_server', SOCKET_ADDRESS),
+	('compartment_id', NET_IF_COMPARTMENT_ID),
+	('network_guid', NET_IF_NETWORK_GUID),
+	('connection_type', NET_IF_CONNECTION_TYPE),
+	('tunnel_type', TUNNEL_TYPE),
+	('dhcpv6_server', SOCKET_ADDRESS),
+	('dhcpv6_client_duid', ctypes.c_byte*MAX_DHCPV6_DUID_LENGTH),
+	('dhcpv6_client_duid_length', ctypes.c_ulong),
+	('dhcpv6_iaid', ctypes.c_ulong),
+	('first_dns_suffix', PIP_ADAPTER_DNS_SUFFIX),
+	]
+
 # define some parameters to the API Functions
 ip_helper = ctypes.windll.iphlpapi
 ip_helper.GetIfTable.argtypes = [
@@ -110,6 +206,31 @@ ip_helper.GetIpAddrTable.argtypes = [
 	BOOL,
 	]
 ip_helper.GetIpAddrTable.restype = DWORD
+
+ip_helper.GetAdaptersAddresses.argtypes = [
+	ctypes.c_ulong,
+	ctypes.c_ulong,
+	ctypes.c_void_p,
+	ctypes.POINTER(IP_ADAPTER_ADDRESSES),
+	ctypes.POINTER(ctypes.c_ulong),
+	]
+ip_helper.GetAdaptersAddresses.restype = ctypes.c_ulong
+
+def GetAdaptersAddresses():
+	size = ctypes.c_ulong()
+	res = ip_helper.GetAdaptersAddresses(0,0,None, None,size)
+	if res != ERROR_BUFFER_OVERFLOW:
+		raise RuntimeError("Error getting structure length (%d)" % res)
+	print size.value
+	pointer_type = ctypes.POINTER(IP_ADAPTER_ADDRESSES)
+	buffer = ctypes.create_string_buffer(size.value)
+	struct_p = ctypes.cast(buffer, pointer_type)
+	res = ip_helper.GetAdaptersAddresses(0,0,None, struct_p, size)
+	if res != NO_ERROR:
+		raise RuntimeError("Error retrieving table (%d)" % res)
+	while struct_p:
+		yield struct_p.contents
+		struct_p = struct_p.contents.next
 
 class AllocatedTable(object):
 	"""
