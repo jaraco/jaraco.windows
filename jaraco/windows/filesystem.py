@@ -283,6 +283,13 @@ def SHFileOperation(operation, from_, to=None, flags=[]):
 	if res != 0:
 		raise RuntimeError("SHFileOperation returned %d" % res)
 
+def relpath(path, start=os.path.curdir):
+	"""
+	Like os.path.relpath, but actually honors the start path
+	if supplied. See http://bugs.python.org/issue7195
+	"""
+	return os.path.normpath(os.path.join(start, path))
+
 def trace_symlink_target(link):
 	"""
 	Given a file that is known to be a symlink, trace it to its ultimate
@@ -295,8 +302,10 @@ def trace_symlink_target(link):
 	if not is_symlink(link):
 		raise ValueError("link must point to a symlink on the system")
 	while is_symlink(link):
+		orig = os.path.dirname(link)
 		link = _trace_symlink_immediate_target(link)
-	return os.path.realpath(link)
+		link = relpath(link, orig)
+	return link
 
 def _trace_symlink_immediate_target(link):
 	handle = CreateFile(
