@@ -296,7 +296,7 @@ def trace_symlink_target(link):
 		raise ValueError("link must point to a symlink on the system")
 	while is_symlink(link):
 		link = _trace_symlink_immediate_target(link)
-	return link
+	return os.path.realpath(link)
 
 def _trace_symlink_immediate_target(link):
 	handle = CreateFile(
