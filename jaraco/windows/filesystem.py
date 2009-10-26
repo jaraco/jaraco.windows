@@ -303,15 +303,19 @@ def trace_symlink_target(link):
 		raise ValueError("link must point to a symlink on the system")
 	while is_symlink(link):
 		orig = os.path.dirname(link)
-		link = _trace_symlink_immediate_target(link)
+		link = readlink(link)
 		link = relpath(link, orig)
 	return link
 
-def _trace_symlink_immediate_target(link):
+def readlink(link):
+	"""
+	readlink(link) -> target
+	Return a string representing the path to which the symbolic link points.
+	"""
 	handle = CreateFile(
 		link,
 		0,
-		FILE_SHARE_READ|FILE_SHARE_WRITE|FILE_SHARE_DELETE,
+		0,
 		None,
 		OPEN_EXISTING,
 		FILE_FLAG_OPEN_REPARSE_POINT|FILE_FLAG_BACKUP_SEMANTICS,
