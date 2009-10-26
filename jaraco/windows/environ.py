@@ -163,10 +163,10 @@ def enver():
 	try:
 		param = args.pop()
 		if args:
-			parser.parser_error("Too many parameters specified")
+			parser.error("Too many parameters specified")
 			raise SystemExit(1)
 		if not '=' in param:
-			parser.parser_error("Expected <name>= or <name>=<value>")
+			parser.error("Expected <name>= or <name>=<value>")
 			raise SystemExit(2)
 		name, value = param.split('=')
 		options.class_.set(name, value, options)
