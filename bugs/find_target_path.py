@@ -55,7 +55,7 @@ def findpath(target, start=os.path.curdir):
 def main():
 	import sys
 	if sys.argv[1:]:
-		findpath(sys.argv[1:])
+		print findpath(*sys.argv[1:])
 	else:
 		import doctest
 		doctest.testmod()
