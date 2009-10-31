@@ -283,12 +283,45 @@ def SHFileOperation(operation, from_, to=None, flags=[]):
 	if res != 0:
 		raise RuntimeError("SHFileOperation returned %d" % res)
 
-def relpath(path, start=os.path.curdir):
+def findpath(target, start=os.path.curdir):
+	r"""
+	Find a path from start to target where target is relative to start.
+	
+	>>> orig_wd = os.getcwd()
+	>>> os.chdir('c:\\windows') # so we know what the working directory is
+
+	>>> findpath('d:\\')
+	'd:\\'
+
+	>>> findpath('d:\\', 'c:\\windows')
+	'd:\\'
+
+	>>> findpath('\\bar', 'd:\\')
+	'd:\\bar'
+
+	>>> findpath('\\bar', 'd:\\foo') # fails with '\\bar'
+	'd:\\bar'
+
+	>>> findpath('bar', 'd:\\foo')
+	'd:\\foo\\bar'
+
+	>>> findpath('\\baz', 'd:\\foo\\bar') # fails with '\\baz'
+	'd:\\baz'
+
+	>>> os.path.abspath(findpath('\\bar'))
+	'c:\\bar'
+
+	>>> os.path.abspath(findpath('bar'))
+	'c:\\windows\\bar'
+
+	>>> findpath('..', 'd:\\foo\\bar')
+	'd:\\foo'
+
+	The parent of the root directory is the root directory.
+	>>> findpath('..', 'd:\\')
+	'd:\\'
 	"""
-	Like os.path.relpath, but actually honors the start path
-	if supplied. See http://bugs.python.org/issue7195
-	"""
-	return os.path.normpath(os.path.join(start, path))
+	return os.path.normpath(os.path.join(start, target))
 
 def trace_symlink_target(link):
 	"""
@@ -304,7 +337,7 @@ def trace_symlink_target(link):
 	while is_symlink(link):
 		orig = os.path.dirname(link)
 		link = readlink(link)
-		link = relpath(link, orig)
+		link = findpath(link, orig)
 	return link
 
 def readlink(link):
