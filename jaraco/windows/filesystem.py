@@ -3,6 +3,8 @@
 import os
 import sys
 import operator
+from itertools import imap, ifilter, izip
+
 from ctypes import (
 	Structure, windll, POINTER, byref, cast, create_unicode_buffer,
 	c_size_t, c_int, create_string_buffer,
@@ -283,6 +285,19 @@ def SHFileOperation(operation, from_, to=None, flags=[]):
 	if res != 0:
 		raise RuntimeError("SHFileOperation returned %d" % res)
 
+def join(*paths):
+	r"""
+	Wrapper around os.path.join that works with Windows drive letters.
+	
+	>>> join('d:\\foo', '\\bar')
+	'd:\\bar'
+	"""
+	paths_with_drives = imap(os.path.splitdrive, paths)
+	drives, paths = zip(*paths_with_drives)
+	# the drive we care about is the last one in the list
+	drive = next(ifilter(None, reversed(drives)), '')
+	return os.path.join(drive, os.path.join(*paths))
+	
 def findpath(target, start=os.path.curdir):
 	r"""
 	Find a path from start to target where target is relative to start.
@@ -321,7 +336,7 @@ def findpath(target, start=os.path.curdir):
 	>>> findpath('..', 'd:\\')
 	'd:\\'
 	"""
-	return os.path.normpath(os.path.join(start, target))
+	return os.path.normpath(join(start, target))
 
 def trace_symlink_target(link):
 	"""
