@@ -121,7 +121,7 @@ def trim(s):
 	from textwrap import dedent
 	return dedent(s).strip()
 
-def enver():
+def enver(*args):
 	"""
 	%prog [<name>=[value]]
 	
@@ -158,7 +158,7 @@ def enver():
 		action='store_true', default=False,
 		help="Replace any existing value (used to override default append for PATH and PATHEXT)",
 		)
-	options, args = parser.parse_args()
+	options, args = parser.parse_args(*args)
 	
 	try:
 		param = args.pop()

@@ -120,17 +120,17 @@ def mklink():
 		link, target = args
 	except ValueError:
 		parser.error("incorrect number of arguments")
-	symlink(link, target, options.directory)
+	symlink(target, link, options.directory)
 	sys.stdout.write("Symbolic link created: %(link)s --> %(target)s\n" % vars())
 
-def symlink(link, target, target_is_directory = False):
+def symlink(target, link, target_is_directory = False):
 	"""
 	An implementation of os.symlink for Windows (Vista and greater)
 	"""
 	target_is_directory = target_is_directory or os.path.isdir(target)
 	handle_nonzero_success(CreateSymbolicLink(link, target, target_is_directory))
 
-def link(link, target):
+def link(target, link):
 	"""
 	Establishes a hard link between an existing file and a new file.
 	"""
