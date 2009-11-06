@@ -29,6 +29,12 @@ to the author.
 Changes
 -------
 
+1.5
+~~~
+* NB!! Switched the order of the parameters for symlink and link to match the
+  signature found in the os module. This will absolutely break any implementations
+  that worked with jaraco.windows prior to 1.5.
+
 1.4
 ~~~
 
