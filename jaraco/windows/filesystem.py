@@ -4,8 +4,10 @@ import os
 import sys
 import operator
 from itertools import imap, ifilter, izip
-
-from jaraco.windows.api.filesystem import *
+from ctypes import (POINTER, byref, cast, create_unicode_buffer,
+	create_string_buffer,)
+from jaraco.windows.error import WindowsError, handle_nonzero_success
+import jaraco.windows.api.filesystem as api
 
 def mklink():
 	"""
@@ -30,23 +32,21 @@ def symlink(target, link, target_is_directory = False):
 	An implementation of os.symlink for Windows (Vista and greater)
 	"""
 	target_is_directory = target_is_directory or os.path.isdir(target)
-	handle_nonzero_success(CreateSymbolicLink(link, target, target_is_directory))
+	handle_nonzero_success(api.CreateSymbolicLink(link, target, target_is_directory))
 
 def link(target, link):
 	"""
 	Establishes a hard link between an existing file and a new file.
 	"""
-	handle_nonzero_success(CreateHardLink(link, target, None))
+	handle_nonzero_success(api.CreateHardLink(link, target, None))
 
 def is_reparse_point(path):
 	"""
 	Determine if the given path is a reparse point.
 	"""
-	FILE_ATTRIBUTE_REPARSE_POINT = 0x400
-	INVALID_FILE_ATTRIBUTES = 0xFFFFFFFF
-	res = GetFileAttributes(path)
-	if res == INVALID_FILE_ATTRIBUTES: raise WindowsError()
-	return bool(res & FILE_ATTRIBUTE_REPARSE_POINT)
+	res = api.GetFileAttributes(path)
+	if res == api.INVALID_FILE_ATTRIBUTES: raise WindowsError()
+	return bool(res & api.FILE_ATTRIBUTE_REPARSE_POINT)
 
 def islink(path):
 	"Determine if the given path is a symlink"
@@ -59,7 +59,7 @@ def is_symlink(path):
 	return _is_symlink(next(find_files(path)))
 
 def _is_symlink(find_data):
-	return find_data.reserved[0] == IO_REPARSE_TAG_SYMLINK
+	return find_data.reserved[0] == api.IO_REPARSE_TAG_SYMLINK
 
 def find_files(spec):
 	"""
@@ -75,18 +75,17 @@ def find_files(spec):
 	>>> 'Windows' in (fd.filename for fd in root_files)
 	True
 	"""
-	fd = WIN32_FIND_DATA()
-	ERROR_NO_MORE_FILES = 0x12
-	handle = FindFirstFile(spec, byref(fd))
+	fd = api.WIN32_FIND_DATA()
+	handle = api.FindFirstFile(spec, byref(fd))
 	while True:
-		if handle == INVALID_HANDLE_VALUE:
+		if handle == api.INVALID_HANDLE_VALUE:
 			raise WindowsError()
 		yield fd
-		fd = WIN32_FIND_DATA()
-		res = FindNextFile(handle, byref(fd))
+		fd = api.WIN32_FIND_DATA()
+		res = api.FindNextFile(handle, byref(fd))
 		if res == 0: # error
 			error = WindowsError()
-			if error.value == ERROR_NO_MORE_FILES:
+			if error.value == api.ERROR_NO_MORE_FILES:
 				break
 			else: raise error
 	# todo: how to close handle when generator is destroyed?
@@ -104,35 +103,33 @@ def get_final_path(path):
 	for C:\Pagefile.sys on a stock windows system). Consider using
 	trace_symlink_target instead.
 	"""
-	hFile = CreateFile(
+	hFile = api.CreateFile(
 		path,
-		NULL, # desired access
-		FILE_SHARE_READ|FILE_SHARE_WRITE|FILE_SHARE_DELETE, # share mode
-		LPSECURITY_ATTRIBUTES(), # NULL pointer
-		OPEN_EXISTING,
-		FILE_FLAG_BACKUP_SEMANTICS,
-		NULL,
+		api.NULL, # desired access
+		api.FILE_SHARE_READ|api.FILE_SHARE_WRITE|api.FILE_SHARE_DELETE, # share mode
+		api.LPSECURITY_ATTRIBUTES(), # NULL pointer
+		api.OPEN_EXISTING,
+		api.FILE_FLAG_BACKUP_SEMANTICS,
+		api.NULL,
 		)
 
-	if hFile == INVALID_HANDLE_VALUE:
+	if hFile == api.INVALID_HANDLE_VALUE:
 		raise WindowsError()
 
-	VOLUME_NAME_DOS = 0
-
-	buf_size = GetFinalPathNameByHandle(hFile, LPWSTR(), 0, VOLUME_NAME_DOS)
+	buf_size = api.GetFinalPathNameByHandle(hFile, api.LPWSTR(), 0, api.VOLUME_NAME_DOS)
 	handle_nonzero_success(buf_size)
 	buf = create_unicode_buffer(buf_size)
-	result_length = GetFinalPathNameByHandle(hFile, buf, len(buf), VOLUME_NAME_DOS)
+	result_length = api.GetFinalPathNameByHandle(hFile, buf, len(buf), api.VOLUME_NAME_DOS)
 
 	assert result_length < len(buf)
 	handle_nonzero_success(result_length)
-	handle_nonzero_success(CloseHandle(hFile))
+	handle_nonzero_success(api.CloseHandle(hFile))
 
 	return buf[:result_length]
 
 def GetBinaryType(filepath):
-	res = DWORD()
-	handle_nonzero_success(_GetBinaryType(filepath, res))
+	res = api.DWORD()
+	handle_nonzero_success(api._GetBinaryType(filepath, res))
 	return res
 
 def _make_null_terminated_list(obs):
@@ -150,8 +147,8 @@ def SHFileOperation(operation, from_, to=None, flags=[]):
 	flags = reduce(operator.or_, flags, 0)
 	from_ = _make_null_terminated_list(from_)
 	to = _make_null_terminated_list(to)
-	params = SHFILEOPSTRUCT(0, operation, from_, to, flags)
-	res = _SHFileOperation(params)
+	params = api.SHFILEOPSTRUCT(0, operation, from_, to, flags)
+	res = api._SHFileOperation(params)
 	if res != 0:
 		raise RuntimeError("SHFileOperation returned %d" % res)
 
@@ -230,22 +227,25 @@ def readlink(link):
 	readlink(link) -> target
 	Return a string representing the path to which the symbolic link points.
 	"""
-	handle = CreateFile(
+	handle = api.CreateFile(
 		link,
 		0,
 		0,
 		None,
-		OPEN_EXISTING,
-		FILE_FLAG_OPEN_REPARSE_POINT|FILE_FLAG_BACKUP_SEMANTICS,
+		api.OPEN_EXISTING,
+		api.FILE_FLAG_OPEN_REPARSE_POINT|api.FILE_FLAG_BACKUP_SEMANTICS,
 		None,
 		)
+	
+	if handle == api.INVALID_HANDLE_VALUE:
+		raise WindowsError()
 
-	res = DeviceIoControl(handle, FSCTL_GET_REPARSE_POINT, None, 10240)
+	res = api.DeviceIoControl(handle, api.FSCTL_GET_REPARSE_POINT, None, 10240)
 
 	bytes = create_string_buffer(res)
-	p_rdb = cast(bytes, POINTER(REPARSE_DATA_BUFFER))
+	p_rdb = cast(bytes, POINTER(api.REPARSE_DATA_BUFFER))
 	rdb = p_rdb.contents
-	if not rdb.tag == IO_REPARSE_TAG_SYMLINK:
+	if not rdb.tag == api.IO_REPARSE_TAG_SYMLINK:
 		raise RuntimeError("Expected IO_REPARSE_TAG_SYMLINK, but got %d" % rdb.tag)
 	return rdb.get_print_name()
 
