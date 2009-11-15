@@ -1,11 +1,13 @@
 #!/usr/bin/env python
 
+from __future__ import print_function
+
 import os
 import sys
 import operator
 from itertools import imap, ifilter, izip
 from ctypes import (POINTER, byref, cast, create_unicode_buffer,
-	create_string_buffer,)
+	create_string_buffer, windll)
 from jaraco.windows.error import WindowsError, handle_nonzero_success
 import jaraco.windows.api.filesystem as api
 
@@ -55,6 +57,11 @@ def islink(path):
 def is_symlink(path):
 	"""
 	Assuming path is a reparse point, determine if it's a symlink.
+	
+	>>> symlink('foobaz', 'foobar')
+	>>> is_symlink('foobar')
+	True
+	>>> os.remove('foobar')
 	"""
 	return _is_symlink(next(find_files(path)))
 
@@ -255,3 +262,32 @@ def patch_os_module():
 		os.path.islink = islink
 	if not hasattr(os, 'readlink'):
 		os.readlink = readlink
+
+def find_symlinks(root):
+	for dirpath, dirnames, filenames in os.walk(root):
+		for name in dirnames+filenames:
+			pathname = os.path.join(dirpath, name)
+			if is_symlink(pathname): yield pathname
+
+def find_symlinks_cmd():
+	"""
+	%prog [start-path]
+	Search the specified path (defaults to the current directory) for symlinks,
+	printing the source and target on each line.
+	"""
+	from optparse import OptionParser
+	from textwrap import dedent
+	parser = OptionParser(usage=dedent(find_symlinks_cmd.__doc__).strip())
+	options, args = parser.parse_args()
+	if not args: args = ['.']
+	root = args.pop()
+	if args:
+		parser.error("unexpected argument(s)")
+	try:
+		for symlink in find_symlinks(root):
+			target = readlink(symlink)
+			dir = ['', 'D'][os.path.isdir(symlink)]
+			msg = '{dir:2}{symlink} --> {target}'.format(**vars())
+			print(msg)
+	except KeyboardInterrupt:
+		pass

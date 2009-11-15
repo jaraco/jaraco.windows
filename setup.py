@@ -34,6 +34,7 @@ setup (name = name,
 			console_scripts = [
 				'xmouse = jaraco.windows.xmouse:run',
 				'mklink = jaraco.windows.filesystem:mklink',
+				'find-symlinks = jaraco.windows.filesystem:find_symlinks_cmd',
 				'enver = jaraco.windows.environ:enver',
 			],
 		),

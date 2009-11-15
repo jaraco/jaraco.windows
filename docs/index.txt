@@ -57,6 +57,7 @@ Changes
 ~~~
 
 * Added monkeypatch for os.symlink and os.readlink.
+* Added find-symlinks command.
 
 1.5
 ~~~
