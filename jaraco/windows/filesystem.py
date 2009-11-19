@@ -171,8 +171,8 @@ def join(*paths):
 	# the drive we care about is the last one in the list
 	drive = next(ifilter(None, reversed(drives)), '')
 	return os.path.join(drive, os.path.join(*paths))
-	
-def findpath(target, start=os.path.curdir):
+
+def resolve_path(target, start=os.path.curdir):
 	r"""
 	Find a path from start to target where target is relative to start.
 	
@@ -212,6 +212,8 @@ def findpath(target, start=os.path.curdir):
 	"""
 	return os.path.normpath(join(start, target))
 
+findpath = resolve_path
+
 def trace_symlink_target(link):
 	"""
 	Given a file that is known to be a symlink, trace it to its ultimate
@@ -226,7 +228,7 @@ def trace_symlink_target(link):
 	while is_symlink(link):
 		orig = os.path.dirname(link)
 		link = readlink(link)
-		link = findpath(link, orig)
+		link = resolve_path(link, orig)
 	return link
 
 def readlink(link):
