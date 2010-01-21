@@ -14,6 +14,7 @@ from ctypes import Structure, windll, POINTER
 from ctypes.wintypes import BYTE, DWORD, BOOL
 
 from jaraco.windows.error import handle_nonzero_success
+from jaraco.util.iter_ import consume
 
 class SYSTEM_POWER_STATUS(Structure):
 	_fields_ = (
@@ -55,7 +56,7 @@ def wait_for_power_status_change():
 	def not_power_status_change(evt):
 		return evt.EventType != EVT_POWER_STATUS_CHANGE
 	events = get_power_management_events()
-	itertools.takewhile(not_power_status_change, events)
+	consume(itertools.takewhile(not_power_status_change, events))
 
 def get_unique_power_states():
 	"""
