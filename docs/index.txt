@@ -53,6 +53,13 @@ to the author.
 Changes
 -------
 
+1.7
+~~~
+
+* Added option to enver to remove values from a path or other semi-
+  colon-separated value.
+* Added privilege module.
+
 1.6
 ~~~
 
