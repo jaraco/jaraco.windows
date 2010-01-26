@@ -78,7 +78,6 @@ class RegisteredEnvironment(object):
 		return res
 		
 
-			
 	@classmethod
 	def set(class_, name, value, options):
 		# consider opening the key read-only except for here
@@ -92,10 +91,23 @@ class RegisteredEnvironment(object):
 		if do_append:
 			sep = ';'
 			values = class_.get_values_list(name, sep) + [value]
-			value = ';'.join(values)
+			value = sep.join(values)
 		winreg.SetValueEx(class_.key, name, 0, winreg.REG_EXPAND_SZ, value)
 		class_.notify()
-	
+
+	@classmethod
+	def remove_values(class_, name, value_substring, options):
+		sep = ';'
+		values = class_.get_values_list(name, sep)
+		new_values = [
+			value
+			for value in values
+			if value_substring.lower() not in value.lower()
+			]
+		values = sep.join(new_values)
+		winreg.SetValueEx(class_.key, name, 0, winreg.REG_EXPAND_SZ, values)
+		class_.notify()
+
 	@classmethod
 	def delete(class_, name):
 		winreg.DeleteValue(class_.key, name)
@@ -140,6 +152,17 @@ def enver(*args):
 	If there is no value, %prog will delete the <name> environment variable.
 	i.e. "PATH="
 
+	To remove a specific value or values from a semicolon-separated
+	multi-value variable (such as PATH), use --remove-value.
+	
+	e.g. enver --remove-value PATH=C:\\Unwanted\\Dir\\In\\Path
+
+	Remove-value matches case-insensitive and also matches any substring
+	so the following would also be sufficient to remove the aforementioned
+	undesirable dir.
+	
+	enver --remove-value PATH=UNWANTED
+
 	Note that %prog does not affect the current running environment, and can
 	only affect subsequently spawned applications.
 	"""
@@ -158,6 +181,9 @@ def enver(*args):
 		action='store_true', default=False,
 		help="Replace any existing value (used to override default append for PATH and PATHEXT)",
 		)
+	parser.add_option('--remove-value', action='store_true', default=False,
+		help="Remove any matching values from a semicolon-separated multi-value variable",
+		)
 	options, args = parser.parse_args(*args)
 	
 	try:
@@ -169,6 +195,10 @@ def enver(*args):
 			parser.error("Expected <name>= or <name>=<value>")
 			raise SystemExit(2)
 		name, value = param.split('=')
-		options.class_.set(name, value, options)
+		method_name = 'set'
+		if options.remove_value:
+			method_name = 'remove_values'
+		method = getattr(options.class_, method_name)
+		method(name, value, options)
 	except IndexError:
 		options.class_.show()
