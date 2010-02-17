@@ -6,7 +6,6 @@ from ctypes.wintypes import (
 	BOOLEAN, LPWSTR, DWORD, LPVOID, HANDLE, FILETIME,
 	c_uint64, WCHAR, BOOL, HWND, WORD, UINT,
 	)
-from jaraco.windows.error import handle_nonzero_success, WindowsError
 from jaraco.windows.reparse import IO_REPARSE_TAG_SYMLINK, FSCTL_GET_REPARSE_POINT, REPARSE_DATA_BUFFER
 from jaraco.windows.reparse import DeviceIoControl
 

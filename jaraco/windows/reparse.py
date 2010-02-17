@@ -1,6 +1,6 @@
 import ctypes
 from ctypes import wintypes
-from jaraco.windows.error import handle_nonzero_success, WindowsError
+from jaraco.windows.error import handle_nonzero_success
 
 FILE_FLAG_OPEN_REPARSE_POINT = 0x00200000
 IO_REPARSE_TAG_SYMLINK = 0xA000000C

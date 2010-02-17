@@ -59,6 +59,8 @@ Changes
 * Added option to enver to remove values from a path or other semi-
   colon-separated value.
 * Added privilege module.
+* Made `jaraco.windows.error.WindowsError` a subclass of
+  `__builtin__.WindowsError`.
 
 1.6
 ~~~

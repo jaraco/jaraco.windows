@@ -4,8 +4,9 @@
 
 import ctypes
 import ctypes.wintypes
+import __builtin__
 
-def format_system_message(value):
+def format_system_message(errno):
 	"""
 	Call FormatMessage with a system error number to retrieve
 	the descriptive error message.
@@ -22,7 +23,7 @@ def format_system_message(value):
 	# Also, let it know we want a system error message.
 	flags = ALLOCATE_BUFFER | FROM_SYSTEM
 	source = None
-	message_id = value
+	message_id = errno
 	language_id = 0
 	result_buffer = ctypes.wintypes.LPWSTR()
 	buffer_size = 0
@@ -45,20 +46,28 @@ def format_system_message(value):
 	return message
 
 
-class WindowsError(Exception):
+class WindowsError(__builtin__.WindowsError):
 	"more info about errors at http://msdn.microsoft.com/en-us/library/ms681381(VS.85).aspx"
 
 	def __init__(self, value=None):
 		if value is None:
 			value = ctypes.windll.kernel32.GetLastError()
-		self.value = value
+		strerror = format_system_message(value)
+		super(WindowsError, self).__init__(value, strerror)
 
 	@property
 	def message(self):
-		return format_system_message(self.value)
-	
+		return self.strerror
+
+	@property
+	def code(self):
+		return self.winerror
+
 	def __str__(self):
 		return self.message
+
+	def __repr__(self):
+		return '{self.__class__.__name__}({self.winerror})'.format(**vars())
 
 def handle_nonzero_success(result):
 	if result == 0:

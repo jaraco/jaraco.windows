@@ -92,7 +92,7 @@ def find_files(spec):
 		res = api.FindNextFile(handle, byref(fd))
 		if res == 0: # error
 			error = WindowsError()
-			if error.value == api.ERROR_NO_MORE_FILES:
+			if error.code == api.ERROR_NO_MORE_FILES:
 				break
 			else: raise error
 	# todo: how to close handle when generator is destroyed?

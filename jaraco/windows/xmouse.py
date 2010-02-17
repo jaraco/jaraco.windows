@@ -5,7 +5,7 @@
 import sys
 import ctypes
 import ctypes.wintypes
-from jaraco.windows.error import WindowsError
+from jaraco.windows.error import handle_nonzero_success
 
 SystemParametersInfo = ctypes.windll.user32.SystemParametersInfoW
 SystemParametersInfo.argtypes = (
@@ -21,19 +21,15 @@ SPI_SETACTIVEWINDOWTRACKING = 0x1001
 set_constant = SPI_SETACTIVEWINDOWTRACKING
 get_constant = SPI_GETACTIVEWINDOWTRACKING
 
-def handle_result(result):
-	if result == 0:
-		raise WindowsError()
-
 def set(value):
-	handle_result(
+	handle_nonzero_success(
 		SystemParametersInfo(
 			set_constant, 0, ctypes.cast(value, ctypes.c_void_p), 0
 	)	)
 
 def get():
 	value = ctypes.wintypes.BOOL()
-	handle_result(
+	handle_nonzero_success(
 		SystemParametersInfo(get_constant, 0, ctypes.byref(value), 0)
 	)
 	return bool(value)
