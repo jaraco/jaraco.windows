@@ -61,6 +61,7 @@ Changes
 * Added privilege module.
 * Made `jaraco.windows.error.WindowsError` a subclass of
   `__builtin__.WindowsError`.
+* Added office module with MS Word based PDF Converter
 
 1.6
 ~~~
