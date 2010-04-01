@@ -63,6 +63,7 @@ Changes
   `__builtin__.WindowsError`.
 * Added office module with MS Word based PDF Converter.
 * Added early implementation of clipboard support.
+* Added delay option to xmouse.
 
 1.6
 ~~~

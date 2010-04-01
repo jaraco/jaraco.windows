@@ -17,7 +17,8 @@ SystemParametersInfo.argtypes = (
 
 SPI_GETACTIVEWINDOWTRACKING = 0x1000
 SPI_SETACTIVEWINDOWTRACKING = 0x1001
-
+SPI_GETACTIVEWNDTRKTIMEOUT = 0x2002
+SPI_SETACTIVEWNDTRKTIMEOUT = 0x2003
 set_constant = SPI_SETACTIVEWINDOWTRACKING
 get_constant = SPI_GETACTIVEWINDOWTRACKING
 
@@ -26,6 +27,8 @@ def set(value):
 		SystemParametersInfo(
 			set_constant, 0, ctypes.cast(value, ctypes.c_void_p), 0
 	)	)
+	if value and hasattr(options, 'delay'):
+		set_delay(options.delay)
 
 def get():
 	value = ctypes.wintypes.BOOL()
@@ -34,10 +37,19 @@ def get():
 	)
 	return bool(value)
 
+def set_delay(milliseconds):
+	handle_nonzero_success(
+		SystemParametersInfo(
+			SPI_SETACTIVEWNDTRKTIMEOUT,
+			0,
+			ctypes.cast(milliseconds, ctypes.c_void_p),
+			0,
+	)	)
+
 def enable():
 	print "enabling xmouse"
 	set(True)
-	
+
 def disable():
 	print "disabling xmouse"
 	set(False)
@@ -52,7 +64,7 @@ def show():
 
 def get_options():
 	"""
-	%prog [<command>]
+	%prog [<command>] [<options>]
 	
 		command: show, enable, disable, toggle (defaults to toggle)
 	"""
@@ -60,6 +72,8 @@ def get_options():
 	usage = dedent(get_options.__doc__).strip()
 	from optparse import OptionParser
 	parser = OptionParser(usage=usage)
+	parser.add_option('-d', '--delay', type="int",
+		help="Delay in milliseconds for active window tracking")
 	options, args = parser.parse_args()
 	try:
 		options.action = args.pop()
@@ -71,6 +85,7 @@ def get_options():
 	return options
 
 def run():
+	global options
 	options = get_options()
 	globals()[options.action]()
 
