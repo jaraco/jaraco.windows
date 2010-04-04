@@ -46,6 +46,18 @@ def set_delay(milliseconds):
 			0,
 	)	)
 
+def get_delay():
+	value = ctypes.wintypes.DWORD()
+	handle_nonzero_success(
+		SystemParametersInfo(
+			SPI_GETACTIVEWNDTRKTIMEOUT,
+			0,
+			ctypes.byref(value),
+			0,
+			)
+		)
+	return int(value.value)
+
 def enable():
 	print "enabling xmouse"
 	set(True)
@@ -60,7 +72,10 @@ def toggle():
 	set(not value)
 
 def show():
-	print "xmouse: %s" % get()
+	enabled = get()
+	delay = get_delay()
+	msg = "xmouse: {enabled} (delay {delay}ms)".format(**vars())
+	print(msg)
 
 def get_options():
 	"""
