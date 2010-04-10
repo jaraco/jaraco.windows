@@ -26,7 +26,7 @@ except ImportError:
 name = 'jaraco.windows'
 
 setup (name = name,
-		version = '1.8',
+		version = '1.9',
 		description = 'Windows Routines by Jason R. Coombs',
 		long_description = open('docs/index.txt').read().strip(),
 		author = 'Jason R. Coombs',
