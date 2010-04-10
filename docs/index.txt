@@ -56,7 +56,8 @@ Changes
 1.8
 ~~~
 
-* Placeholder
+* Removed default import of jaraco.windows.net into jaraco.windows
+* Fixed division operator issue in jaraco.windows.reparse.
 
 1.7
 ~~~

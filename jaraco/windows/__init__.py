@@ -11,7 +11,3 @@ This package attempts to provide interfaces similar or compatible
 with Mark Hammond's pywin32 library, but avoids the use of extension
 modules by utilizing ctypes.
 """
-
-__all__ = ('net')
-
-import net

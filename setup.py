@@ -12,6 +12,17 @@ __version__ = '$Rev$'[6:-2]
 __svnauthor__ = '$Author$'[9:-2]
 __date__ = '$Date$'[7:-2]
 
+try:
+	from distutils.command.build_py import build_py_2to3 as build_py
+	# exclude some fixers that break already compatible code
+	from lib2to3.refactor import get_fixers_from_package
+	fixers = get_fixers_from_package('lib2to3.fixes')
+	for skip_fixer in ['import']:
+		fixers.remove('lib2to3.fixes.fix_' + skip_fixer)
+	build_py.fixer_names = fixers
+except ImportError:
+	from distutils.command.build_py import build_py
+
 name = 'jaraco.windows'
 
 setup (name = name,
@@ -49,4 +60,5 @@ setup (name = name,
 			'nose>=0.10',
 		],
 		test_suite = "nose.collector",
+		cmdclass=dict(build_py=build_py),
 	)

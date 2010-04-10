@@ -1,3 +1,4 @@
+from __future__ import division
 import ctypes
 from ctypes import wintypes
 from jaraco.windows.error import handle_nonzero_success
@@ -64,12 +65,12 @@ class REPARSE_DATA_BUFFER(ctypes.Structure):
 		('path_buffer', ctypes.c_byte*1),
 	]
 	def get_print_name(self):
-		arr_typ = wintypes.WCHAR*(self.print_name_length/wchar_size)
+		arr_typ = wintypes.WCHAR*(self.print_name_length//wchar_size)
 		data = ctypes.byref(self.path_buffer, self.print_name_offset)
 		return ctypes.cast(data, ctypes.POINTER(arr_typ)).contents.value
 
 	def get_substitute_name(self):
-		arr_typ = wintypes.WCHAR*(self.substitute_name_length/wchar_size)
+		arr_typ = wintypes.WCHAR*(self.substitute_name_length//wchar_size)
 		data = ctypes.byref(self.path_buffer, self.substitute_name_offset)
 		return ctypes.cast(data, ctypes.POINTER(arr_typ)).contents.value
 
