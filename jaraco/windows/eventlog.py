@@ -14,11 +14,14 @@ class EventLog(object):
 		self.name = name
 
 	def __enter__(self):
+		if hasattr(self.handle):
+			raise ValueError("Overlapping attempts to use this log context")
 		self.handle = win32evtlog.OpenEventLog(self.machine_name, self.name)
 		return self
 
 	def __exit__(self, *args):
 		win32evtlog.CloseEventLog(self.handle)
+		del self.handle
 		
 	def get_records(self, flags=win32evtlog.EVENTLOG_BACKWARDS_READ|win32evtlog.EVENTLOG_SEQUENTIAL_READ):
 		with self:
