@@ -56,6 +56,7 @@ Changes
 1.8
 ~~~
 
+* Added 2to3 build support - now installs on Python 3
 * Removed default import of jaraco.windows.net into jaraco.windows
 * Fixed division operator issue in jaraco.windows.reparse.
 
