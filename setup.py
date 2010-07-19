@@ -5,12 +5,25 @@
 Copyright © 2009 Jason R. Coombs
 """
 
-from setuptools import setup, find_packages
+import os
+import functools
+from setuptools import setup, find_packages, Distribution
 
 __author__ = 'Jason R. Coombs <jaraco@jaraco.com>'
 __version__ = '$Rev$'[6:-2]
 __svnauthor__ = '$Author$'[9:-2]
 __date__ = '$Date$'[7:-2]
+
+class VersionCallableDistribution(Distribution):
+	"""
+	A Distribution class that allows the version to be a callable, so
+	the version can be calculated, and the calculation can be dependent
+	on setup-time dependencies specified in setup_requires.
+	"""
+	def __init__(self, *args, **kwargs):
+		Distribution.__init__(self, *args, **kwargs)
+		if hasattr(self.metadata.version, '__call__'):
+			self.metadata.version = self.metadata.version()
 
 try:
 	from distutils.command.build_py import build_py_2to3 as build_py
@@ -25,8 +38,18 @@ except ImportError:
 
 name = 'jaraco.windows'
 
+def get_version(default='unknown'):
+	import hgtools
+	os.environ['HGTOOLS_FORCE_CMD'] = 'True'
+	mgr = hgtools.get_manager()
+	tag = mgr.get_tag()
+	if tag and tag != 'tip':
+		return tag
+	return default
+
 setup (name = name,
-		version = '1.9',
+		version = functools.partial(get_version, default='1.9'),
+		distclass=VersionCallableDistribution,
 		description = 'Windows Routines by Jason R. Coombs',
 		long_description = open('docs/index.txt').read().strip(),
 		author = 'Jason R. Coombs',
@@ -58,6 +81,9 @@ setup (name = name,
 		],
 		tests_require=[
 			'nose>=0.10',
+		],
+		setup_requires=[
+			'hgtools',
 		],
 		test_suite = "nose.collector",
 		cmdclass=dict(build_py=build_py),
