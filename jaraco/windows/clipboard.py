@@ -3,6 +3,7 @@ from ctypes import windll
 from ctypes.wintypes import UINT, HANDLE
 
 from jaraco.windows.error import handle_nonzero_success, WindowsError
+from jaraco.windows.memory import LockedMemory
 
 __all__ = (
 	'CF_TEXT', 'GetClipboardData', 'CloseClipboard',
@@ -10,6 +11,32 @@ __all__ = (
 	)
 
 CF_TEXT = 1
+CF_BITMAP = 2
+CF_METAFILEPICT    = 3
+CF_SYLK            = 4
+CF_DIF             = 5
+CF_TIFF            = 6
+CF_OEMTEXT         = 7
+CF_DIB             = 8
+CF_PALETTE         = 9
+CF_PENDATA         = 10
+CF_RIFF            = 11
+CF_WAVE            = 12
+CF_UNICODETEXT     = 13
+CF_ENHMETAFILE     = 14
+CF_HDROP           = 15
+CF_LOCALE          = 16
+CF_DIBV5           = 17
+CF_MAX             = 18
+CF_OWNERDISPLAY    = 0x0080
+CF_DSPTEXT         = 0x0081
+CF_DSPBITMAP       = 0x0082
+CF_DSPMETAFILEPICT = 0x0083
+CF_DSPENHMETAFILE  = 0x008E
+CF_PRIVATEFIRST    = 0x0200
+CF_PRIVATELAST     = 0x02FF
+CF_GDIOBJFIRST     = 0x0300
+CF_GDIOBJLAST      = 0x03FF
 
 def OpenClipboard(owner=None):
 	"""
@@ -28,13 +55,35 @@ _GetClipboardData = windll.user32.GetClipboardData
 _GetClipboardData.argtypes = (UINT,)
 _GetClipboardData.restype = HANDLE
 
-def GetClipboardData(type):
-	if not type == CF_TEXT:
+data_handlers = dict()
+def handles(*formats):
+	def register(func):
+		for format in formats:
+			data_handlers[format] = func
+		return func
+	return register
+
+@handles(CF_TEXT, CF_DIBV5, CF_DIB)
+def raw_string(handle):
+	return LockedMemory(handle).data
+
+@handles(CF_UNICODETEXT)
+def unicode_string(handle):
+	return unicode(raw_string(handle))
+
+@handles(CF_BITMAP)
+def as_bitmap(handle):
+	# handle is HBITMAP
+	raise NotImplementedError("Can't convert to DIB")
+	# todo: use GetDIBits http://msdn.microsoft.com/en-us/library/dd144879%28v=VS.85%29.aspx
+
+def GetClipboardData(type=CF_UNICODETEXT):
+	if not type in data_handlers:
 		raise NotImplementedError("No support for data of type %d" % type)
 	handle = _GetClipboardData(type)
 	if handle is None:
 		raise ValueError("No clipboard data of type %d" % type)
-	return ctypes.string_at(handle)
+	return data_handlers[type](handle)
 
 EmptyClipboard = lambda: handle_nonzero_success(windll.user32.EmptyClipboard())
 
