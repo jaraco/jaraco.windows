@@ -82,7 +82,7 @@ def GetClipboardData(type=CF_UNICODETEXT):
 		raise NotImplementedError("No support for data of type %d" % type)
 	handle = _GetClipboardData(type)
 	if handle is None:
-		raise ValueError("No clipboard data of type %d" % type)
+		raise TypeError("No clipboard data of type %d" % type)
 	return data_handlers[type](handle)
 
 EmptyClipboard = lambda: handle_nonzero_success(windll.user32.EmptyClipboard())
