@@ -1,9 +1,7 @@
 #!/usr/bin/env python
-
-# $Id$
+from __future__ import absolute_import
 
 import sys
-from itertools import count
 
 import ctypes
 import ctypes.wintypes
@@ -12,6 +10,7 @@ import _winreg as winreg
 
 from jaraco.windows import error
 from jaraco.windows.message import SendMessage, HWND_BROADCAST, WM_SETTINGCHANGE
+from .registry import key_values as registry_key_values
 
 _SetEnvironmentVariable = ctypes.windll.kernel32.SetEnvironmentVariableW
 _SetEnvironmentVariable.restype = ctypes.wintypes.BOOL
@@ -37,20 +36,6 @@ def GetEnvironmentVariable(name):
 	return buffer.value
 
 ### 
-
-def registry_key_values(key):
-	for index in count():
-		try:
-			yield winreg.EnumValue(key, index)
-		except WindowsError:
-			break
-
-def registry_key_subkeys(key):
-	for index in count():
-		try:
-			yield winreg.EnumKey(key, index)
-		except WindowsError:
-			break
 
 class RegisteredEnvironment(object):
 	"""
