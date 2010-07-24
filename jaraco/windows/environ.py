@@ -8,10 +8,7 @@ from itertools import count
 import ctypes
 import ctypes.wintypes
 
-try:
-	import winreg
-except ImportError:
-	import _winreg as winreg
+import _winreg as winreg
 
 from jaraco.windows import error
 from jaraco.windows.message import SendMessage, HWND_BROADCAST, WM_SETTINGCHANGE
@@ -45,6 +42,13 @@ def registry_key_values(key):
 	for index in count():
 		try:
 			yield winreg.EnumValue(key, index)
+		except WindowsError:
+			break
+
+def registry_key_subkeys(key):
+	for index in count():
+		try:
+			yield winreg.EnumKey(key, index)
 		except WindowsError:
 			break
 
