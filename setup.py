@@ -46,7 +46,7 @@ def get_version(default='unknown'):
 	return default
 
 setup (name = name,
-		version = '1.9',
+		version = '2.0',
 		distclass=VersionCallableDistribution,
 		description = 'Windows Routines by Jason R. Coombs',
 		long_description = open('docs/index.txt').read().strip(),
