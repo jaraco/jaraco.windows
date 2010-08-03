@@ -53,6 +53,14 @@ to the author.
 Changes
 -------
 
+1.9
+~~~
+
+* Added eventlog utility
+* Added support for other clipboard formats (including DIB and DIBV5), and now clipboards to proper memory locking while reading the resource
+* Added registry module
+* Moved office module to jaraco.office project
+
 1.8
 ~~~
 
