@@ -18,7 +18,8 @@ class VersionCallableDistribution(Distribution):
 	on setup-time dependencies specified in setup_requires.
 	"""
 	def __init__(self, *args, **kwargs):
-		Distribution.__init__(self, *args, **kwargs)
+		parent = self.__class__.__bases__[0]
+		parent.__init__(self, *args, **kwargs)
 		if hasattr(self.metadata.version, '__call__'):
 			self.metadata.version = self.metadata.version()
 
@@ -45,7 +46,7 @@ def get_version(default='unknown'):
 	return default
 
 setup (name = name,
-		version = '1.9',
+		version = '2.0',
 		distclass=VersionCallableDistribution,
 		description = 'Windows Routines by Jason R. Coombs',
 		long_description = open('docs/index.txt').read().strip(),
