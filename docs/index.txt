@@ -53,6 +53,11 @@ to the author.
 Changes
 -------
 
+1.9.1
+~~~~~
+
+* Fixed issue with clipboard handling of null-terminated strings
+
 1.9
 ~~~
 

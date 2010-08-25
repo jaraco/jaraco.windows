@@ -63,13 +63,25 @@ def handles(*formats):
 		return func
 	return register
 
-@handles(CF_TEXT, CF_DIBV5, CF_DIB)
-def raw_string(handle):
+def nts(s):
+	"""
+	Null Terminated String
+	Get the portion of s up to a null character.
+	"""
+	result, null, rest = s.partition('\x00')
+	return result
+
+@handles(CF_DIBV5, CF_DIB)
+def raw_data(handle):
 	return LockedMemory(handle).data
+
+@handles(CF_TEXT)
+def text_string(handle):
+	return nts(raw_data(handle))
 
 @handles(CF_UNICODETEXT)
 def unicode_string(handle):
-	return unicode(raw_string(handle))
+	return nts(raw_data(handle).decode('utf-16'))
 
 @handles(CF_BITMAP)
 def as_bitmap(handle):
