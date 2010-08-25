@@ -2,7 +2,7 @@
 
 """ Setup script for building jaraco.windows distribution
 
-Copyright © 2009 Jason R. Coombs
+Copyright © 2009-2010 Jason R. Coombs
 """
 
 import os
@@ -45,15 +45,16 @@ def get_version(default='unknown'):
 		return tag
 	return default
 
-setup (name = name,
-		version = '2.0',
+setup (
+		name = name,
+		use_hg_version = True,
 		distclass=VersionCallableDistribution,
 		description = 'Windows Routines by Jason R. Coombs',
 		long_description = open('docs/index.txt').read().strip(),
 		author = 'Jason R. Coombs',
 		author_email = 'jaraco@jaraco.com',
 		url = 'http://pypi.python.org/pypi/'+name,
-		packages = find_packages(exclude=['ez_setup', 'tests', 'examples']),
+		packages = find_packages(),
 		zip_safe=True,
 		namespace_packages = ['jaraco',],
 		license = 'MIT',
@@ -81,7 +82,7 @@ setup (name = name,
 			'nose>=0.10',
 		],
 		setup_requires=[
-			'hgtools',
+			'hgtools >= 0.4.7',
 		],
 		test_suite = "nose.collector",
 		cmdclass=dict(build_py=build_py),
