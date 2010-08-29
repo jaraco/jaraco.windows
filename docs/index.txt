@@ -53,6 +53,11 @@ to the author.
 Changes
 -------
 
+2.0
+~~~
+
+* Added clipboard.set_text function for a simple routine for setting clipboard text.
+
 1.9.1
 ~~~~~
 

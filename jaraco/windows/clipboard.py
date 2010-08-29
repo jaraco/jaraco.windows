@@ -122,3 +122,9 @@ def SetClipboardData(type, content):
 	result = _SetClipboardData(type, handle_to_copy)
 	if result is None:
 		raise WindowsError()
+
+def set_text(source): 
+	OpenClipboard()
+	EmptyClipboard()
+	SetClipboardData(CF_TEXT, source) 
+	CloseClipboard()
