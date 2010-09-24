@@ -1,3 +1,4 @@
+import sys
 import ctypes
 from ctypes import windll
 from ctypes.wintypes import UINT, HANDLE
@@ -123,8 +124,20 @@ def SetClipboardData(type, content):
 	if result is None:
 		raise WindowsError()
 
-def set_text(source): 
+def set_text(source):
 	OpenClipboard()
 	EmptyClipboard()
 	SetClipboardData(CF_TEXT, source) 
 	CloseClipboard()
+
+def get_text():
+	OpenClipboard()
+	result = GetClipboardData(CF_TEXT)
+	CloseClipboard()
+	return result
+
+def paste_stdout():
+	sys.stdout.write(get_text())
+
+def stdin_copy():
+	set_text(sys.stdin.read())

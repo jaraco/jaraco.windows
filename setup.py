@@ -69,6 +69,8 @@ setup (
 				'mklink = jaraco.windows.filesystem:mklink',
 				'find-symlinks = jaraco.windows.filesystem:find_symlinks_cmd',
 				'enver = jaraco.windows.environ:enver',
+				'pclip = jaraco.windows.clipboard:paste_stdout',
+				'gclip = jaraco.windows.clipboard:stdin_copy',
 			],
 		),
 		install_requires=[
