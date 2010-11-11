@@ -8,6 +8,8 @@ import ctypes.wintypes
 
 import _winreg as winreg
 
+from jaraco.util.editor import EditableFile
+
 from jaraco.windows import error
 from jaraco.windows.message import SendMessage, HWND_BROADCAST, WM_SETTINGCHANGE
 from .registry import key_values as registry_key_values
@@ -98,6 +100,18 @@ class RegisteredEnvironment(object):
 		class_.notify()
 
 	@classmethod
+	def edit(class_, name, value='', options=None):
+		# value, options ignored
+		sep = ';'
+		values = class_.get_values_list(name, sep)
+		e = EditableFile('\n'.join(values))
+		e.edit()
+		if e.changed:
+			values = sep.join(e.data.strip().split('\n'))
+			winreg.SetValueEx(class_.key, name, 0, winreg.REG_EXPAND_SZ, values)
+			class_.notify()
+
+	@classmethod
 	def delete(class_, name):
 		winreg.DeleteValue(class_.key, name)
 		class_.notify()
@@ -173,6 +187,9 @@ def enver(*args):
 	parser.add_option('--remove-value', action='store_true', default=False,
 		help="Remove any matching values from a semicolon-separated multi-value variable",
 		)
+	parser.add_option('-e', '--edit', action='store_true', default=False,
+		help="Edit the value in a local editor",
+		)
 	options, args = parser.parse_args(*args)
 	
 	try:
@@ -180,13 +197,15 @@ def enver(*args):
 		if args:
 			parser.error("Too many parameters specified")
 			raise SystemExit(1)
-		if not '=' in param:
+		if not '=' in param and not options.edit:
 			parser.error("Expected <name>= or <name>=<value>")
 			raise SystemExit(2)
-		name, value = param.split('=')
+		name, sep, value = param.partition('=')
 		method_name = 'set'
 		if options.remove_value:
 			method_name = 'remove_values'
+		if options.edit:
+			method_name = 'edit'
 		method = getattr(options.class_, method_name)
 		method(name, value, options)
 	except IndexError:

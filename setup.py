@@ -74,7 +74,7 @@ setup (
 			],
 		),
 		install_requires=[
-			'jaraco.util>=3.0dev-r1143',
+			'jaraco.util>=3.5.2dev',
 		],
 		extras_require = {
 		},
