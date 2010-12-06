@@ -1,3 +1,5 @@
+.. -*- restructuredext -*-
+
 jaraco.windows
 ==============
 
@@ -14,9 +16,9 @@ rather to supply interfaces as they are needed by the contributors.
 `MIT-style permissive license
 <http://www.opensource.org/licenses/mit-license.php>`_.
 
-You can install it with ``easy_install jaraco.windows``, or from the
-`subversion repository
-<https://svn.jaraco.com/jaraco/python/jaraco.windows#egg=jaraco.windows-dev>`_ with
+You can install it with ``easy_install jaraco.util``, or from the
+`mercurial repository
+<http://bitbucket.org/jaraco/jaraco.windows/get/tip.zip#egg=jaraco.windows-dev>`_ with
 ``easy_install jaraco.windows==dev``.
 
 Package Contents
