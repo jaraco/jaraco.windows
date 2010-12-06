@@ -1,7 +1,14 @@
+from __future__ import with_statement
+
 import sys
+import re
+import itertools
+from contextlib import contextmanager
+from StringIO import StringIO
+
 import ctypes
 from ctypes import windll
-from ctypes.wintypes import UINT, HANDLE
+from ctypes.wintypes import UINT, HANDLE, LPWSTR
 
 from jaraco.windows.error import handle_nonzero_success, WindowsError
 from jaraco.windows.memory import LockedMemory
@@ -52,6 +59,15 @@ def OpenClipboard(owner=None):
 
 CloseClipboard = lambda: handle_nonzero_success(windll.user32.CloseClipboard())
 
+_RegisterClipboardFormat = windll.user32.RegisterClipboardFormatW
+_RegisterClipboardFormat.argtypes = (LPWSTR,)
+_RegisterClipboardFormat.restype = UINT
+CF_HTML = _RegisterClipboardFormat('HTML Format')
+
+_EnumClipboardFormats = windll.user32.EnumClipboardFormats
+_EnumClipboardFormats.argtypes = (UINT,)
+_EnumClipboardFormats.restype = UINT
+
 _GetClipboardData = windll.user32.GetClipboardData
 _GetClipboardData.argtypes = (UINT,)
 _GetClipboardData.restype = HANDLE
@@ -90,6 +106,41 @@ def as_bitmap(handle):
 	raise NotImplementedError("Can't convert to DIB")
 	# todo: use GetDIBits http://msdn.microsoft.com/en-us/library/dd144879%28v=VS.85%29.aspx
 
+@handles(CF_HTML)
+class HTMLSnippet(object):
+	def __init__(self, handle):
+		self.data = text_string(handle)
+		self.headers = self.parse_headers(self.data)
+
+	@property
+	def html(self):
+		return self.data[self.headers['StartHTML']:]
+
+	@staticmethod
+	def parse_headers(data):
+		d = StringIO(data)
+		def header_line(line):
+			return re.match('(\w+):(.*)', line)
+		headers = itertools.imap(header_line, d)
+		# grab headers until they no longer match
+		headers = itertools.takewhile(bool, headers)
+		def best_type(value):
+			try:
+				return int(value)
+			except ValueError:
+				pass
+			try:
+				return float(value)
+			except ValueError:
+				pass
+			return value
+		pairs = (
+			(header.group(1), best_type(header.group(2)))
+			for header
+			in headers
+		)
+		return dict(pairs)
+
 def GetClipboardData(type=CF_UNICODETEXT):
 	if not type in data_handlers:
 		raise NotImplementedError("No support for data of type %d" % type)
@@ -125,15 +176,18 @@ def SetClipboardData(type, content):
 		raise WindowsError()
 
 def set_text(source):
-	OpenClipboard()
-	EmptyClipboard()
-	SetClipboardData(CF_TEXT, source) 
-	CloseClipboard()
+	with context():
+		EmptyClipboard()
+		SetClipboardData(CF_TEXT, source) 
 
 def get_text():
-	OpenClipboard()
-	result = GetClipboardData(CF_TEXT)
-	CloseClipboard()
+	with context():
+		result = GetClipboardData(CF_TEXT)
+	return result
+
+def get_html():
+	with context():
+		result = GetClipboardData(CF_HTML)
 	return result
 
 def paste_stdout():
@@ -141,3 +195,20 @@ def paste_stdout():
 
 def stdin_copy():
 	set_text(sys.stdin.read())
+
+@contextmanager
+def context():
+	OpenClipboard()
+	try:
+		yield
+	finally:
+		CloseClipboard()
+
+def get_formats():
+	with context():
+		format_index = 0
+		while True:
+			format_index = _EnumClipboardFormats(format_index)
+			if format_index == 0: break
+			yield format_index
+

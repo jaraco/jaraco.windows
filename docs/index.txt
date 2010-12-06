@@ -59,6 +59,8 @@ Changes
 * Added clipboard.set_text function for a simple routine for setting
   clipboard text.
 * Added support for editing environment variables in a text-editor.
+* Added clipboard.get_html and clipboard.HTMLSnippet for supporting
+  the HTML format from the clipboard.
 
 1.9.1
 ~~~~~
