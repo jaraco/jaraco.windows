@@ -5,9 +5,7 @@
 Copyright © 2009-2010 Jason R. Coombs
 """
 
-import os
-import functools
-from setuptools import setup, find_packages, Distribution
+from setuptools import find_packages
 
 __author__ = 'Jason R. Coombs <jaraco@jaraco.com>'
 
@@ -24,46 +22,50 @@ except ImportError:
 
 name = 'jaraco.windows'
 
-setup (
-		name = name,
-		use_hg_version = True,
-		description = 'Windows Routines by Jason R. Coombs',
-		long_description = open('README').read(),
-		author = 'Jason R. Coombs',
-		author_email = 'jaraco@jaraco.com',
-		url = 'http://pypi.python.org/pypi/'+name,
-		packages = find_packages(),
-		zip_safe=True,
-		namespace_packages = ['jaraco',],
-		license = 'MIT',
-		classifiers = [
-			"Development Status :: 4 - Beta",
-			"Intended Audience :: Developers",
-			"Programming Language :: Python",
+setup_params=dict(
+	name = name,
+	use_hg_version = True,
+	description = 'Windows Routines by Jason R. Coombs',
+	long_description = open('README').read(),
+	author = 'Jason R. Coombs',
+	author_email = 'jaraco@jaraco.com',
+	url = 'http://pypi.python.org/pypi/'+name,
+	packages = find_packages(),
+	zip_safe=True,
+	namespace_packages = ['jaraco',],
+	license = 'MIT',
+	classifiers = [
+		"Development Status :: 4 - Beta",
+		"Intended Audience :: Developers",
+		"Programming Language :: Python",
+	],
+	entry_points = dict(
+		console_scripts = [
+			'xmouse = jaraco.windows.xmouse:run',
+			'mklink = jaraco.windows.filesystem:mklink',
+			'find-symlinks = jaraco.windows.filesystem:find_symlinks_cmd',
+			'enver = jaraco.windows.environ:enver',
+			'pclip = jaraco.windows.clipboard:paste_stdout',
+			'gclip = jaraco.windows.clipboard:stdin_copy',
 		],
-		entry_points = dict(
-			console_scripts = [
-				'xmouse = jaraco.windows.xmouse:run',
-				'mklink = jaraco.windows.filesystem:mklink',
-				'find-symlinks = jaraco.windows.filesystem:find_symlinks_cmd',
-				'enver = jaraco.windows.environ:enver',
-				'pclip = jaraco.windows.clipboard:paste_stdout',
-				'gclip = jaraco.windows.clipboard:stdin_copy',
-			],
-		),
-		install_requires=[
-			'jaraco.util>=3.5.2dev',
-		],
-		extras_require = {
-		},
-		dependency_links = [
-		],
-		tests_require=[
-			'nose>=0.10',
-		],
-		setup_requires=[
-			'hgtools >= 0.4.7',
-		],
-		test_suite = "nose.collector",
-		cmdclass=dict(build_py=build_py),
-	)
+	),
+	install_requires=[
+		'jaraco.util>=3.5.2dev',
+	],
+	extras_require = {
+	},
+	dependency_links = [
+	],
+	tests_require=[
+		'nose>=0.10',
+	],
+	setup_requires=[
+		'hgtools >= 0.4.7',
+	],
+	test_suite = "nose.collector",
+	cmdclass=dict(build_py=build_py),
+)
+
+if __name__ == '__main__':
+	from setuptools import setup
+	setup(**setup_params)
