@@ -55,6 +55,12 @@ to the author.
 Changes
 -------
 
+2.1
+~~~
+
+* Added jaraco.windows.user module (with get_user_name function).
+
+
 2.0
 ~~~
 

@@ -8,20 +8,14 @@ import itertools
 import ctypes
 from ctypes.wintypes import DWORD, BYTE, WCHAR, BOOL
 
+from .constants import *
+
 # from mprapi.h
 MAX_INTERFACE_NAME_LEN = 2**8
 
 # from iprtrmib.h
 MAXLEN_PHYSADDR = 2**3
 MAXLEN_IFDESCR = 2**8
-
-# from error.h
-NO_ERROR = 0
-ERROR_INSUFFICIENT_BUFFER = 122
-ERROR_BUFFER_OVERFLOW = 111
-ERROR_NO_DATA = 232
-ERROR_INVALID_PARAMETER = 87
-ERROR_NOT_SUPPORTED = 50
 
 # from iptypes.h
 MAX_ADAPTER_ADDRESS_LENGTH = 8
