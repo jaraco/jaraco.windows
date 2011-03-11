@@ -38,6 +38,8 @@ setup_params=dict(
 		"Development Status :: 4 - Beta",
 		"Intended Audience :: Developers",
 		"Programming Language :: Python",
+		"Programming Language :: Python :: 2",
+		"Programming Language :: Python :: 3",
 	],
 	entry_points = dict(
 		console_scripts = [
