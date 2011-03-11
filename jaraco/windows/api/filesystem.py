@@ -1,10 +1,10 @@
 from ctypes import (
 	Structure, windll, POINTER, byref, cast, create_unicode_buffer,
-	c_size_t, c_int, create_string_buffer,
+	c_size_t, c_int, create_string_buffer, c_uint64,
 	)
 from ctypes.wintypes import (
 	BOOLEAN, LPWSTR, DWORD, LPVOID, HANDLE, FILETIME,
-	c_uint64, WCHAR, BOOL, HWND, WORD, UINT,
+	WCHAR, BOOL, HWND, WORD, UINT,
 	)
 from jaraco.windows.reparse import IO_REPARSE_TAG_SYMLINK, FSCTL_GET_REPARSE_POINT, REPARSE_DATA_BUFFER
 from jaraco.windows.reparse import DeviceIoControl
