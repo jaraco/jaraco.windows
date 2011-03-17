@@ -185,6 +185,10 @@ def get_text():
 		result = GetClipboardData(CF_TEXT)
 	return result
 
+def get_unicode_text():
+	with context():
+		return GetClipboardData()
+
 def get_html():
 	with context():
 		result = GetClipboardData(CF_HTML)

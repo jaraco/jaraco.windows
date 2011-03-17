@@ -59,7 +59,7 @@ Changes
 ~~~
 
 * Added jaraco.windows.user module (with get_user_name function).
-
+* Added get_unicode_text to clipboard module.
 
 2.0
 ~~~
