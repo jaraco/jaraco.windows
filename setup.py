@@ -24,7 +24,7 @@ name = 'jaraco.windows'
 
 setup_params=dict(
 	name = name,
-	use_hg_version = True,
+	use_hg_version = dict(increment='0.1'),
 	description = 'Windows Routines by Jason R. Coombs',
 	long_description = open('README').read(),
 	author = 'Jason R. Coombs',
