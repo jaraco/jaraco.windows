@@ -29,16 +29,21 @@ def mklink():
 	symlink(target, link, options.directory)
 	sys.stdout.write("Symbolic link created: %(link)s --> %(target)s\n" % vars())
 
+def _is_target_a_directory(link, rel_target):
+	"""
+	If creating a symlink from link to a target, determine if target
+	is a directory (relative to dirname(link)).
+	"""
+	target = os.path.join(os.path.dirname(link), rel_target)
+	return os.path.isdir(target)
+
 def symlink(target, link, target_is_directory = False):
 	"""
 	An implementation of os.symlink for Windows (Vista and greater)
 	"""
-	if not target_is_directory:
-		path = target
-		if not os.path.isabs(path):
-			path = os.path.join(os.path.dirname(link), target)
-		target_is_directory = os.path.isdir(path)
-	link = os.path.normpath(link)
+	target_is_directory = (target_is_directory or
+		_is_target_a_directory(link, target))
+	# normalize the target (MS symlinks don't respect forward slashes)
 	target = os.path.normpath(target)
 	handle_nonzero_success(api.CreateSymbolicLink(link, target, target_is_directory))
 
