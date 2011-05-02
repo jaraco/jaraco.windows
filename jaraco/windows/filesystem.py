@@ -33,7 +33,13 @@ def symlink(target, link, target_is_directory = False):
 	"""
 	An implementation of os.symlink for Windows (Vista and greater)
 	"""
-	target_is_directory = target_is_directory or os.path.isdir(target)
+	if not target_is_directory:
+		path = target
+		if not os.path.isabs(path):
+			path = os.path.join(os.path.dirname(link), target)
+		target_is_directory = os.path.isdir(path)
+	link = os.path.normpath(link)
+	target = os.path.normpath(target)
 	handle_nonzero_success(api.CreateSymbolicLink(link, target, target_is_directory))
 
 def link(target, link):
@@ -256,7 +262,7 @@ def readlink(link):
 	rdb = p_rdb.contents
 	if not rdb.tag == api.IO_REPARSE_TAG_SYMLINK:
 		raise RuntimeError("Expected IO_REPARSE_TAG_SYMLINK, but got %d" % rdb.tag)
-	return rdb.get_print_name()
+	return rdb.get_substitute_name()
 
 def patch_os_module():
 	if not hasattr(os, 'symlink'):
