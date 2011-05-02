@@ -55,6 +55,11 @@ to the author.
 Changes
 -------
 
+2.1.1
+~~~~~
+
+* Fixes by wkornewald for issue #1 - Symlink relative path deficiencies.
+
 2.1
 ~~~
 
