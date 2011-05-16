@@ -1,6 +1,6 @@
 from ctypes import (
 	Structure, windll, POINTER, byref, cast, create_unicode_buffer,
-	c_size_t, c_int, create_string_buffer, c_uint64,
+	c_size_t, c_int, create_string_buffer, c_uint64, c_ushort, c_short,
 	)
 from ctypes.wintypes import (
 	BOOLEAN, LPWSTR, DWORD, LPVOID, HANDLE, FILETIME,
@@ -152,3 +152,23 @@ ReplaceFile.argtypes = [
 REPLACEFILE_WRITE_THROUGH = 0x1
 REPLACEFILE_IGNORE_MERGE_ERRORS = 0x2
 REPLACEFILE_IGNORE_ACL_ERRORS = 0x4
+
+class STAT_STRUCT(Structure):
+	_fields_ = [
+		('dev', c_uint),
+		('ino', c_ushort),
+		('mode', c_ushort),
+		('nlink', c_short),
+		('uid', c_short),
+		('gid', c_short),
+		('rdev', c_uint),
+		# the following 4 fields are c_uint64 for _stat64
+		('size', c_uint),
+		('atime', c_uint),
+		('mtime', c_uint),
+		('ctime', c_uint),
+	]
+
+_wstat = windll.msvcrt._wstat
+_wstat.argtypes = [LPWSTR, POINTER(STAT_STRUCT)]
+_wstat.restype = c_int
