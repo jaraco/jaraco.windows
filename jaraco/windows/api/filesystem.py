@@ -1,6 +1,7 @@
 from ctypes import (
 	Structure, windll, POINTER, byref, cast, create_unicode_buffer,
 	c_size_t, c_int, create_string_buffer, c_uint64, c_ushort, c_short,
+	c_uint,
 	)
 from ctypes.wintypes import (
 	BOOLEAN, LPWSTR, DWORD, LPVOID, HANDLE, FILETIME,
