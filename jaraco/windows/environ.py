@@ -11,7 +11,7 @@ import _winreg as winreg
 from jaraco.util.editor import EditableFile
 
 from jaraco.windows import error
-from jaraco.windows.message import SendMessage, HWND_BROADCAST, WM_SETTINGCHANGE
+from jaraco.windows import message
 from .registry import key_values as registry_key_values
 
 _SetEnvironmentVariable = ctypes.windll.kernel32.SetEnvironmentVariableW
@@ -118,10 +118,23 @@ class RegisteredEnvironment(object):
 	
 	@classmethod
 	def notify(class_):
+		"""
+		Notify other windows that the environment has changed (following
+		http://support.microsoft.com/kb/104011).
+		"""
 		# TODO: Implement Microsoft UIPI (User Interface Privilege Isolation) to
 		#  elevate privilege to system level so the system gets this notification
 		# for now, this must be run as admin to work as expected
-		SendMessage(HWND_BROADCAST, WM_SETTINGCHANGE, 0, u'Environment')
+		return_val = ctypes.wintypes.DWORD()
+		res = message.SendMessageTimeout(
+			message.HWND_BROADCAST,
+			message.WM_SETTINGCHANGE,
+			0, # wparam must be null
+			'Environment',
+			message.SMTO_ABORTIFHUNG,
+			5000, # timeout in ms
+			return_val,
+		)
 
 class MachineRegisteredEnvironment(RegisteredEnvironment):
 	path = r'SYSTEM\CurrentControlSet\Control\Session Manager\Environment'

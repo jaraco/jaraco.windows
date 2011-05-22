@@ -55,10 +55,14 @@ to the author.
 Changes
 -------
 
-2.1.1
-~~~~~
+2.2
+~~~
 
 * Fixes by wkornewald for issue #1 - Symlink relative path deficiencies.
+* Added jaraco.windows.message.SendMessageTimeout.
+* Fixed issue where environment changes would stall on SendMessage.
+* SendMessage now uses the correct type for lParam, but will still accept
+  string types.
 
 2.1
 ~~~
