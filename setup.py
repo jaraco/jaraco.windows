@@ -2,7 +2,7 @@
 
 """ Setup script for building jaraco.windows distribution
 
-Copyright © 2009-2010 Jason R. Coombs
+Copyright © 2009-2011 Jason R. Coombs
 """
 
 from setuptools import find_packages
@@ -40,6 +40,7 @@ setup_params=dict(
 		"Programming Language :: Python",
 		"Programming Language :: Python :: 2",
 		"Programming Language :: Python :: 3",
+		"Operating System :: Microsoft :: Windows",
 	],
 	entry_points = dict(
 		console_scripts = [
