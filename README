@@ -55,6 +55,13 @@ to the author.
 Changes
 -------
 
+2.3
+~~~
+
+* Added filesystem.GetFileAttributes.
+* Added services module for working with Windows Services (currently uses
+  pywin32).
+
 2.2
 ~~~
 
@@ -63,7 +70,6 @@ Changes
 * Fixed issue where environment changes would stall on SendMessage.
 * SendMessage now uses the correct type for lParam, but will still accept
   string types.
-* Added filesystem.GetFileAttributes.
 
 2.1
 ~~~
