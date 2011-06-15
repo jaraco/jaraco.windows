@@ -173,3 +173,7 @@ class STAT_STRUCT(Structure):
 _wstat = windll.msvcrt._wstat
 _wstat.argtypes = [LPWSTR, POINTER(STAT_STRUCT)]
 _wstat.restype = c_int
+
+GetFileAttributes = windll.kernel32.GetFileAttributesW
+GetFileAttributes.argtypes = LPWSTR,
+GetFileAttributes.restype = DWORD

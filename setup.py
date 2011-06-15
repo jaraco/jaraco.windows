@@ -53,7 +53,7 @@ setup_params=dict(
 		],
 	),
 	install_requires=[
-		'jaraco.util>=3.5.2dev',
+		'jaraco.util>=3.9dev',
 	],
 	extras_require = {
 	},

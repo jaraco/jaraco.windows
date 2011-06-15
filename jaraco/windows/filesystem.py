@@ -8,6 +8,9 @@ import operator
 from itertools import imap, ifilter, izip
 from ctypes import (POINTER, byref, cast, create_unicode_buffer,
 	create_string_buffer, windll)
+
+import jaraco.util.bitutil
+
 from jaraco.windows.error import WindowsError, handle_nonzero_success
 import jaraco.windows.api.filesystem as api
 
@@ -304,3 +307,27 @@ def find_symlinks_cmd():
 			print(msg)
 	except KeyboardInterrupt:
 		pass
+
+class FileAttributes(int):
+	__metaclass__ = jaraco.util.bitutil.BitMask
+	archive = 0x20
+	compressed = 0x800
+	hidden = 0x2
+	device = 0x40
+	directory = 0x10
+	encrypted = 0x4000
+	normal = 0x80
+	not_content_indexed = 0x2000
+	offline = 0x1000
+	read_only = 0x1
+	reparse_point = 0x400
+	sparse_file = 0x200
+	system = 0x4
+	temporary = 0x100
+	virtual = 0x10000
+
+def GetFileAttributes(filepath):
+	attrs = api.GetFileAttributes(filepath)
+	if attrs == api.INVALID_FILE_ATTRIBUTES:
+		raise WindowsError()
+	return FileAttributes(attrs)
