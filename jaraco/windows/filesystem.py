@@ -2,6 +2,7 @@
 
 from __future__ import print_function
 
+import __builtin__
 import os
 import sys
 import operator
@@ -10,6 +11,7 @@ from ctypes import (POINTER, byref, cast, create_unicode_buffer,
 	create_string_buffer, windll)
 
 import jaraco.util.bitutil
+from jaraco.util.string import local_format as lf
 
 from jaraco.windows.error import WindowsError, handle_nonzero_success
 import jaraco.windows.api.filesystem as api
@@ -68,16 +70,35 @@ def islink(path):
 	"Determine if the given path is a symlink"
 	return is_reparse_point(path) and is_symlink(path)
 
+def _patch_path(path):
+	"""
+	Paths have a max length of api.MAX_PATH characters (260). If a target path
+	is longer than that, it needs to be made absolute and prepended with
+	\\?\ in order to work with API calls.
+	See http://msdn.microsoft.com/en-us/library/aa365247%28v=vs.85%29.aspx for
+	details.
+	"""
+	if path.startswith('\\\\?\\'): return path
+	abs_path = os.path.abspath(path)
+	if not abs_path[1] == ':':
+		# python doesn't include the drive letter, but \\?\ requires it
+		abs_path = os.getcwd()[:2] + abs_path
+	return '\\\\?\\' + abs_path
+
 def is_symlink(path):
 	"""
 	Assuming path is a reparse point, determine if it's a symlink.
-	
+
 	>>> symlink('foobaz', 'foobar')
 	>>> is_symlink('foobar')
 	True
 	>>> os.remove('foobar')
 	"""
-	return _is_symlink(next(find_files(path)))
+	path = _patch_path(path)
+	try:
+		return _is_symlink(next(find_files(path)))
+	except WindowsError, orig_error:
+		raise __builtin__.WindowsError(lf("Error accessing {path}: {orig_error.message}"))
 
 def _is_symlink(find_data):
 	return find_data.reserved[0] == api.IO_REPARSE_TAG_SYMLINK
@@ -85,13 +106,13 @@ def _is_symlink(find_data):
 def find_files(spec):
 	"""
 	A pythonic wrapper around the FindFirstFile/FindNextFile win32 api.
-	
+
 	>>> root_files = tuple(find_files(r'c:\*'))
 	>>> len(root_files) > 1
 	True
 	>>> root_files[0].filename == root_files[1].filename
 	False
-	
+
 	This test might fail on a non-standard installation
 	>>> 'Windows' in (fd.filename for fd in root_files)
 	True
@@ -119,7 +140,7 @@ def get_final_path(path):
 	Useful for resolving symlink targets.
 	This functions wraps the GetFinalPathNameByHandle from the Windows
 	SDK.
-	
+
 	Note, this function fails if a handle cannot be obtained (such as
 	for C:\Pagefile.sys on a stock windows system). Consider using
 	trace_symlink_target instead.
@@ -176,7 +197,7 @@ def SHFileOperation(operation, from_, to=None, flags=[]):
 def join(*paths):
 	r"""
 	Wrapper around os.path.join that works with Windows drive letters.
-	
+
 	>>> join('d:\\foo', '\\bar')
 	'd:\\bar'
 	"""
@@ -189,7 +210,7 @@ def join(*paths):
 def resolve_path(target, start=os.path.curdir):
 	r"""
 	Find a path from start to target where target is relative to start.
-	
+
 	>>> orig_wd = os.getcwd()
 	>>> os.chdir('c:\\windows') # so we know what the working directory is
 
@@ -232,7 +253,7 @@ def trace_symlink_target(link):
 	"""
 	Given a file that is known to be a symlink, trace it to its ultimate
 	target.
-	
+
 	Raises TargetNotPresent when the target cannot be determined.
 	Raises ValueError when the specified link is not a symlink.
 	"""
@@ -259,7 +280,7 @@ def readlink(link):
 		api.FILE_FLAG_OPEN_REPARSE_POINT|api.FILE_FLAG_BACKUP_SEMANTICS,
 		None,
 		)
-	
+
 	if handle == api.INVALID_HANDLE_VALUE:
 		raise WindowsError()
 
@@ -283,7 +304,11 @@ def find_symlinks(root):
 	for dirpath, dirnames, filenames in os.walk(root):
 		for name in dirnames+filenames:
 			pathname = os.path.join(dirpath, name)
-			if is_symlink(pathname): yield pathname
+			if is_symlink(pathname):
+				yield pathname
+				# don't traverse symlinks
+				if name in dirnames:
+					dirnames.remove(name)
 
 def find_symlinks_cmd():
 	"""
