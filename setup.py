@@ -9,17 +9,6 @@ from setuptools import find_packages
 
 __author__ = 'Jason R. Coombs <jaraco@jaraco.com>'
 
-try:
-	from distutils.command.build_py import build_py_2to3 as build_py
-	# exclude some fixers that break already compatible code
-	from lib2to3.refactor import get_fixers_from_package
-	fixers = get_fixers_from_package('lib2to3.fixes')
-	for skip_fixer in ['import']:
-		fixers.remove('lib2to3.fixes.fix_' + skip_fixer)
-	build_py.fixer_names = fixers
-except ImportError:
-	from distutils.command.build_py import build_py
-
 name = 'jaraco.windows'
 
 setup_params=dict(
@@ -66,7 +55,7 @@ setup_params=dict(
 		'hgtools >= 0.4.7',
 	],
 	test_suite = "nose.collector",
-	cmdclass=dict(build_py=build_py),
+	use_2to3=True,
 )
 
 if __name__ == '__main__':
