@@ -9,10 +9,10 @@ Windows Messaging support
 # $Id$
 
 import ctypes
-from ctypes.wintypes import HWND, UINT, WPARAM, LPARAM, DWORD
+from ctypes.wintypes import HWND, UINT, WPARAM, LPARAM, DWORD, LPVOID
 LRESULT = LPARAM
 
-class StringCapableLPARAM(LPARAM):
+class LPARAM_wstr(LPARAM):
 	"""
 	A special instance of LPARAM that can be constructed from a string
 	instance (for functions such as SendMessage, whose LPARAM may point to
@@ -21,11 +21,11 @@ class StringCapableLPARAM(LPARAM):
 	@classmethod
 	def from_param(cls, param):
 		if isinstance(param, basestring):
-			param = ctypes.cast(ctypes.c_wchar_p(param), ctypes.c_void_p).value
+			return LPVOID.from_param(unicode(param))
 		return LPARAM.from_param(param)
 
 SendMessage = ctypes.windll.user32.SendMessageW
-SendMessage.argtypes = (HWND, UINT, WPARAM, StringCapableLPARAM)
+SendMessage.argtypes = (HWND, UINT, WPARAM, LPARAM_wstr)
 SendMessage.restype = LRESULT
 
 HWND_BROADCAST=0xFFFF
@@ -47,4 +47,3 @@ SendMessageTimeout.restype = LRESULT
 def unicode_as_lparam(source):
 	pointer = ctypes.cast(ctypes.c_wchar_p(source), ctypes.c_void_p)
 	return LPARAM(pointer.value)
- 
