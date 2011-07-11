@@ -37,13 +37,13 @@ def GetEnvironmentVariable(name):
 	error.handle_nonzero_success(_GetEnvironmentVariable(name, buffer, max_size))
 	return buffer.value
 
-### 
+###
 
 class RegisteredEnvironment(object):
 	"""
 	Manages the environment variables as set in the Windows Registry.
 	"""
-	
+
 	@classmethod
 	def show(class_):
 		for name, value, type in registry_key_values(class_.key):
@@ -67,7 +67,7 @@ class RegisteredEnvironment(object):
 		if isinstance(res, basestring):
 			res = res.split(sep)
 		return res
-		
+
 
 	@classmethod
 	def set(class_, name, value, options):
@@ -115,7 +115,7 @@ class RegisteredEnvironment(object):
 	def delete(class_, name):
 		winreg.DeleteValue(class_.key, name)
 		class_.notify()
-	
+
 	@classmethod
 	def notify(class_):
 		"""
@@ -135,6 +135,7 @@ class RegisteredEnvironment(object):
 			5000, # timeout in ms
 			return_val,
 		)
+		error.handle_nonzero_success(res)
 
 class MachineRegisteredEnvironment(RegisteredEnvironment):
 	path = r'SYSTEM\CurrentControlSet\Control\Session Manager\Environment'
@@ -152,7 +153,7 @@ def trim(s):
 def enver(*args):
 	"""
 	%prog [<name>=[value]]
-	
+
 	To show all environment variables, call with no parameters:
 	 %prog
 	To Add/Modify/Delete environment variable:
@@ -170,13 +171,13 @@ def enver(*args):
 
 	To remove a specific value or values from a semicolon-separated
 	multi-value variable (such as PATH), use --remove-value.
-	
+
 	e.g. enver --remove-value PATH=C:\\Unwanted\\Dir\\In\\Path
 
 	Remove-value matches case-insensitive and also matches any substring
 	so the following would also be sufficient to remove the aforementioned
 	undesirable dir.
-	
+
 	enver --remove-value PATH=UNWANTED
 
 	Note that %prog does not affect the current running environment, and can
@@ -204,7 +205,7 @@ def enver(*args):
 		help="Edit the value in a local editor",
 		)
 	options, args = parser.parse_args(*args)
-	
+
 	try:
 		param = args.pop()
 		if args:
