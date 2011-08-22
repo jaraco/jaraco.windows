@@ -1,25 +1,26 @@
 # -*- coding: UTF-8 -*-
 
-"""FileChange
+"""
+FileChange
 	Classes and routines for monitoring the file system for changes.
 
-Copyright © 2004 Jason R. Coombs
+Copyright © 2004, 2011 Jason R. Coombs
 """
 
-__author__ = 'Jason R. Coombs <jaraco@jaraco.com>'
-__version__ = '$Rev$'[6:-2]
-__svnauthor__ = '$Author$'[9:-2]
-__date__ = '$Date$'[7:-2]
-
-import os, sys, time, re, operator
+import os
+import sys
+import time
+import re
+import operator
 from threading import Thread
 import traceback
 from stat import *
 import itertools
+import logging
+
 from jaraco.util.itertools import consume
 import jaraco.util.string
 
-import logging
 log = logging.getLogger(__name__)
 
 # win32* requires ActivePython by Mark Hammond (thanks Mark!)
@@ -32,57 +33,59 @@ class NotifierException(Exception):
 	pass
 
 class FileFilter(object):
-	def SetRoot(self, root):
+	def set_root(self, root):
 		self.root = root
 
-	def _GetFilePath(self, filename):
+	def _get_file_path(self, filename):
 		try:
 			filename = os.path.join(self.root, filename)
 		except AttributeError: pass
 		return filename
 
 class ModifiedTimeFilter(FileFilter):
-	""" Returns true for each call where the modified time of the file is after the cutoff time """
+	"""
+	Returns true for each call where the modified time of the file is after
+	the cutoff time.
+	"""
 	def __init__(self, cutoff):
 		# truncate the time to the second.
 		self.cutoff = int(cutoff)
 
 	def __call__(self, file):
-		filepath = self._GetFilePath(file)
+		filepath = self._get_file_path(file)
 		last_mod = os.stat(filepath).st_mtime
 		log.debug('%s last modified at %s.', filepath, time.asctime(time.localtime(last_mod)))
 		return last_mod >= self.cutoff
 
 class PatternFilter(FileFilter):
 	"""
-	This file filter when called will return True for those files that match the pattern.
-	  When initialized, exactly one of filePattern or rePattern must be supplied.
-
-	filePattern is a DOS-like file name with wildcards (*,?)
-	rePattern is a regular expression.
+	Filter that returns True for files that match pattern (a regular
+	expression).
 	"""
-	def __init__(self, filePattern = None, rePattern = None):
-		if filePattern and rePattern:
-			raise TypeError('PatternFilter() takes exactly 1 argument (2 given).')
-		if not filePattern and not rePattern:
-			raise TypeError('PatternFilter() takes exactly 1 argument (0 given).')
-		if filePattern:
-			self.pattern = PatternFilter.ConvertFilePattern(filePattern)
-		if rePattern:
-			self.pattern = rePattern
+	def __init__(self, pattern):
+		self.pattern = re.compile(pattern) if isinstance(pattern, basestring) else pattern
+
+	def __call__(self, file):
+		return bool(self.pattern.match(file, re.I))
+
+class GlobFilter(PatternFilter):
+	"""
+	Filter that returns True for files that match the pattern (a glob
+	expression.
+	"""
+	def __init__(self, expression):
+		super(GlobFilter, self).__init__(self.convert_file_pattern(expression))
 
 	@staticmethod
-	def ConvertFilePattern(p):
+	def convert_file_pattern(p):
 		r"""
 		converts a filename specification (such as c:\*.*) to an equivelent regular expression
-		>>> PatternFilter.ConvertFilePattern('c:\*')
-		'c:\\\\.*'
+		>>> GlobFilter.convert_file_pattern('/*')
+		'/.*'
 		"""
 		subs = (('\\', '\\\\'), ('.', '\\.'), ('*', '.*'), ('?', '.'))
 		return jaraco.util.string.multi_substitution(*subs)(p)
 
-	def __call__(self, file):
-		return bool(re.match(self.pattern, file, re.I))
 
 class AggregateFilter(FileFilter):
 	"""
@@ -92,21 +95,18 @@ class AggregateFilter(FileFilter):
 	def __init__(self, *filters):
 		self.filters = filters
 
-	def SetRoot(self, root):
-		consume(f.SetRoot(root) for f in self.filters)
+	def set_root(self, root):
+		consume(f.set_root(root) for f in self.filters)
 
 	def __call__(self, file):
-		results = (fil(file) for fil in self.filters)
-		result = reduce(operator.and_, results)
-		return result
+		return all(fil(file) for fil in self.filters)
 
-def filesWithPath(files, path):
-	for file in files:
-		yield os.path.join(path, file)
+def files_with_path(files, path):
+	return (os.path.join(path, file) for file in files)
 
-def GetFilePaths(walkResult):
-	root, dirs, files = walkResult
-	return filesWithPath(files, root)
+def get_file_paths(walk_result):
+	root, dirs, files = walk_result
+	return files_with_path(files, root)
 
 class Notifier(object):
 	def __init__(self, root = '.', filters = []):
@@ -116,19 +116,19 @@ class Notifier(object):
 			raise NotifierException('Root directory "%s" does not exist' % self.root)
 		self.filters = filters
 
-		self.watchSubtree = False
-		self.QuitEvent = CreateEvent(None, 0, 0, None)
+		self.watch_subtree = False
+		self.quit_event = CreateEvent(None, 0, 0, None)
 
 	def __del__(self):
 		try:
 			FindCloseChangeNotification(self.hChange)
 		except: pass
 
-	def _GetChangeHandle(self):
+	def _get_change_handle(self):
 		# set up to monitor the directory tree specified
 		self.hChange = FindFirstChangeNotification(
 			self.root,
-			self.watchSubtree,
+			self.watch_subtree,
 			FILE_NOTIFY_CHANGE_LAST_WRITE
 		)
 
@@ -136,7 +136,8 @@ class Notifier(object):
 		if self.hChange == INVALID_HANDLE_VALUE:
 			raise NotifierException('Could not set up directory change notification')
 
-	def _FilteredWalk(path, fileFilter):
+	@staticmethod
+	def _filtered_walk(path, file_filter):
 		"""
 		static method that calls os.walk, but filters out
 		anything that doesn't match the filter
@@ -144,60 +145,59 @@ class Notifier(object):
 		for root, dirs, files in os.walk(path):
 			log.debug('looking in %s', root)
 			log.debug('files is %s', files)
-			fileFilter.SetRoot(root)
-			files = filter(fileFilter, files)
+			file_filter.set_root(root)
+			files = filter(file_filter, files)
 			log.debug('filtered files is %s', files)
 			yield (root, dirs, files)
-	_FilteredWalk = staticmethod(_FilteredWalk)
 
-	def Quit(self):
-		SetEvent(self.QuitEvent)
+	def quit(self):
+		SetEvent(self.quit_event)
 
 class BlockingNotifier(Notifier):
 
-	def WaitResults(*args):
+	@staticmethod
+	def wait_results(*args):
 		""" calls WaitForMultipleObjects repeatedly with args """
 		return itertools.starmap(WaitForMultipleObjects, itertools.repeat(args))
-	WaitResults = staticmethod(WaitResults)
 
-	def GetChangedFiles(self):
-		self._GetChangeHandle()
-		checkTime = time.time()
+	def get_changed_files(self):
+		self._get_change_handle()
+		check_time = time.time()
 		# block (sleep) until something changes in the
 		#  target directory or a quit is requested.
 		# timeout so we can catch keyboard interrupts or other exceptions
-		for result in BlockingNotifier.WaitResults((self.hChange, self.QuitEvent), False, 1000):
+		for result in BlockingNotifier.wait_results((self.hChange, self.quit_event), False, 1000):
 			if result == WAIT_OBJECT_0 + 0:
 				# something has changed.
 				log.debug('Change notification received')
-				nextCheckTime = time.time()
+				next_check_time = time.time()
 				FindNextChangeNotification(self.hChange)
-				log.debug('Looking for all files changed after %s', time.asctime(time.localtime(checkTime)))
-				for file in self.FindFilesAfter(checkTime):
+				log.debug('Looking for all files changed after %s', time.asctime(time.localtime(check_time)))
+				for file in self.FindFilesAfter(check_time):
 					yield file
-				checkTime = nextCheckTime
+				check_time = next_check_time
 			if result == WAIT_OBJECT_0 + 1:
 				# quit was received, stop yielding stuff
 				return
 			else:
 				pass # it was a timeout.  ignore it and wait some more.
 
-	def FindFilesAfter(self, cutoff):
+	def find_files_after(self, cutoff):
 		mtf = ModifiedTimeFilter(cutoff)
 		af = AggregateFilter(mtf, *self.filters)
-		results = Notifier._FilteredWalk(self.root, af)
-		results = itertools.imap(GetFilePaths, results)
-		if self.watchSubtree:
+		results = Notifier._filtered_walk(self.root, af)
+		results = itertools.imap(get_file_paths, results)
+		if self.watch_subtree:
 			result = itertools.chain(*results)
 		else:
-			result = results.next()
+			result = next(results)
 		return result
 
 class ThreadedNotifier(BlockingNotifier, Thread):
 	r"""
 	ThreadedNotifier provides a simple interface that calls the handler
-		for each file rooted in root that passes the filters.  It runs as its own
-		thread, so must be started as such.
+	for each file rooted in root that passes the filters.  It runs as its own
+	thread, so must be started as such.
 
 	>>> notifier = ThreadedNotifier('c:\\', handler = StreamHandler()) # doctest: +SKIP
 	>>> notifier.start() # doctest: +SKIP
@@ -209,16 +209,16 @@ class ThreadedNotifier(BlockingNotifier, Thread):
 		# init thread stuff
 		Thread.__init__(self)
 		# set it as a daemon thread so that it doesn't block waiting to close.
-		#  I tried setting __del__(self) to .Quit(), but unfortunately, there are
+		#  I tried setting __del__(self) to .quit(), but unfortunately, there are
 		#  references to this object in the win32api stuff, so __del__ never gets
 		#  called.
 		self.setDaemon(True)
 
-		self.Handle = handler
+		self.handle = handler
 
 	def run(self):
-		for file in self.GetChangedFiles():
-			self.Handle(file)
+		for file in self.get_changed_files():
+			self.handle(file)
 
 class StreamHandler(object):
 	"""
