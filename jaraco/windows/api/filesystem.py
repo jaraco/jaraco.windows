@@ -93,7 +93,7 @@ class WIN32_FIND_DATA(Structure):
 		('filename', WCHAR*MAX_PATH),
 		('alternate_filename', WCHAR*14),
 	]
-	
+
 	@property
 	def file_size(self):
 		return cast(self.file_size_words, POINTER(c_uint64)).contents
@@ -177,3 +177,17 @@ _wstat.restype = c_int
 GetFileAttributes = windll.kernel32.GetFileAttributesW
 GetFileAttributes.argtypes = LPWSTR,
 GetFileAttributes.restype = DWORD
+
+FILE_NOTIFY_CHANGE_LAST_WRITE = 0x10
+
+FindFirstChangeNotification = windll.kernel32.FindFirstChangeNotificationW
+FindFirstChangeNotification.argtypes = LPWSTR, BOOL, DWORD
+FindFirstChangeNotification.restype = HANDLE
+
+FindCloseChangeNotification = windll.kernel32.FindCloseChangeNotification
+FindCloseChangeNotification.argtypes = HANDLE,
+FindCloseChangeNotification.restype = BOOL
+
+FindNextChangeNotification = windll.kernel32.FindNextChangeNotification
+FindNextChangeNotification.argtypes = HANDLE,
+FindNextChangeNotification.restype = BOOL

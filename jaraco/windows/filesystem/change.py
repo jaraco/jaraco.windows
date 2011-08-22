@@ -21,13 +21,10 @@ import logging
 from jaraco.util.itertools import consume
 import jaraco.util.string
 
-log = logging.getLogger(__name__)
+import jaraco.windows.api.filesystem
+import jaraco.windows.api.event
 
-# win32* requires ActivePython by Mark Hammond (thanks Mark!)
-from win32file import *
-from win32api import *
-from win32event import *
-from win32con import FILE_NOTIFY_CHANGE_LAST_WRITE
+log = logging.getLogger(__name__)
 
 class NotifierException(Exception):
 	pass
@@ -117,22 +114,23 @@ class Notifier(object):
 		self.filters = filters
 
 		self.watch_subtree = False
-		self.quit_event = CreateEvent(None, 0, 0, None)
+		self.quit_event = jaraco.windows.api.event.CreateEvent(None, 0, 0, None)
 
 	def __del__(self):
 		try:
-			FindCloseChangeNotification(self.hChange)
+			jaraco.windows.api.filesystem.FindCloseChangeNotification(self.hChange)
 		except: pass
 
 	def _get_change_handle(self):
 		# set up to monitor the directory tree specified
-		self.hChange = FindFirstChangeNotification(
+		self.hChange = jaraco.windows.api.filesystem.FindFirstChangeNotification(
 			self.root,
 			self.watch_subtree,
-			FILE_NOTIFY_CHANGE_LAST_WRITE
+			jaraco.windows.api.filesystem.FILE_NOTIFY_CHANGE_LAST_WRITE,
 		)
 
 		# make sure it worked; if not, bail
+		INVALID_HANDLE_VALUE = jaraco.windows.api.filesystem.INVALID_HANDLE_VALUE
 		if self.hChange == INVALID_HANDLE_VALUE:
 			raise NotifierException('Could not set up directory change notification')
 
@@ -158,7 +156,9 @@ class BlockingNotifier(Notifier):
 	@staticmethod
 	def wait_results(*args):
 		""" calls WaitForMultipleObjects repeatedly with args """
-		return itertools.starmap(WaitForMultipleObjects, itertools.repeat(args))
+		return itertools.starmap(
+			jaraco.windows.api.event.WaitForMultipleObjects,
+			itertools.repeat(args))
 
 	def get_changed_files(self):
 		self._get_change_handle()
@@ -166,12 +166,13 @@ class BlockingNotifier(Notifier):
 		# block (sleep) until something changes in the
 		#  target directory or a quit is requested.
 		# timeout so we can catch keyboard interrupts or other exceptions
+		WAIT_OBJECT_0 = jaraco.windows.api.event.WAIT_OBJECT_0
 		for result in BlockingNotifier.wait_results((self.hChange, self.quit_event), False, 1000):
 			if result == WAIT_OBJECT_0 + 0:
 				# something has changed.
 				log.debug('Change notification received')
 				next_check_time = time.time()
-				FindNextChangeNotification(self.hChange)
+				jaraco.windows.api.filesystem.FindNextChangeNotification(self.hChange)
 				log.debug('Looking for all files changed after %s', time.asctime(time.localtime(check_time)))
 				for file in self.find_files_after(check_time):
 					yield file
