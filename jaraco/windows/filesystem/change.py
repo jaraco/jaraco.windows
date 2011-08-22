@@ -173,7 +173,7 @@ class BlockingNotifier(Notifier):
 				next_check_time = time.time()
 				FindNextChangeNotification(self.hChange)
 				log.debug('Looking for all files changed after %s', time.asctime(time.localtime(check_time)))
-				for file in self.FindFilesAfter(check_time):
+				for file in self.find_files_after(check_time):
 					yield file
 				check_time = next_check_time
 			if result == WAIT_OBJECT_0 + 1:
