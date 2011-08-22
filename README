@@ -55,6 +55,11 @@ to the author.
 Changes
 -------
 
+2.4
+~~~
+
+* Moved filechange notification from jaraco.util.
+
 2.3
 ~~~
 
