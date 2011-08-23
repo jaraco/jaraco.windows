@@ -7,9 +7,12 @@ timers
 Copyright © 2004,2011 Jason R. Coombs
 """
 
+from __future__ import absolute_import
+
 import time
-import win32event
-import threading
+import thread
+
+from jaraco.windows.api import event as win32event
 
 __author__ = 'Jason R. Coombs <jaraco@jaraco.com>'
 
@@ -19,7 +22,7 @@ class WaitableTimer:
 		self.StopEvent = win32event.CreateEvent(None, 0, 0, None)
 
 	def Set(self, dueTime, period):
-		threading.start_new_thread(self._SignalLoop_, (dueTime, period))
+		thread.start_new_thread(self._SignalLoop_, (dueTime, period))
 
 	def Stop(self):
 		win32event.SetEvent(self.StopEvent)

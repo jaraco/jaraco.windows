@@ -17,6 +17,14 @@ CreateEvent.argtypes = (
 )
 CreateEvent.restype = HANDLE
 
+SetEvent = windll.kernel32.SetEvent
+SetEvent.argtypes = HANDLE,
+SetEvent.restype = BOOL
+
+WaitForSingleObject = windll.kernel32.WaitForSingleObject
+WaitForSingleObject.argtypes = HANDLE, DWORD
+WaitForSingleObject.restype = DWORD
+
 _WaitForMultipleObjects = windll.kernel32.WaitForMultipleObjects
 _WaitForMultipleObjects.argtypes = DWORD, POINTER(HANDLE), BOOL, DWORD
 _WaitForMultipleObjects.restype = DWORD
