@@ -53,6 +53,11 @@ to the author.
 Changes
 -------
 
+2.5
+~~~
+
+* Moved timers module from jaraco.util.
+
 2.4
 ~~~
 
