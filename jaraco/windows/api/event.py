@@ -29,3 +29,5 @@ def WaitForMultipleObjects(handles, wait_all=False, timeout=0):
 	return _WaitForMultipleObjects(n_handles, handle_array, wait_all, timeout)
 
 WAIT_OBJECT_0 = 0
+INFINITE = -1
+WAIT_TIMEOUT = 0x102
