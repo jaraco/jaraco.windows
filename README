@@ -57,6 +57,8 @@ Changes
 ~~~
 
 * Moved timers module from jaraco.util.
+* Added jaraco.windows.cred with initial support for Windows Credential
+  Manager.
 
 2.4
 ~~~
