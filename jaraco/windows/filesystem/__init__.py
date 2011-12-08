@@ -97,7 +97,7 @@ def is_symlink(path):
 	path = _patch_path(path)
 	try:
 		return _is_symlink(next(find_files(path)))
-	except WindowsError, orig_error:
+	except WindowsError as orig_error:
 		raise __builtin__.WindowsError(lf("Error accessing {path}: {orig_error.message}"))
 
 def _is_symlink(find_data):
