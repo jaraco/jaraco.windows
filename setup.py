@@ -11,17 +11,17 @@ __author__ = 'Jason R. Coombs <jaraco@jaraco.com>'
 
 name = 'jaraco.windows'
 
-setup_params=dict(
+setup_params = dict(
 	name = name,
-	use_hg_version = dict(increment='0.1'),
+	use_hg_version = dict(increment='0.0.1'),
 	description = 'Windows Routines by Jason R. Coombs',
 	long_description = open('README').read(),
 	author = 'Jason R. Coombs',
 	author_email = 'jaraco@jaraco.com',
-	url = 'http://pypi.python.org/pypi/'+name,
+	url = 'http://pypi.python.org/pypi/' + name,
 	packages = find_packages(),
 	zip_safe=True,
-	namespace_packages = ['jaraco',],
+	namespace_packages = ['jaraco'],
 	license = 'MIT',
 	classifiers = [
 		"Development Status :: 5 - Production/Stable",
