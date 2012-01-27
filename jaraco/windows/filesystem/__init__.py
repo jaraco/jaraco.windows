@@ -61,10 +61,14 @@ def link(target, link):
 def is_reparse_point(path):
 	"""
 	Determine if the given path is a reparse point.
+	Return False if the file does not exist or the file attributes cannot
+	be determined.
 	"""
 	res = api.GetFileAttributes(path)
-	if res == api.INVALID_FILE_ATTRIBUTES: raise WindowsError()
-	return bool(res & api.FILE_ATTRIBUTE_REPARSE_POINT)
+	return (
+		res != api.INVALID_FILE_ATTRIBUTES
+		and bool(res & api.FILE_ATTRIBUTE_REPARSE_POINT)
+	)
 
 def islink(path):
 	"Determine if the given path is a symlink"

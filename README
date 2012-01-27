@@ -53,10 +53,13 @@ to the author.
 Changes
 -------
 
-2.5.1
-~~~~~
+2.6
+~~~
 
 * Fixed import issue in jaraco.windows.filesystem on Python 3.
+* Added cookie module from jaraco.net.
+* Fixed issue in filesystem.islink() where a call against a nonexistent
+  file could raise an Exception.
 
 2.5
 ~~~
