@@ -6,7 +6,7 @@ import __builtin__
 import os
 import sys
 import operator
-from itertools import imap, ifilter, izip
+from itertools import imap, ifilter
 from ctypes import (POINTER, byref, cast, create_unicode_buffer,
 	create_string_buffer, windll)
 
@@ -125,7 +125,7 @@ def find_files(spec):
 		yield fd
 		fd = api.WIN32_FIND_DATA()
 		res = api.FindNextFile(handle, byref(fd))
-		if res == 0: # error
+		if res == 0:  # error
 			error = WindowsError()
 			if error.code == api.ERROR_NO_MORE_FILES:
 				break
@@ -145,11 +145,14 @@ def get_final_path(path):
 	for C:\Pagefile.sys on a stock windows system). Consider using
 	trace_symlink_target instead.
 	"""
+	desired_access = api.NULL
+	share_mode = api.FILE_SHARE_READ | api.FILE_SHARE_WRITE | api.FILE_SHARE_DELETE
+	security_attributes = api.LPSECURITY_ATTRIBUTES()  # NULL pointer
 	hFile = api.CreateFile(
 		path,
-		api.NULL, # desired access
-		api.FILE_SHARE_READ|api.FILE_SHARE_WRITE|api.FILE_SHARE_DELETE, # share mode
-		api.LPSECURITY_ATTRIBUTES(), # NULL pointer
+		desired_access,
+		share_mode,
+		security_attributes,
 		api.OPEN_EXISTING,
 		api.FILE_FLAG_BACKUP_SEMANTICS,
 		api.NULL,
@@ -277,7 +280,7 @@ def readlink(link):
 		0,
 		None,
 		api.OPEN_EXISTING,
-		api.FILE_FLAG_OPEN_REPARSE_POINT|api.FILE_FLAG_BACKUP_SEMANTICS,
+		api.FILE_FLAG_OPEN_REPARSE_POINT | api.FILE_FLAG_BACKUP_SEMANTICS,
 		None,
 		)
 
@@ -302,7 +305,7 @@ def patch_os_module():
 
 def find_symlinks(root):
 	for dirpath, dirnames, filenames in os.walk(root):
-		for name in dirnames+filenames:
+		for name in dirnames + filenames:
 			pathname = os.path.join(dirpath, name)
 			if is_symlink(pathname):
 				yield pathname
