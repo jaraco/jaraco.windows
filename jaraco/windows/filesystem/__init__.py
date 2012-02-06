@@ -306,8 +306,6 @@ def patch_os_module():
 		os.path.islink = islink
 	if not hasattr(os, 'readlink'):
 		os.readlink = readlink
-	if not hasattr(os, 'islink'):
-		os.islink = islink
 
 def find_symlinks(root):
 	for dirpath, dirnames, filenames in os.walk(root):
