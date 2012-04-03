@@ -6,6 +6,7 @@ import __builtin__
 import os
 import sys
 import operator
+import collections
 from itertools import imap, ifilter
 from ctypes import (POINTER, byref, cast, create_unicode_buffer,
 	create_string_buffer, windll)
@@ -363,3 +364,21 @@ def GetFileAttributes(filepath):
 	if attrs == api.INVALID_FILE_ATTRIBUTES:
 		raise WindowsError()
 	return FileAttributes(attrs)
+
+def SetFileAttributes(filepath, *attrs):
+	"""
+	Set file attributes. e.g.:
+
+		SetFileAttributes('C:\\foo', 'hidden')
+
+	Each attr must be either a numeric value, a constant defined in
+	jaraco.windows.filesystem.api, or one of the nice names
+	defined in this function.
+	"""
+	nice_names = collections.defaultdict(lambda key:key,
+		hidden = 'FILE_ATTRIBUTE_HIDDEN',
+		read_only = 'FILE_ATTRIBUTE_READONLY',
+	)
+	flags = (getattr(api, nice_names[attr], attr) for attr in attrs)
+	flags = reduce(operator.or_, flags)
+	handle_nonzero_success(api.SetFileAttributes(filepath, flags))

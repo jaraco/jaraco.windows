@@ -27,8 +27,12 @@ CreateHardLink.argtypes = (
 CreateHardLink.restype = BOOLEAN
 
 GetFileAttributes = windll.kernel32.GetFileAttributesW
-GetFileAttributes.argtypes = (LPWSTR,)
+GetFileAttributes.argtypes = LPWSTR,
 GetFileAttributes.restype = DWORD
+
+SetFileAttributes = windll.kernel32.SetFileAttributesW
+SetFileAttributes.argtypes = LPWSTR, DWORD
+SetFileAttributes.restype = BOOL
 
 MAX_PATH = 260
 
@@ -65,6 +69,7 @@ FILE_FLAG_BACKUP_SEMANTICS = 0x2000000
 NULL = 0
 OPEN_EXISTING = 3
 FILE_ATTRIBUTE_READONLY = 0x1
+FILE_ATTRIBUTE_HIDDEN = 0x2
 FILE_ATTRIBUTE_DIRECTORY = 0x10
 FILE_ATTRIBUTE_NORMAL = 0x80
 FILE_ATTRIBUTE_REPARSE_POINT = 0x400
@@ -173,10 +178,6 @@ class STAT_STRUCT(Structure):
 _wstat = windll.msvcrt._wstat
 _wstat.argtypes = [LPWSTR, POINTER(STAT_STRUCT)]
 _wstat.restype = c_int
-
-GetFileAttributes = windll.kernel32.GetFileAttributesW
-GetFileAttributes.argtypes = LPWSTR,
-GetFileAttributes.restype = DWORD
 
 FILE_NOTIFY_CHANGE_LAST_WRITE = 0x10
 
