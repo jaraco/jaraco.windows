@@ -1,6 +1,9 @@
 from __future__ import print_function
+
 import ctypes
 from ctypes import wintypes
+
+from . import constants
 
 GetCurrentProcess = ctypes.windll.kernel32.GetCurrentProcess
 GetCurrentProcess.restype = wintypes.HANDLE
@@ -37,10 +40,10 @@ class TOKEN_INFORMATION_CLASS:
 	TokenPrivileges = 3
 	# ... see http://msdn.microsoft.com/en-us/library/aa379626%28VS.85%29.aspx
 
-SE_PRIVILEGE_ENABLED_BY_DEFAULT = (0x00000001)
-SE_PRIVILEGE_ENABLED            = (0x00000002)
-SE_PRIVILEGE_REMOVED            = (0x00000004)
-SE_PRIVILEGE_USED_FOR_ACCESS    = (0x80000000)
+SE_PRIVILEGE_ENABLED_BY_DEFAULT = 0x00000001
+SE_PRIVILEGE_ENABLED = 0x00000002
+SE_PRIVILEGE_REMOVED = 0x00000004
+SE_PRIVILEGE_USED_FOR_ACCESS = 0x80000000
 
 class LUID_AND_ATTRIBUTES(ctypes.Structure):
 	_fields_ = [
@@ -190,6 +193,35 @@ def enable_symlink_privilege():
 
 	ERROR_NOT_ALL_ASSIGNED = 1300
 	return ctypes.windll.kernel32.GetLastError() != ERROR_NOT_ALL_ASSIGNED
+
+class PolicyHandle(wintypes.HANDLE):
+	pass
+
+class LSA_UNICODE_STRING(ctypes.Structure):
+	_fields_ = [
+		('length', ctypes.c_ushort),
+		('max_length', ctypes.c_ushort),
+		('buffer', ctypes.wintypes.LPWSTR),
+	]
+
+def OpenPolicy(system_name, object_attributes, access_mask):
+	policy = PolicyHandle()
+	raise NotImplementedError("Need to construct structures for parameters "
+		"(see http://msdn.microsoft.com/en-us/library/windows/desktop/aa378299%28v=vs.85%29.aspx)")
+	res = ctypes.windll.advapi32.LsaOpenPolicy(system_name, object_attributes,
+		access_mask, ctypes.byref(policy))
+	assert res == 0, "Error status {res}".format(**vars())
+	return policy
+
+def grant_symlink_privilege(who, machine=''):
+	"""
+	Grant the 'create symlink' privilege to who.
+
+	Based on http://support.microsoft.com/kb/132958
+	"""
+	flags = constants.POLICY_CREATE_ACCOUNT | constants.POLICY_LOOKUP_NAMES
+	policy = OpenPolicy(machine, flags)
+	return policy
 
 def main():
 	assigned = enable_symlink_privilege()
