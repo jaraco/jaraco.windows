@@ -140,11 +140,16 @@ class RegisteredEnvironment(object):
 class MachineRegisteredEnvironment(RegisteredEnvironment):
 	path = r'SYSTEM\CurrentControlSet\Control\Session Manager\Environment'
 	hklm = winreg.ConnectRegistry(None, winreg.HKEY_LOCAL_MACHINE)
-	key = winreg.OpenKey(hklm, path, 0, winreg.KEY_READ | winreg.KEY_WRITE)
+	try:
+		key = winreg.OpenKey(hklm, path, 0,
+			winreg.KEY_READ | winreg.KEY_WRITE)
+	except WindowsError:
+		key = winreg.OpenKey(hklm, path, 0, winreg.KEY_READ)
 
 class UserRegisteredEnvironment(RegisteredEnvironment):
 	hkcu = winreg.ConnectRegistry(None, winreg.HKEY_CURRENT_USER)
-	key = winreg.OpenKey(hkcu, 'Environment', 0, winreg.KEY_READ | winreg.KEY_WRITE)
+	key = winreg.OpenKey(hkcu, 'Environment', 0,
+		winreg.KEY_READ | winreg.KEY_WRITE)
 
 def trim(s):
 	from textwrap import dedent
