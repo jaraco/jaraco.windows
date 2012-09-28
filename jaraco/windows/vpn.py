@@ -2,7 +2,8 @@ import os
 from path import path
 
 def params_to_lines(params):
-	return ('{key}={value}\n' for key, value in params.iteritems())
+	return ('{key}={value}\n'.format(**vars())
+		for key, value in params.iteritems())
 
 def install_pptp(name, **params):
 	"""
