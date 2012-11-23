@@ -12,6 +12,58 @@ class TOKEN_USER(ctypes.Structure):
 		('ATTRIBUTES', ctypes.wintypes.DWORD),
 	]
 
+
+class SECURITY_DESCRIPTOR(ctypes.Structure):
+	"""
+	typedef struct _SECURITY_DESCRIPTOR
+		{
+		UCHAR Revision;
+		UCHAR Sbz1;
+		SECURITY_DESCRIPTOR_CONTROL Control;
+		PSID Owner;
+		PSID Group;
+		PACL Sacl;
+		PACL Dacl;
+		}   SECURITY_DESCRIPTOR;
+	"""
+	SECURITY_DESCRIPTOR_CONTROL = ctypes.wintypes.USHORT
+	REVISION = 1
+
+	_fields_ = [
+		('Revision', ctypes.c_ubyte),
+		('Sbz1', ctypes.c_ubyte),
+		('Control', SECURITY_DESCRIPTOR_CONTROL),
+		('Owner', ctypes.c_void_p),
+		('Group', ctypes.c_void_p),
+		('Sacl', ctypes.c_void_p),
+		('Dacl', ctypes.c_void_p),
+	]
+
+class SECURITY_ATTRIBUTES(ctypes.Structure):
+	"""
+	typedef struct _SECURITY_ATTRIBUTES {
+		DWORD  nLength;
+		LPVOID lpSecurityDescriptor;
+		BOOL   bInheritHandle;
+	} SECURITY_ATTRIBUTES;
+	"""
+	_fields_ = [
+		('nLength', ctypes.wintypes.DWORD),
+		('lpSecurityDescriptor', ctypes.c_void_p),
+		('bInheritHandle', ctypes.wintypes.BOOL),
+	]
+
+	def __init__(self, *args, **kwargs):
+		super(SECURITY_ATTRIBUTES, self).__init__(*args, **kwargs)
+		self.nLength = ctypes.sizeof(SECURITY_ATTRIBUTES)
+
+	def _get_descriptor(self):
+		return self._descriptor
+	def _set_descriptor(self, descriptor):
+		self._descriptor = descriptor
+		self.lpSecurityDescriptor = ctypes.addressof(descriptor)
+	descriptor = property(_get_descriptor, _set_descriptor)
+
 def GetTokenInformation(token, information_class):
 	"""
 	Given a token, get the token information for it.
