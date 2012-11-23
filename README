@@ -53,6 +53,25 @@ to the author.
 Changes
 -------
 
+2.10
+~~~~
+
+* Fixed issue where MemoryMap wouldn't read null bytes.
+* Added security.get_security_attributes_for_user.
+
+2.9
+~~~
+
+* Added mmap module with MemoryMap class. This class allows the client to
+  specify SECURITY_ATTRIBUTES, which the Python mmap module does not.
+* Added security module with support for security descriptors and security
+  attributes.
+
+2.8
+~~~
+
+* Added vpn module with support for creating PPTP connections.
+
 2.7
 ~~~
 
