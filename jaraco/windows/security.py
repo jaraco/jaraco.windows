@@ -89,8 +89,29 @@ def OpenProcessToken(proc_handle, access):
 	return result
 
 def get_current_user():
+	"""
+	Return a TOKEN_USER for the owner of this process.
+	"""
 	process = OpenProcessToken(
 		ctypes.windll.kernel32.GetCurrentProcess(),
 		TokenAccess.TOKEN_QUERY,
 	)
 	return GetTokenInformation(process, TOKEN_USER)
+
+def _get_security_attributes_for_current_user():
+	"""
+	Return a SECURITY_ATTRIBUTES structure with the SID set to the
+	current user.
+	"""
+	SD = SECURITY_DESCRIPTOR()
+	SA = SECURITY_ATTRIBUTES()
+	# by attaching the actual security descriptor, it will be garbage-
+	# collected with the security attributes
+	SA.descriptor = SD
+	SA.bInheritHandle = 1
+
+	ctypes.windll.advapi32.InitializeSecurityDescriptor(ctypes.byref(SD),
+		SECURITY_DESCRIPTOR.REVISION)
+	ctypes.windll.advapi32.SetSecurityDescriptorOwner(ctypes.byref(SD),
+		get_current_user().SID, 0)
+	return SA
