@@ -58,7 +58,7 @@ class MemoryMap(object):
 		out = ctypes.create_string_buffer(n)
 		ctypes.windll.msvcrt.memcpy(out, self.view + self.pos, n)
 		self.pos += n
-		return out.value
+		return out.raw
 
 	def __exit__(self, exc_type, exc_val, tb):
 		ctypes.windll.kernel32.UnmapViewOfFile(self.view)
