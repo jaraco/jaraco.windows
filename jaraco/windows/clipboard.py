@@ -49,7 +49,7 @@ CF_GDIOBJLAST      = 0x03FF
 def OpenClipboard(owner=None):
 	"""
 	Open the clipboard.
-	
+
 	owner
 	[in] Handle to the window to be associated with the open clipboard.
 	If this parameter is None, the open clipboard is associated with the
@@ -178,7 +178,7 @@ def SetClipboardData(type, content):
 def set_text(source):
 	with context():
 		EmptyClipboard()
-		SetClipboardData(CF_TEXT, source) 
+		SetClipboardData(CF_TEXT, source)
 
 def get_text():
 	with context():
@@ -215,4 +215,3 @@ def get_formats():
 			format_index = _EnumClipboardFormats(format_index)
 			if format_index == 0: break
 			yield format_index
-
