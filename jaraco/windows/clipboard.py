@@ -185,6 +185,11 @@ def get_text():
 		result = GetClipboardData(CF_TEXT)
 	return result
 
+def set_unicode_text(source):
+	with context():
+		EmptyClipboard()
+		SetClipboardData(CF_UNICODETEXT, source)
+
 def get_unicode_text():
 	with context():
 		return GetClipboardData()

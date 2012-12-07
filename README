@@ -53,6 +53,11 @@ to the author.
 Changes
 -------
 
+2.11
+~~~~
+
+* Add `clipboard.set_unicode_text`.
+
 2.10
 ~~~~
 
