@@ -1,4 +1,4 @@
-from __future__ import with_statement
+from __future__ import with_statement, print_function
 
 import sys
 import re
@@ -157,20 +157,29 @@ _SetClipboardData.restype = HANDLE
 
 GMEM_MOVEABLE = 0x2
 
+GlobalAlloc = windll.kernel32.GlobalAlloc
+GlobalAlloc.argtypes = [
+	UINT, ctypes.wintypes.c_ssize_t,
+]
+GlobalAlloc.restype = HANDLE
+
 def SetClipboardData(type, content):
 	"""
 	Modeled after http://msdn.microsoft.com/en-us/library/ms649016%28VS.85%29.aspx#_win32_Copying_Information_to_the_Clipboard
 	"""
-	if not type == CF_TEXT and not isinstance(content, basestring):
-		raise NotImplementedError("Only text type is supported at this time")
+	allocators = {
+		CF_TEXT: ctypes.create_string_buffer,
+		CF_UNICODETEXT: ctypes.create_unicode_buffer,
+	}
+	if not type in allocators:
+		raise NotImplementedError("Only text types are supported at this time")
 	# allocate the memory for the data
-	content = ctypes.create_string_buffer(content)
+	content = allocators[type](content)
 	flags = GMEM_MOVEABLE
-	size = len(content)
+	size = ctypes.sizeof(content)
 	handle_to_copy = windll.kernel32.GlobalAlloc(flags, size)
-	ptr = windll.kernel32.GlobalLock(handle_to_copy)
-	ctypes.memmove(ptr, content, size)
-	windll.kernel32.GlobalUnlock(handle_to_copy)
+	with LockedMemory(handle_to_copy) as lm:
+		ctypes.memmove(lm.data_ptr, content, size)
 	result = _SetClipboardData(type, handle_to_copy)
 	if result is None:
 		raise WindowsError()

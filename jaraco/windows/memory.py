@@ -24,6 +24,7 @@ class LockedMemory(object):
 		if not self.data_ptr:
 			del self.data_ptr
 			raise WinError()
+		return self
 
 	def __exit__(self, *args):
 		GlobalUnlock(self.handle)
@@ -37,4 +38,3 @@ class LockedMemory(object):
 	@property
 	def size(self):
 		return GlobalSize(self.data_ptr)
-
