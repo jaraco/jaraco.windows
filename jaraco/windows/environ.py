@@ -68,7 +68,6 @@ class RegisteredEnvironment(object):
 			res = res.split(sep)
 		return res
 
-
 	@classmethod
 	def set(class_, name, value, options):
 		# consider opening the key read-only except for here
@@ -160,9 +159,9 @@ def enver(*args):
 	%prog [<name>=[value]]
 
 	To show all environment variables, call with no parameters:
-	 %prog
+		%prog
 	To Add/Modify/Delete environment variable:
-	 %prog <name>=[value]
+		%prog <name>=[value]
 
 	If <name> is PATH or PATHEXT, %prog will by default append the value using
 	a semicolon as a separator. Use -r to disable this behavior or -a to force
