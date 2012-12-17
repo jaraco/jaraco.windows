@@ -53,6 +53,12 @@ to the author.
 Changes
 -------
 
+2.12
+~~~~
+
+* Added `add` method to the environ RegisteredEnvironments. Use it to add
+  a value to a list of values but only if it's not already present.
+
 2.11.1
 ~~~~~~
 

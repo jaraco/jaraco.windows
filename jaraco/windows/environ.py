@@ -86,6 +86,20 @@ class RegisteredEnvironment(object):
 		class_.notify()
 
 	@classmethod
+	def add(class_, name, value, sep=';'):
+		"""
+		Add a value to a delimited variable, but only when the value isn't
+		already present.
+		"""
+		values = class_.get_values_list(name, sep)
+		if value in values:
+			return
+		new_value = sep.join(values + [value])
+		winreg.SetValueEx(class_.key, name, 0, winreg.REG_EXPAND_SZ,
+			new_value)
+		class_.notify()
+
+	@classmethod
 	def remove_values(class_, name, value_substring, options):
 		sep = ';'
 		values = class_.get_values_list(name, sep)
