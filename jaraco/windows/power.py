@@ -1,17 +1,19 @@
 #-*- coding: utf-8 -*-
 
 import itertools
+import contextlib
+import ctypes
+
+from ctypes import Structure, windll, POINTER
+from ctypes.wintypes import BYTE, DWORD, BOOL
 
 try:
 	import wmi as wmilib
 except ImportError:
 	pass
 
-from ctypes import Structure, windll, POINTER
-from ctypes.wintypes import BYTE, DWORD, BOOL
-
 from jaraco.windows.error import handle_nonzero_success
-from jaraco.util.iter_ import consume
+from jaraco.util.itertools import consume
 
 class SYSTEM_POWER_STATUS(Structure):
 	_fields_ = (
@@ -73,3 +75,22 @@ def get_power_states():
 		state = GetSystemPowerStatus()
 		yield state.ac_line_status_string
 		wait_for_power_status_change()
+
+SetThreadExecutionState = ctypes.windll.kernel32.SetThreadExecutionState
+SetThreadExecutionState.argtypes = [ctypes.c_uint]
+SetThreadExecutionState.restype = ctypes.c_uint
+
+@contextlib.contextmanager
+def no_sleep():
+	"""
+	Context that prevents the computer from going to sleep.
+	"""
+	try:
+		ES_CONTINUOUS = 0x80000000
+		ES_AWAYMODE_REQUIRED = 0x40
+		ES_SYSTEM_REQUIRED = 0x2
+		mode = ES_CONTINUOUS | ES_SYSTEM_REQUIRED | ES_AWAYMODE_REQUIRED
+		print SetThreadExecutionState(mode)
+		yield
+	finally:
+		print SetThreadExecutionState(ES_CONTINUOUS)
