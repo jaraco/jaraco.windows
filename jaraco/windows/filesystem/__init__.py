@@ -299,6 +299,8 @@ def readlink(link):
 	rdb = p_rdb.contents
 	if not rdb.tag == api.IO_REPARSE_TAG_SYMLINK:
 		raise RuntimeError("Expected IO_REPARSE_TAG_SYMLINK, but got %d" % rdb.tag)
+
+    handle_nonzero_success(api.CloseHandle(handle))
 	return rdb.get_substitute_name()
 
 def patch_os_module():
