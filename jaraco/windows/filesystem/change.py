@@ -11,7 +11,7 @@ from __future__ import print_function
 
 import os
 import sys
-import time
+import datetime
 import re
 from threading import Thread
 import itertools
@@ -44,14 +44,13 @@ class ModifiedTimeFilter(FileFilter):
 	the cutoff time.
 	"""
 	def __init__(self, cutoff):
-		# truncate the time to the second.
-		self.cutoff = int(cutoff)
+		self.cutoff = cutoff
 
 	def __call__(self, file):
 		filepath = self._get_file_path(file)
-		last_mod = os.stat(filepath).st_mtime
-		log.debug('%s last modified at %s.', filepath,
-			time.asctime(time.localtime(last_mod)))
+		last_mod = datetime.datetime.utcfromtimestamp(
+			os.stat(filepath).st_mtime)
+		log.debug('{filepath} last modified at {last_mod}.'.format(**vars()))
 		return last_mod > self.cutoff
 
 class PatternFilter(FileFilter):
@@ -169,7 +168,7 @@ class BlockingNotifier(Notifier):
 
 	def get_changed_files(self):
 		self._get_change_handle()
-		check_time = time.time()
+		check_time = datetime.datetime.utcnow()
 		# block (sleep) until something changes in the
 		#  target directory or a quit is requested.
 		# timeout so we can catch keyboard interrupts or other exceptions
@@ -184,10 +183,9 @@ class BlockingNotifier(Notifier):
 
 			# something has changed.
 			log.debug('Change notification received')
-			next_check_time = time.time()
+			next_check_time = datetime.datetime.utcnow()
 			fs.FindNextChangeNotification(self.hChange)
-			log.debug('Looking for all files changed after %s',
-				time.asctime(time.localtime(check_time)))
+			log.debug('Looking for all files changed after %s', check_time)
 			for file in self.find_files_after(check_time):
 				yield file
 			check_time = next_check_time
