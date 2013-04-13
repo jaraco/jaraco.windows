@@ -102,6 +102,18 @@ class AggregateFilter(FileFilter):
 	def __call__(self, file):
 		return all(fil(file) for fil in self.filters)
 
+class OncePerModFilter(FileFilter):
+	def __init__(self):
+		self.history = list()
+
+	def __call__(self, file):
+		key = file, os.stat(file).st_mtime
+		result = key not in self.history
+		self.history.append(key)
+		if len(self.history) > 100:
+			del self.history[-50:]
+		return result
+
 def files_with_path(files, path):
 	return (os.path.join(path, file) for file in files)
 
@@ -120,6 +132,7 @@ class Notifier(object):
 
 		self.watch_subtree = False
 		self.quit_event = event.CreateEvent(None, 0, 0, None)
+		self.opm_filter = OncePerModFilter()
 
 	def __del__(self):
 		try:
@@ -183,8 +196,8 @@ class BlockingNotifier(Notifier):
 
 			# something has changed.
 			log.debug('Change notification received')
-			next_check_time = datetime.datetime.utcnow()
 			fs.FindNextChangeNotification(self.hChange)
+			next_check_time = datetime.datetime.utcnow()
 			log.debug('Looking for all files changed after %s', check_time)
 			for file in self.find_files_after(check_time):
 				yield file
@@ -192,7 +205,7 @@ class BlockingNotifier(Notifier):
 
 	def find_files_after(self, cutoff):
 		mtf = ModifiedTimeFilter(cutoff)
-		af = AggregateFilter(mtf, *self.filters)
+		af = AggregateFilter(mtf, self.opm_filter, *self.filters)
 		results = Notifier._filtered_walk(self.root, af)
 		results = itertools.imap(get_file_paths, results)
 		if self.watch_subtree:
