@@ -52,7 +52,7 @@ class ModifiedTimeFilter(FileFilter):
 		last_mod = os.stat(filepath).st_mtime
 		log.debug('%s last modified at %s.', filepath,
 			time.asctime(time.localtime(last_mod)))
-		return last_mod >= self.cutoff
+		return last_mod > self.cutoff
 
 class PatternFilter(FileFilter):
 	"""
