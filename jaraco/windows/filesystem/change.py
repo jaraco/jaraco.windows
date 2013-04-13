@@ -48,7 +48,8 @@ class ModifiedTimeFilter(FileFilter):
 	def __call__(self, file):
 		filepath = self._get_file_path(file)
 		last_mod = os.stat(filepath).st_mtime
-		log.debug('%s last modified at %s.', filepath, time.asctime(time.localtime(last_mod)))
+		log.debug('%s last modified at %s.', filepath,
+			time.asctime(time.localtime(last_mod)))
 		return last_mod >= self.cutoff
 
 class PatternFilter(FileFilter):
@@ -57,7 +58,10 @@ class PatternFilter(FileFilter):
 	expression).
 	"""
 	def __init__(self, pattern):
-		self.pattern = re.compile(pattern) if isinstance(pattern, basestring) else pattern
+		self.pattern = (
+			re.compile(pattern) if isinstance(pattern, basestring)
+			else pattern
+		)
 
 	def __call__(self, file):
 		return bool(self.pattern.match(file, re.I))
@@ -68,12 +72,14 @@ class GlobFilter(PatternFilter):
 	expression.
 	"""
 	def __init__(self, expression):
-		super(GlobFilter, self).__init__(self.convert_file_pattern(expression))
+		super(GlobFilter, self).__init__(
+			self.convert_file_pattern(expression))
 
 	@staticmethod
 	def convert_file_pattern(p):
 		r"""
-		converts a filename specification (such as c:\*.*) to an equivelent regular expression
+		converts a filename specification (such as c:\*.*) to an equivelent
+		regular expression
 		>>> GlobFilter.convert_file_pattern('/*')
 		'/.*'
 		"""
@@ -107,7 +113,8 @@ class Notifier(object):
 		# assign the root, verify it exists
 		self.root = root
 		if not os.path.isdir(self.root):
-			raise NotifierException('Root directory "%s" does not exist' % self.root)
+			raise NotifierException(
+				'Root directory "%s" does not exist' % self.root)
 		self.filters = filters
 
 		self.watch_subtree = False
@@ -129,7 +136,8 @@ class Notifier(object):
 		# make sure it worked; if not, bail
 		INVALID_HANDLE_VALUE = fs.INVALID_HANDLE_VALUE
 		if self.hChange == INVALID_HANDLE_VALUE:
-			raise NotifierException('Could not set up directory change notification')
+			raise NotifierException('Could not set up directory change '
+				'notification')
 
 	@staticmethod
 	def _filtered_walk(path, file_filter):
@@ -164,13 +172,15 @@ class BlockingNotifier(Notifier):
 		#  target directory or a quit is requested.
 		# timeout so we can catch keyboard interrupts or other exceptions
 		WAIT_OBJECT_0 = event.WAIT_OBJECT_0
-		for result in BlockingNotifier.wait_results((self.hChange, self.quit_event), False, 1000):
+		events = (self.hChange, self.quit_event)
+		for result in BlockingNotifier.wait_results(events, False, 1000):
 			if result == WAIT_OBJECT_0 + 0:
 				# something has changed.
 				log.debug('Change notification received')
 				next_check_time = time.time()
 				fs.FindNextChangeNotification(self.hChange)
-				log.debug('Looking for all files changed after %s', time.asctime(time.localtime(check_time)))
+				log.debug('Looking for all files changed after %s',
+					time.asctime(time.localtime(check_time)))
 				for file in self.find_files_after(check_time):
 					yield file
 				check_time = next_check_time
@@ -207,9 +217,9 @@ class ThreadedNotifier(BlockingNotifier, Thread):
 		# init thread stuff
 		Thread.__init__(self)
 		# set it as a daemon thread so that it doesn't block waiting to close.
-		#  I tried setting __del__(self) to .quit(), but unfortunately, there are
-		#  references to this object in the win32api stuff, so __del__ never gets
-		#  called.
+		# I tried setting __del__(self) to .quit(), but unfortunately, there
+		# are references to this object in the win32api stuff, so __del__
+		# never gets called.
 		self.setDaemon(True)
 
 		self.handle = handler
