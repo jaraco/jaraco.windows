@@ -107,6 +107,7 @@ class OncePerModFilter(FileFilter):
 		self.history = list()
 
 	def __call__(self, file):
+		file = os.path.join(self.root, file)
 		key = file, os.stat(file).st_mtime
 		result = key not in self.history
 		self.history.append(key)
