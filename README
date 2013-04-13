@@ -53,11 +53,15 @@ to the author.
 Changes
 -------
 
+2.13.2
+~~~~~~
+
+* Improvements to file change handling, reducing duplicates.
+
 2.13
 ~~~~
 
 * Added `no_sleep` context manager to the power module.
-
 2.12
 ~~~~
 
