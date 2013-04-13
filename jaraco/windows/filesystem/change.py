@@ -146,7 +146,7 @@ class Notifier(object):
 			yield (root, dirs, files)
 
 	def quit(self):
-		SetEvent(self.quit_event)
+		jaraco.windows.api.event.SetEvent(self.quit_event)
 
 class BlockingNotifier(Notifier):
 
