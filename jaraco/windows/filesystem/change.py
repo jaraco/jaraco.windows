@@ -4,17 +4,14 @@
 FileChange
 	Classes and routines for monitoring the file system for changes.
 
-Copyright © 2004, 2011 Jason R. Coombs
+Copyright © 2004, 2011, 2013 Jason R. Coombs
 """
 
 import os
 import sys
 import time
 import re
-import operator
 from threading import Thread
-import traceback
-from stat import *
 import itertools
 import logging
 
@@ -86,8 +83,8 @@ class GlobFilter(PatternFilter):
 
 class AggregateFilter(FileFilter):
 	"""
-	This file filter will aggregate the filters passed to it, and when called, will
-	  return the results of each filter ANDed together.
+	This file filter will aggregate the filters passed to it, and when called,
+	will return the results of each filter ANDed together.
 	"""
 	def __init__(self, *filters):
 		self.filters = filters
