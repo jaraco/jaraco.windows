@@ -7,6 +7,8 @@ FileChange
 Copyright © 2004, 2011, 2013 Jason R. Coombs
 """
 
+from __future__ import print_function
+
 import os
 import sys
 import time
@@ -171,24 +173,24 @@ class BlockingNotifier(Notifier):
 		# block (sleep) until something changes in the
 		#  target directory or a quit is requested.
 		# timeout so we can catch keyboard interrupts or other exceptions
-		WAIT_OBJECT_0 = event.WAIT_OBJECT_0
 		events = (self.hChange, self.quit_event)
-		for result in BlockingNotifier.wait_results(events, False, 1000):
-			if result == WAIT_OBJECT_0 + 0:
-				# something has changed.
-				log.debug('Change notification received')
-				next_check_time = time.time()
-				fs.FindNextChangeNotification(self.hChange)
-				log.debug('Looking for all files changed after %s',
-					time.asctime(time.localtime(check_time)))
-				for file in self.find_files_after(check_time):
-					yield file
-				check_time = next_check_time
-			if result == WAIT_OBJECT_0 + 1:
-				# quit was received, stop yielding stuff
+		for result in self.wait_results(events, False, 1000):
+			if result == event.WAIT_TIMEOUT:
+				continue
+			index = result - event.WAIT_OBJECT_0
+			if events[index] is self.quit_event:
+				# quit was received; stop yielding results
 				return
-			else:
-				pass # it was a timeout.  ignore it and wait some more.
+
+			# something has changed.
+			log.debug('Change notification received')
+			next_check_time = time.time()
+			fs.FindNextChangeNotification(self.hChange)
+			log.debug('Looking for all files changed after %s',
+				time.asctime(time.localtime(check_time)))
+			for file in self.find_files_after(check_time):
+				yield file
+			check_time = next_check_time
 
 	def find_files_after(self, cutoff):
 		mtf = ModifiedTimeFilter(cutoff)
