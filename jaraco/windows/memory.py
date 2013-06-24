@@ -1,7 +1,8 @@
 import ctypes
 from ctypes import windll
 from ctypes import c_size_t
-from ctypes.wintypes import HGLOBAL, LPVOID, BOOL, WinError
+from ctypes import WinError
+from ctypes.wintypes import HGLOBAL, LPVOID, BOOL
 
 GlobalLock = windll.kernel32.GlobalLock
 GlobalLock.argtypes = HGLOBAL,

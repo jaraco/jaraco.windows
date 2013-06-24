@@ -159,7 +159,7 @@ GMEM_MOVEABLE = 0x2
 
 GlobalAlloc = windll.kernel32.GlobalAlloc
 GlobalAlloc.argtypes = [
-	UINT, ctypes.wintypes.c_ssize_t,
+	UINT, ctypes.c_ssize_t,
 ]
 GlobalAlloc.restype = HANDLE
 
