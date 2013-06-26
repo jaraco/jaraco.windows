@@ -1,6 +1,16 @@
 Changes
 -------
 
+2.15
+~~~~
+
+* Improved Python 3 support including working gclip and pclip commands.
+
+2.14
+~~~~
+
+* Added py2exe support to the package.
+
 2.13.2
 ~~~~~~
 
