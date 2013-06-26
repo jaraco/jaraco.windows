@@ -1,10 +1,9 @@
 import functools
-from contextlib import contextmanager
 from itertools import imap
 
-import win32api, win32con, winerror, win32evtlog, win32evtlogutil
-
-from jaraco.util.iter_ import consume
+import win32api
+import win32evtlog
+import win32evtlogutil
 
 error = win32api.error # The error the evtlog module raises.
 
@@ -23,7 +22,7 @@ class EventLog(object):
 	def __exit__(self, *args):
 		win32evtlog.CloseEventLog(self.handle)
 		del self.handle
-		
+
 	def get_records(self, flags=win32evtlog.EVENTLOG_BACKWARDS_READ|win32evtlog.EVENTLOG_SEQUENTIAL_READ):
 		with self:
 			while True:
