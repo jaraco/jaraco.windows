@@ -3,8 +3,6 @@
 """
 timers
 	In particular, contains a waitable timer.
-
-Copyright © 2004,2011 Jason R. Coombs
 """
 
 from __future__ import absolute_import
