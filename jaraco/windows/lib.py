@@ -8,9 +8,9 @@ GetModuleFileName.restype = DWORD
 def find_lib(lib):
 	r"""
 	Find the DLL for a given library.
-	
+
 	Accepts a string or loaded module
-	
+
 	>>> find_lib('kernel32').lower()
 	u'c:\\windows\\system32\\kernel32.dll'
 	"""
