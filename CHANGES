@@ -1,0 +1,190 @@
+Changes
+-------
+
+2.13.2
+~~~~~~
+
+* Improvements to file change handling, reducing duplicates.
+
+2.13
+~~~~
+
+* Added `no_sleep` context manager to the power module.
+2.12
+~~~~
+
+* Added `add` method to the environ RegisteredEnvironments. Use it to add
+  a value to a list of values but only if it's not already present.
+
+2.11.1
+~~~~~~
+
+* Fixed issue in set_unicode_text.
+
+2.11
+~~~~
+
+* Add `clipboard.set_unicode_text`.
+
+2.10
+~~~~
+
+* Fixed issue where MemoryMap wouldn't read null bytes.
+* Added security.get_security_attributes_for_user.
+
+2.9
+~~~
+
+* Added mmap module with MemoryMap class. This class allows the client to
+  specify SECURITY_ATTRIBUTES, which the Python mmap module does not.
+* Added security module with support for security descriptors and security
+  attributes.
+
+2.8
+~~~
+
+* Added vpn module with support for creating PPTP connections.
+
+2.7
+~~~
+
+* Added filesystem.SetFileAttributes
+
+2.6
+~~~
+
+* Fixed import issue in jaraco.windows.filesystem on Python 3.
+* Added cookie module from jaraco.net.
+* Fixed issue in filesystem.islink() where a call against a nonexistent
+  file could raise an Exception.
+
+2.5
+~~~
+
+* Moved timers module from jaraco.util.
+* Added jaraco.windows.cred with initial support for Windows Credential
+  Manager.
+
+2.4
+~~~
+
+* Moved filechange notification from jaraco.util.
+
+2.3
+~~~
+
+* Added filesystem.GetFileAttributes.
+* Added services module for working with Windows Services (currently uses
+  pywin32).
+
+2.2
+~~~
+
+* Fixes by wkornewald for issue #1 - Symlink relative path deficiencies.
+* Added jaraco.windows.message.SendMessageTimeout.
+* Fixed issue where environment changes would stall on SendMessage.
+* SendMessage now uses the correct type for lParam, but will still accept
+  string types.
+
+2.1
+~~~
+
+* Added jaraco.windows.user module (with get_user_name function).
+* Added get_unicode_text to clipboard module.
+
+2.0
+~~~
+
+* Added clipboard.set_text function for a simple routine for setting
+  clipboard text.
+* Added support for editing environment variables in a text-editor.
+* Added clipboard.get_html and clipboard.HTMLSnippet for supporting
+  the HTML format from the clipboard.
+
+1.9.1
+~~~~~
+
+* Fixed issue with clipboard handling of null-terminated strings
+
+1.9
+~~~
+
+* Added eventlog utility
+* Added support for other clipboard formats (including DIB and DIBV5), and now clipboards to proper memory locking while reading the resource
+* Added registry module
+* Moved office module to jaraco.office project
+
+1.8
+~~~
+
+* Added 2to3 build support - now installs on Python 3
+* Removed default import of jaraco.windows.net into jaraco.windows
+* Fixed division operator issue in jaraco.windows.reparse.
+
+1.7
+~~~
+
+* Added option to enver to remove values from a path or other semi-
+  colon-separated value.
+* Added privilege module.
+* Made `jaraco.windows.error.WindowsError` a subclass of
+  `__builtin__.WindowsError`.
+* Added office module with MS Word based PDF Converter.
+* Added early implementation of clipboard support.
+* Added delay option to xmouse.
+
+1.6
+~~~
+
+* Added monkeypatch for os.symlink and os.readlink.
+* Added find-symlinks command.
+
+1.5
+~~~
+
+* NB!! Switched the order of the parameters for symlink and link to match the
+  signature found in the ``os`` module. This will absolutely break any implementations
+  that worked with ``jaraco.windows`` prior to 1.5.
+
+1.4
+~~~
+
+* Added more robust support for symlink support (including a symlink traversal
+  routine that works even when the target is locked). This method uses explicit
+  reparse point parsing, using the new reparse module.
+* Added support for hardlinks.
+* Added jaraco.windows.lib for locating loaded modules.
+* Added command line parameters to environ to allow override of default
+  append/replace behavior.
+* Added power monitoring utilities.
+* Began work on GUI testing objects in jaraco.windows.gui.test, based on watsup.
+* Added filesystem.GetBinaryType
+* Added filesystem.SHFileOperation (useful for sending items to a Recycle Bin).
+* Updated enver to support appending to a non-existent variable.
+* Added a 'show' option to xmouse
+* Added routines to support the Microsoft Data Protection API (DPAPI).
+
+1.3
+~~~
+
+* Added -U option to enver
+
+1.2
+~~~
+
+* Added this documentation
+* Updated the project website to use PYPI directly.
+* Improved deployment support (fixes issues with easy_install)
+* Fixed issue with PATH and PATHEXT handling in enver.
+
+1.1
+~~~
+
+* Added support for persistent environment variable setting (inspired by
+  enver.py)
+
+1.0
+~~~
+
+* Initial release
+* Includes xmouse script for enabling/disabling focus-follows-mouse

@@ -11,11 +11,17 @@ __author__ = 'Jason R. Coombs <jaraco@jaraco.com>'
 
 name = 'jaraco.windows'
 
+with open('README') as readme:
+	long_description = readme.read()
+
+with open('CHANGES') as changes:
+	long_description += changes.read()
+
 setup_params = dict(
 	name = name,
 	use_hg_version = dict(increment='0.0.1'),
 	description = 'Windows Routines by Jason R. Coombs',
-	long_description = open('README').read(),
+	long_description = long_description,
 	author = 'Jason R. Coombs',
 	author_email = 'jaraco@jaraco.com',
 	url = 'http://pypi.python.org/pypi/' + name,
