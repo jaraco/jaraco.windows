@@ -3,6 +3,8 @@ Some routines for retrieving the addresses from the local
 network config.
 """
 
+from __future__ import print_function
+
 import ipaddr
 import itertools
 import ctypes
@@ -215,7 +217,7 @@ def GetAdaptersAddresses():
 	res = ip_helper.GetAdaptersAddresses(0,0,None, None,size)
 	if res != ERROR_BUFFER_OVERFLOW:
 		raise RuntimeError("Error getting structure length (%d)" % res)
-	print size.value
+	print(size.value)
 	pointer_type = ctypes.POINTER(IP_ADAPTER_ADDRESSES)
 	buffer = ctypes.create_string_buffer(size.value)
 	struct_p = ctypes.cast(buffer, pointer_type)
