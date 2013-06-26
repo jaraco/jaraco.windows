@@ -1,7 +1,5 @@
 #!/usr/bin/env python
 
-# $Id$
-
 import ctypes
 import ctypes.wintypes
 import __builtin__
@@ -13,12 +11,8 @@ def format_system_message(errno):
 	"""
 	# first some flags used by FormatMessageW
 	ALLOCATE_BUFFER = 0x100
-	ARGUMENT_ARRAY = 0x2000
-	FROM_HMODULE = 0x800
-	FROM_STRING = 0x400
 	FROM_SYSTEM = 0x1000
-	IGNORE_INSERTS = 0x200
-	
+
 	# Let FormatMessageW allocate the buffer (we'll free it below)
 	# Also, let it know we want a system error message.
 	flags = ALLOCATE_BUFFER | FROM_SYSTEM
