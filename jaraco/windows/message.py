@@ -6,10 +6,11 @@ jaraco.windows.message
 Windows Messaging support
 """
 
-# $Id$
-
 import ctypes
 from ctypes.wintypes import HWND, UINT, WPARAM, LPARAM, DWORD, LPVOID
+
+import six
+
 LRESULT = LPARAM
 
 class LPARAM_wstr(LPARAM):
@@ -20,8 +21,8 @@ class LPARAM_wstr(LPARAM):
 	"""
 	@classmethod
 	def from_param(cls, param):
-		if isinstance(param, basestring):
-			return LPVOID.from_param(unicode(param))
+		if isinstance(param, six.string_types):
+			return LPVOID.from_param(six.text_type(param))
 		return LPARAM.from_param(param)
 
 SendMessage = ctypes.windll.user32.SendMessageW
