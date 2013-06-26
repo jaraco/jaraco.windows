@@ -40,9 +40,15 @@ class CookieMonster(object):
 			CreateLow, CreateHigh):
 		expires = (int(ExpireHigh) << 32) | int(ExpireLow)
 		created = (int(CreateHigh) << 32) | int(CreateLow)
-		del ExpireHigh, ExpireLow, CreateHigh, CreateLow
 		flags = int(flags)
 		domain, sep, path = domain.partition('/')
 		path = '/' + path
-		cookie = vars()
-		return cookie
+		return dict(
+			key=key,
+			value=value,
+			domain=domain,
+			flags=flags,
+			expires=expires,
+			created=created,
+			path=path,
+			)
