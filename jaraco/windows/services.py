@@ -66,7 +66,8 @@ class Service(object):
 		self.userv = service
 		self.scmhandle = win32service.OpenSCManager(machinename, dbname, win32service.SC_MANAGER_ALL_ACCESS)
 		self.sserv, self.lserv = self.getname()
-		if (self.sserv or self.lserv) == None: sys.exit()
+		if (self.sserv or self.lserv) is None:
+			sys.exit()
 		self.handle = win32service.OpenService(self.scmhandle, self.sserv, win32service.SERVICE_ALL_ACCESS)
 		self.sccss = "SYSTEM\\CurrentControlSet\\Services\\"
 
@@ -112,51 +113,61 @@ class Service(object):
 
 	def fetchstatus(self, fstatus, timeout=None):
 		self.fstatus = fstatus.upper()
-		if timeout != None:
-			timeout = int(timeout); timeout *= 2
+		if timeout is not None:
+			timeout = int(timeout)
+			timeout *= 2
 		def to(timeout):
 			time.sleep(.5)
-			if timeout != None:
+			if timeout is not None:
 				if timeout > 1:
-					timeout -= 1; return timeout
+					timeout -= 1
+					return timeout
 				else:
 					return "TO"
 		if self.fstatus == "STOPPED":
 			while 1:
 				self.stat = win32service.QueryServiceStatus(self.handle)
 				if self.stat[1]==win32service.SERVICE_STOPPED:
-					self.fstate = "STOPPED"; break
+					self.fstate = "STOPPED"
+					break
 				else:
 					timeout=to(timeout)
 					if timeout == "TO":
-						return "TIMEDOUT"; break
+						return "TIMEDOUT"
+						break
 		elif self.fstatus == "STOPPING":
 			while 1:
 				self.stat = win32service.QueryServiceStatus(self.handle)
 				if self.stat[1]==win32service.SERVICE_STOP_PENDING:
-					self.fstate = "STOPPING"; break
+					self.fstate = "STOPPING"
+					break
 				else:
 					timeout=to(timeout)
 					if timeout == "TO":
-						return "TIMEDOUT"; break
+						return "TIMEDOUT"
+						break
 		elif self.fstatus == "RUNNING":
 			while 1:
 				self.stat = win32service.QueryServiceStatus(self.handle)
 				if self.stat[1]==win32service.SERVICE_RUNNING:
-					self.fstate = "RUNNING"; break
+					self.fstate = "RUNNING"
+					break
 				else:
 					timeout=to(timeout)
 					if timeout == "TO":
-						return "TIMEDOUT"; break
+						return "TIMEDOUT"
+						break
 		elif self.fstatus == "STARTING":
 			while 1:
 				self.stat = win32service.QueryServiceStatus(self.handle)
 				if self.stat[1]==win32service.SERVICE_START_PENDING:
-					self.fstate = "STARTING"; break
+					self.fstate = "STARTING"
+					break
 				else:
 					timeout=to(timeout)
 					if timeout == "TO":
-						return "TIMEDOUT"; break
+						return "TIMEDOUT"
+						break
 
 	def infotype(self):
 		self.stat = win32service.QueryServiceStatus(self.handle)
@@ -172,7 +183,7 @@ class Service(object):
 		if self.stat[2] and win32service.SERVICE_ACCEPT_PAUSE_CONTINUE:
 			print("The %s service can be paused." % self.lserv)
 		if self.stat[2] and win32service.SERVICE_ACCEPT_STOP:
-			print("The %s service can be stopped."	% self.lserv)
+			print("The %s service can be stopped." % self.lserv)
 		if self.stat[2] and win32service.SERVICE_ACCEPT_SHUTDOWN:
 			print("The %s service can be shutdown." % self.lserv)
 
@@ -207,8 +218,10 @@ class Service(object):
 		self.snames=win32service.EnumServicesStatus(self.scmhandle)
 		for i in self.snames:
 			if i[0].lower() == self.userv.lower():
-				return i[0], i[1]; break
+				return i[0], i[1]
+				break
 			if i[1].lower() == self.userv.lower():
-				return i[0], i[1]; break
+				return i[0], i[1]
+				break
 		print("Error: The %s service doesn't seem to exist." % self.userv)
 		return None, None
