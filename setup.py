@@ -43,6 +43,7 @@ setup_params = dict(
 	),
 	install_requires=[
 		'jaraco.util>=3.9dev',
+		'six',
 	],
 	extras_require = {
 	},

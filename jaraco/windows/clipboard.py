@@ -6,6 +6,7 @@ import itertools
 from contextlib import contextmanager
 from StringIO import StringIO
 
+import six
 import ctypes
 from ctypes import windll
 from ctypes.wintypes import UINT, HANDLE, LPWSTR
@@ -209,10 +210,12 @@ def get_html():
 	return result
 
 def paste_stdout():
-	sys.stdout.write(get_text())
+	getter = get_unicode_text if six.PY3 else get_text
+	sys.stdout.write(getter())
 
 def stdin_copy():
-	set_text(sys.stdin.read())
+	setter = set_unicode_text if six.PY3 else set_text
+	setter(sys.stdin.read())
 
 @contextmanager
 def context():
