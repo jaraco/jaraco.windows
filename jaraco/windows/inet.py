@@ -23,30 +23,30 @@ MAX_DHCPV6_DUID_LENGTH = 130
 
 class MIB_IFROW(ctypes.Structure):
 	_fields_ = (
-			('name', WCHAR*MAX_INTERFACE_NAME_LEN),
-			('index', DWORD),
-			('type', DWORD),
-			('MTU', DWORD),
-			('speed', DWORD),
-			('physical_address_length', DWORD),
-			('physical_address_raw', BYTE*MAXLEN_PHYSADDR),
-			('admin_status', DWORD),
-			('operational_status', DWORD),
-			('last_change', DWORD),
-			('octets_received', DWORD),
-			('unicast_packets_received', DWORD),
-			('non_unicast_packets_received', DWORD),
-			('incoming_discards', DWORD),
-			('incoming_errors', DWORD),
-			('incoming_unknown_protocols', DWORD),
-			('octets_sent', DWORD),
-			('unicast_packets_sent', DWORD),
-			('non_unicast_packets_sent', DWORD),
-			('outgoing_discards', DWORD),
-			('outgoing_errors', DWORD),
-			('outgoing_queue_length', DWORD),
-			('description_length', DWORD),
-			('description_raw', ctypes.c_char*MAXLEN_IFDESCR),
+		('name', WCHAR*MAX_INTERFACE_NAME_LEN),
+		('index', DWORD),
+		('type', DWORD),
+		('MTU', DWORD),
+		('speed', DWORD),
+		('physical_address_length', DWORD),
+		('physical_address_raw', BYTE*MAXLEN_PHYSADDR),
+		('admin_status', DWORD),
+		('operational_status', DWORD),
+		('last_change', DWORD),
+		('octets_received', DWORD),
+		('unicast_packets_received', DWORD),
+		('non_unicast_packets_received', DWORD),
+		('incoming_discards', DWORD),
+		('incoming_errors', DWORD),
+		('incoming_unknown_protocols', DWORD),
+		('octets_sent', DWORD),
+		('unicast_packets_sent', DWORD),
+		('non_unicast_packets_sent', DWORD),
+		('outgoing_discards', DWORD),
+		('outgoing_errors', DWORD),
+		('outgoing_queue_length', DWORD),
+		('description_length', DWORD),
+		('description_raw', ctypes.c_char*MAXLEN_IFDESCR),
 	)
 
 	def _get_binary_property(self, name):
@@ -80,7 +80,7 @@ class MIB_IPADDRROW(ctypes.Structure):
 		('unused', ctypes.c_ushort),
 		('type', ctypes.c_ushort),
 	)
-	
+
 	@property
 	def address(self):
 		# Convert from little-endian to big-endian
@@ -121,7 +121,7 @@ class _IP_ADAPTER_ADDRESSES_U1(ctypes.Union):
 		]
 
 class IP_ADAPTER_ADDRESSES(ctypes.Structure):
-	pass#_anonymous_ = ('u',)
+	pass
 
 LP_IP_ADAPTER_ADDRESSES = ctypes.POINTER(IP_ADAPTER_ADDRESSES)
 
@@ -232,7 +232,7 @@ class AllocatedTable(object):
 	technique to store arrays of structures of variable length. This
 	base class captures the functionality to retrieve and access those
 	table entries.
-	
+
 	The subclass needs to define three class attributes:
 		method: a callable that takes three arguments - a pointer to
 				the structure, the length of the data contained by the
