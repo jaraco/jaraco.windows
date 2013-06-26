@@ -17,7 +17,7 @@ from jaraco.windows.error import handle_nonzero_success
 class DATA_BLOB(ctypes.Structure):
 	r"""
 	A data blob structure for use with MS DPAPI functions.
-	
+
 	Initialize with string of characters
 	>>> blob = DATA_BLOB('abc123\x00456')
 	>>> len(blob)
@@ -77,7 +77,7 @@ _CryptProtectData.argtypes = [
 	p_DATA_BLOB,      # data out
 	]
 _CryptProtectData.restype = wintypes.BOOL
-	
+
 _CryptUnprotectData = ctypes.windll.crypt32.CryptUnprotectData
 _CryptUnprotectData.argtypes = [
 	p_DATA_BLOB,       # data in
@@ -89,7 +89,7 @@ _CryptUnprotectData.argtypes = [
 	p_DATA_BLOB,       # data out
 	]
 _CryptUnprotectData.restype = wintypes.BOOL
-	
+
 CRYPTPROTECT_UI_FORBIDDEN = 0x01
 
 def CryptProtectData(

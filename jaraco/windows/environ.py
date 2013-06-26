@@ -203,7 +203,8 @@ def enver(*args):
 	"""
 	from optparse import OptionParser
 	parser = OptionParser(usage=trim(enver.__doc__))
-	parser.add_option('-U', '--user-environment',
+	parser.add_option(
+		'-U', '--user-environment',
 		action='store_const', const=UserRegisteredEnvironment,
 		default=MachineRegisteredEnvironment,
 		dest='class_',
@@ -212,14 +213,17 @@ def enver(*args):
 	parser.add_option('-a', '--append',
 		action='store_true', default=False,
 		help="Append the value to any existing value (default for PATH and PATHEXT)",)
-	parser.add_option('-r', '--replace',
+	parser.add_option(
+		'-r', '--replace',
 		action='store_true', default=False,
 		help="Replace any existing value (used to override default append for PATH and PATHEXT)",
 		)
-	parser.add_option('--remove-value', action='store_true', default=False,
+	parser.add_option(
+		'--remove-value', action='store_true', default=False,
 		help="Remove any matching values from a semicolon-separated multi-value variable",
 		)
-	parser.add_option('-e', '--edit', action='store_true', default=False,
+	parser.add_option(
+		'-e', '--edit', action='store_true', default=False,
 		help="Edit the value in a local editor",
 		)
 	options, args = parser.parse_args(*args)
