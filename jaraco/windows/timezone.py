@@ -1,32 +1,32 @@
 #!/usr/bin/env python
 
-# $Id$
-
 import operator
 import ctypes
+import datetime
 from ctypes.wintypes import WORD, WCHAR, BOOL, LONG
+
 from jaraco.windows.util import Extended
 from jaraco.util.dictlib import RangeMap
 
 class AnyDict(object):
 	"A dictionary that returns the same value regardless of key"
-	
+
 	def __init__(self, value):
 		self.value = value
 
 	def __getitem__(self, key):
-		return value
+		return self.value
 
 class SYSTEMTIME(Extended, ctypes.Structure):
 	_fields_ = [
 		('year', WORD),
 		('month', WORD),
-		('day_of_week', WORD), 
-		('day', WORD), 
-		('hour', WORD), 
-		('minute', WORD), 
-		('second', WORD), 
-		('millisecond', WORD), 
+		('day_of_week', WORD),
+		('day', WORD),
+		('hour', WORD),
+		('minute', WORD),
+		('second', WORD),
+		('millisecond', WORD),
 	]
 
 class REG_TZI_FORMAT(Extended, ctypes.Structure):
@@ -55,11 +55,11 @@ class DYNAMIC_TIME_ZONE_INFORMATION(TIME_ZONE_INFORMATION):
 	the structure of the TIME_ZONE_INFORMATION, this structure
 	can be used as a drop-in replacement for calls where the
 	structure is passed by reference.
-	
+
 	For example,
 	dynamic_tzi = DYNAMIC_TIME_ZONE_INFORMATION()
 	ctypes.windll.kernel32.GetTimeZoneInformation(ctypes.byref(dynamic_tzi))
-	
+
 	(although the key_name and dynamic_daylight_time_disabled flags will be
 	set to the default (null)).
 
@@ -73,7 +73,7 @@ class DYNAMIC_TIME_ZONE_INFORMATION(TIME_ZONE_INFORMATION):
 		('key_name', WCHAR*128),
 		('dynamic_daylight_time_disabled', BOOL),
 	]
-	
+
 	def __init__(self, *args, **kwargs):
 		"""Allow initialization from args from both this class and
 		its superclass.  Default ctypes implementation seems to
@@ -93,14 +93,14 @@ class Info(DYNAMIC_TIME_ZONE_INFORMATION):
 	"""
 	A time zone definition class based on the win32
 	DYNAMIC_TIME_ZONE_INFORMATION structure.
-	
+
 	Describes a bias against UTC (bias), and two dates at which a separate
 	additional bias applies (standard_bias and daylight_bias).
 	"""
 
 	def field_names(self):
 		return map(operator.itemgetter(0), self._fields_)
-	
+
 	def __init__(self, *args, **kwargs):
 		"""
 		Try to construct a TimeZoneDefinition from
@@ -125,6 +125,7 @@ class Info(DYNAMIC_TIME_ZONE_INFORMATION):
 
 	def __init_from_bytes(self, bytes, **kwargs):
 		reg_tzi = REG_TZI_FORMAT()
+		# todo: use buffer API in Python 3
 		buffer = buffer(bytes)
 		ctypes.memmove(ctypes.addressof(reg_tzi), buffer, len(buffer))
 		self.__init_from_reg_tzi(self, reg_tzi, **kwargs)
@@ -184,7 +185,7 @@ class Info(DYNAMIC_TIME_ZONE_INFORMATION):
 
 	def get_info_for_year(self, year):
 		return self.dynamic_info[year]
-	
+
 	@property
 	def dynamic_info(self):
 		"Return a map that for a given year will return the correct Info"
@@ -193,10 +194,10 @@ class Info(DYNAMIC_TIME_ZONE_INFORMATION):
 			del dyn_key['FirstEntry']
 			del dyn_key['LastEntry']
 			years = map(int, dyn_key.keys())
-			values = map(Info, info.values())
+			values = map(Info, dyn_key.values())
 			# create a range mapping that searches by descending year and matches
 			# if the target year is greater or equal.
-			return RangeMap(zip(years, values), descending, operator.ge)
+			return RangeMap(zip(years, values), RangeMap.descending, operator.ge)
 		else:
 			return AnyDict(self)
 
