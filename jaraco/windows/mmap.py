@@ -1,5 +1,7 @@
 import ctypes
 
+import six
+
 from .error import handle_nonzero_success
 
 CreateFileMapping = ctypes.windll.kernel32.CreateFileMappingW
@@ -36,7 +38,7 @@ class MemoryMap(object):
 		FILE_MAP_WRITE = 0x2
 		filemap = ctypes.windll.kernel32.CreateFileMappingW(
 			INVALID_HANDLE_VALUE, p_SA, PAGE_READWRITE, 0, self.length,
-			unicode(self.name))
+			six.text_type(self.name))
 		handle_nonzero_success(filemap)
 		if filemap == INVALID_HANDLE_VALUE:
 			raise Exception("Failed to create file mapping")

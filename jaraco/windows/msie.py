@@ -3,13 +3,12 @@
 """cookies.py
 
 Cookie support utilities
-s
-Copyright © 2004, 2011 Jason R. Coombs
 """
-
 
 import os
 import itertools
+
+import six
 
 class CookieMonster(object):
 	"Read cookies out of a user's IE cookies file"
@@ -27,7 +26,7 @@ class CookieMonster(object):
 			while True:
 				entry = itertools.takewhile(self.is_not_cookie_delimiter,
 					cookie_file)
-				entry = map(unicode.rstrip, entry)
+				entry = list(map(six.text_type.rstrip, entry))
 				if not entry: break
 				cookie = self.make_cookie(*entry)
 				yield cookie
@@ -38,12 +37,12 @@ class CookieMonster(object):
 
 	@staticmethod
 	def make_cookie(key, value, domain, flags, ExpireLow, ExpireHigh,
-		CreateLow, CreateHigh):
+			CreateLow, CreateHigh):
 		expires = (int(ExpireHigh) << 32) | int(ExpireLow)
 		created = (int(CreateHigh) << 32) | int(CreateLow)
 		del ExpireHigh, ExpireLow, CreateHigh, CreateLow
 		flags = int(flags)
-		domain, path = unicode.split(domain, '/', 1)
+		domain, sep, path = domain.partition('/')
 		path = '/' + path
 		cookie = vars()
 		return cookie
