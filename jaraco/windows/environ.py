@@ -6,7 +6,8 @@ import sys
 import ctypes
 import ctypes.wintypes
 
-import _winreg as winreg
+import six
+winreg = six.moves.winreg
 
 from jaraco.util.editor import EditableFile
 
@@ -64,7 +65,7 @@ class RegisteredEnvironment(object):
 	@classmethod
 	def get_values_list(class_, name, sep):
 		res = class_.get(name.upper(), [])
-		if isinstance(res, basestring):
+		if isinstance(res, six.string_types):
 			res = res.split(sep)
 		return res
 
