@@ -26,10 +26,10 @@ _DeviceIoControl.restype = wintypes.BOOL
 def DeviceIoControl(device, io_control_code, in_buffer, out_buffer, overlapped=None):
 	if overlapped is not None:
 		raise NotImplementedError("overlapped handles not yet supported")
-	
+
 	if isinstance(out_buffer, int):
 		out_buffer = ctypes.create_string_buffer(out_buffer)
-	
+
 	in_buffer_size = len(in_buffer) if in_buffer is not None else 0
 	out_buffer_size = len(out_buffer)
 	assert isinstance(out_buffer, ctypes.Array)
@@ -47,7 +47,7 @@ def DeviceIoControl(device, io_control_code, in_buffer, out_buffer, overlapped=N
 
 	handle_nonzero_success(res)
 	handle_nonzero_success(returned_bytes)
-	
+
 	return out_buffer[:returned_bytes.value]
 
 wchar_size = ctypes.sizeof(wintypes.WCHAR)

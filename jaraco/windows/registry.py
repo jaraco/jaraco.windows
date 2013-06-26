@@ -1,5 +1,7 @@
-import _winreg as winreg
 from itertools import count
+
+import six
+winreg = six.moves.winreg
 
 def key_values(key):
 	for index in count():
@@ -14,4 +16,3 @@ def key_subkeys(key):
 			yield winreg.EnumKey(key, index)
 		except WindowsError:
 			break
-

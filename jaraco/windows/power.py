@@ -1,5 +1,7 @@
 #-*- coding: utf-8 -*-
 
+from __future__ import print_function
+
 import itertools
 import contextlib
 import ctypes
@@ -12,8 +14,8 @@ try:
 except ImportError:
 	pass
 
+import jaraco.util.itertools as jiter
 from jaraco.windows.error import handle_nonzero_success
-from jaraco.util.itertools import consume
 
 class SYSTEM_POWER_STATUS(Structure):
 	_fields_ = (
@@ -55,15 +57,14 @@ def wait_for_power_status_change():
 	def not_power_status_change(evt):
 		return evt.EventType != EVT_POWER_STATUS_CHANGE
 	events = get_power_management_events()
-	consume(itertools.takewhile(not_power_status_change, events))
+	jiter.consume(itertools.takewhile(not_power_status_change, events))
 
 def get_unique_power_states():
 	"""
 	Just like get_power_states, but ensures values are returned only
 	when the state changes.
 	"""
-	from jaraco.util.iter_ import unique_justseen
-	return unique_justseen(get_power_states())
+	return jiter.unique_justseen(get_power_states())
 
 def get_power_states():
 	"""
@@ -90,7 +91,7 @@ def no_sleep():
 		ES_AWAYMODE_REQUIRED = 0x40
 		ES_SYSTEM_REQUIRED = 0x2
 		mode = ES_CONTINUOUS | ES_SYSTEM_REQUIRED | ES_AWAYMODE_REQUIRED
-		print SetThreadExecutionState(mode)
+		print(SetThreadExecutionState(mode))
 		yield
 	finally:
-		print SetThreadExecutionState(ES_CONTINUOUS)
+		print(SetThreadExecutionState(ES_CONTINUOUS))

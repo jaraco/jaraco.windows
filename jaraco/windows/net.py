@@ -54,7 +54,7 @@ def AddConnection(
 		provider_name=provider_name,
 		# WNetAddConnection2 ignores the other members of NETRESOURCE
 		)
-	
+
 	result = WNetAddConnection2(
 		resource,
 		password,
