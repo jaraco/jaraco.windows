@@ -15,7 +15,7 @@ with open('README') as readme:
 	long_description = readme.read()
 
 with open('CHANGES') as changes:
-	long_description += changes.read()
+	long_description += "\n" + changes.read()
 
 setup_params = dict(
 	name = name,
