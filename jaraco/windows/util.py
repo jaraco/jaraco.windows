@@ -1,7 +1,5 @@
 #!/usr/bin/env python
 
-# $Id$
-
 import ctypes
 
 def ensure_unicode(param):
@@ -15,7 +13,6 @@ class Extended(object):
 	"Used to add extended capability to structures"
 	def __eq__(self, other):
 		return buffer(self) == buffer(other)
-		
+
 	def __ne__(self, other):
 		return buffer(self) != buffer(other)
-

@@ -11,7 +11,7 @@ def get_user_name():
 	size = ctypes.wintypes.DWORD()
 	try:
 		handle_nonzero_success(GetUserName(None, size))
-	except WindowsError, e:
+	except WindowsError as e:
 		if e.code != ERROR_INSUFFICIENT_BUFFER:
 			raise
 	buffer = ctypes.create_unicode_buffer(size.value)

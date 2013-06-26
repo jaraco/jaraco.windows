@@ -1,8 +1,7 @@
 #!python
 
-# $Id$
+from __future__ import print_function
 
-import sys
 import ctypes
 import ctypes.wintypes
 from jaraco.windows.error import handle_nonzero_success
@@ -21,6 +20,8 @@ SPI_GETACTIVEWNDTRKTIMEOUT = 0x2002
 SPI_SETACTIVEWNDTRKTIMEOUT = 0x2003
 set_constant = SPI_SETACTIVEWINDOWTRACKING
 get_constant = SPI_GETACTIVEWINDOWTRACKING
+
+options = None
 
 def set(value):
 	handle_nonzero_success(
@@ -59,28 +60,29 @@ def get_delay():
 	return int(value.value)
 
 def enable():
-	print "enabling xmouse"
+	print("enabling xmouse")
 	set(True)
 
 def disable():
-	print "disabling xmouse"
+	print("disabling xmouse")
 	set(False)
 
 def toggle():
 	value = get()
-	print "xmouse: %s -> %s" % (value, not value)
+	print("xmouse: %s -> %s" % (value, not value))
 	set(not value)
 
 def show():
-	enabled = get()
-	delay = get_delay()
-	msg = "xmouse: {enabled} (delay {delay}ms)".format(**vars())
+	msg = "xmouse: {enabled} (delay {delay}ms)".format(
+		enabled=get(),
+		delay=get_delay(),
+	)
 	print(msg)
 
 def get_options():
 	"""
 	%prog [<command>] [<options>]
-	
+
 		command: show, enable, disable, toggle (defaults to toggle)
 	"""
 	from textwrap import dedent
