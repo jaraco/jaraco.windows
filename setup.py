@@ -62,7 +62,6 @@ setup_params = dict(
 		'hgtools >= 0.4.7',
 	],
 	test_suite = "nose.collector",
-	use_2to3=True,
 )
 
 if __name__ == '__main__':
