@@ -4,7 +4,7 @@ import sys
 import re
 import itertools
 from contextlib import contextmanager
-from StringIO import StringIO
+import io
 
 import six
 import ctypes
@@ -119,7 +119,7 @@ class HTMLSnippet(object):
 
 	@staticmethod
 	def parse_headers(data):
-		d = StringIO(data)
+		d = io.StringIO(data)
 		def header_line(line):
 			return re.match('(\w+):(.*)', line)
 		headers = itertools.imap(header_line, d)
