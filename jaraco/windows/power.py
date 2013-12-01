@@ -87,9 +87,8 @@ def no_sleep():
 	Context that prevents the computer from going to sleep.
 	"""
 	ES_CONTINUOUS = 0x80000000
-	ES_AWAYMODE_REQUIRED = 0x40
 	ES_SYSTEM_REQUIRED = 0x2
-	mode = ES_CONTINUOUS | ES_SYSTEM_REQUIRED | ES_AWAYMODE_REQUIRED
+	mode = ES_CONTINUOUS | ES_SYSTEM_REQUIRED
 	handle_nonzero_success(SetThreadExecutionState(mode))
 	try:
 		yield
