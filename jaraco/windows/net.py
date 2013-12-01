@@ -1,7 +1,5 @@
 #!/usr/bin/env python
 
-# $Id$
-
 """
 API hooks for network stuff.
 """
