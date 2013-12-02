@@ -81,16 +81,24 @@ SetThreadExecutionState = ctypes.windll.kernel32.SetThreadExecutionState
 SetThreadExecutionState.argtypes = [ctypes.c_uint]
 SetThreadExecutionState.restype = ctypes.c_uint
 
+class ES:
+	"""
+	Execution state constants
+	"""
+	continuous = 0x80000000
+	system_required = 1
+	display_required = 2
+	awaymode_required = 0x40
+
+
 @contextlib.contextmanager
 def no_sleep():
 	"""
 	Context that prevents the computer from going to sleep.
 	"""
-	ES_CONTINUOUS = 0x80000000
-	ES_SYSTEM_REQUIRED = 0x2
-	mode = ES_CONTINUOUS | ES_SYSTEM_REQUIRED
+	mode = ES.continuous | ES.system_required
 	handle_nonzero_success(SetThreadExecutionState(mode))
 	try:
 		yield
 	finally:
-		handle_nonzero_success(SetThreadExecutionState(ES_CONTINUOUS))
+		handle_nonzero_success(SetThreadExecutionState(ES.continuous))
