@@ -2,14 +2,14 @@
 
 from __future__ import print_function
 
-import __builtin__
 import os
 import sys
 import operator
 import collections
-from itertools import imap, ifilter
 from ctypes import (POINTER, byref, cast, create_unicode_buffer,
 	create_string_buffer, windll)
+
+from six.moves import builtins
 
 import jaraco.util.bitutil
 from jaraco.util.string import local_format as lf
@@ -103,7 +103,7 @@ def is_symlink(path):
 	try:
 		return _is_symlink(next(find_files(path)))
 	except WindowsError as orig_error:
-		raise __builtin__.WindowsError(lf("Error accessing {path}: {orig_error.message}"))
+		raise builtins.WindowsError(lf("Error accessing {path}: {orig_error.message}"))
 
 def _is_symlink(find_data):
 	return find_data.reserved[0] == api.IO_REPARSE_TAG_SYMLINK
@@ -209,10 +209,10 @@ def join(*paths):
 	>>> join('d:\\foo', '\\bar')
 	'd:\\bar'
 	"""
-	paths_with_drives = imap(os.path.splitdrive, paths)
+	paths_with_drives = map(os.path.splitdrive, paths)
 	drives, paths = zip(*paths_with_drives)
 	# the drive we care about is the last one in the list
-	drive = next(ifilter(None, reversed(drives)), '')
+	drive = next(filter(None, reversed(drives)), '')
 	return os.path.join(drive, os.path.join(*paths))
 
 def resolve_path(target, start=os.path.curdir):
