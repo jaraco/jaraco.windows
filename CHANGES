@@ -1,6 +1,11 @@
 Changes
 -------
 
+2.15.1
+~~~~~~
+
+* Fixed constants around ``power.no_sleep``.
+
 2.15
 ~~~~
 
