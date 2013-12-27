@@ -305,6 +305,10 @@ def readlink(link):
 	return rdb.get_substitute_name()
 
 def patch_os_module():
+	"""
+	jaraco.windows provides the os.symlink and os.readlink functions.
+	Monkey-patch the os module to include them if not present.
+	"""
 	if not hasattr(os, 'symlink'):
 		os.symlink = symlink
 		os.path.islink = islink
