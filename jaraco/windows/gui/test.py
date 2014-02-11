@@ -11,8 +11,8 @@ import win32gui
 
 from watsup.launcher import AppThread
 from watsup.winGuiAuto import (
-	findTopWindow, findTopWindows,
-	activateMenuItem, getTopMenu,
+	findTopWindow,
+	getTopMenu,
 	_getMenuInfo, WinGuiAutoError,
 	)
 
