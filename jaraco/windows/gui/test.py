@@ -5,6 +5,7 @@ Based on watsup and winGuiAuto
 """
 
 import re
+import functools
 from time import sleep
 import win32gui
 
@@ -33,19 +34,19 @@ def launch_app(program,wantedText=None,wantedClass=None,verbose=False,delay=0):
 	sleep(delay)
 	try:
 		return AppWindow.find(wantedText=wantedText,wantedClass=wantedClass)
-	except WinGuiAutoError,e:
+	except WinGuiAutoError:
 		pass
 
 def _normalize_control_text(control_text, use_mnemonic=True):
 	"""
 	Normalize the control text suitable for matching a control.
-	
+
 	If use_mnemonic is True (default), remove single ampersands and
 	replace double-ampersands with single ampersands.
-	
+
 	>>> _normalize_control_text('&Copy && Paste')
 	'copy & paste'
-	
+
 	If the labels are not using mnemonics, run this with use_mnemonic
 	= False
 	>>> _normalize_control_text('Copy & Paste', use_mnemonic=False)
@@ -76,14 +77,15 @@ class Menu(object):
 			"Return the submenu handle (if it is a submenu); otherwise, return the menuinfo"
 			res = _find_named_submenu(menu_handle, submenu_name)[1]
 			return res.submenu or res
-		return reduce(_find_submenu_or_item, item_path, self._handle)
+		return functools.reduce(_find_submenu_or_item, item_path, self._handle)
 
 def _find_named_submenu(menu_handle, submenu_name):
 	"""
 	Find the index number of a menu's submenu with a specific name and
 	the submenu itself.
-	
+
 	For example,
+	>>> hMenu = 0
 	>>> index, submenu = _find_named_submenu(hMenu, 'File') #doctest:+SKIP
 	"""
 	menu_item_count = win32gui.GetMenuItemCount(menu_handle)
