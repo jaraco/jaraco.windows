@@ -5,11 +5,15 @@ network config.
 
 from __future__ import print_function
 
-import ipaddr
 import itertools
 import struct
 import ctypes
 from ctypes.wintypes import DWORD, BYTE, WCHAR, BOOL
+
+try:
+	import ipaddr
+except ImportError:
+	pass
 
 from .constants import *
 
