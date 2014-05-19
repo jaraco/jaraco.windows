@@ -7,6 +7,7 @@ from __future__ import print_function
 
 import ipaddr
 import itertools
+import struct
 import ctypes
 from ctypes.wintypes import DWORD, BYTE, WCHAR, BOOL
 
@@ -86,7 +87,6 @@ class MIB_IPADDRROW(ctypes.Structure):
 	@property
 	def address(self):
 		# Convert from little-endian to big-endian
-		import struct
 		_ = struct.pack('L', self.address_num)
 		address_num = struct.unpack('!L', _)[0]
 		return ipaddr.IPv4Address(address_num)
