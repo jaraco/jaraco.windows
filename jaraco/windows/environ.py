@@ -247,3 +247,6 @@ def enver(*args):
 		method(name, value, options)
 	except IndexError:
 		options.class_.show()
+
+if __name__ == '__main__':
+	enver

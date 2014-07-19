@@ -1,6 +1,11 @@
 Changes
 -------
 
+2.16
+~~~~
+
+* Allow enver to be invoked with python -m jaraco.windows.environ
+
 2.15.1
 ~~~~~~
 
