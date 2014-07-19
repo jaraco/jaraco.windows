@@ -5,6 +5,7 @@ Changes
 ~~~~
 
 * Allow enver to be invoked with python -m jaraco.windows.environ
+* Add nominal support for credential vault.
 
 2.15.1
 ~~~~~~
