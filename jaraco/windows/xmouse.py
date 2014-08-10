@@ -3,27 +3,14 @@
 from __future__ import print_function
 
 import ctypes
-import ctypes.wintypes
 from jaraco.windows.error import handle_nonzero_success
+from jaraco.windows.api import system
 from jaraco.util.cmdline import Command
 
 
-SystemParametersInfo = ctypes.windll.user32.SystemParametersInfoW
-SystemParametersInfo.argtypes = (
-	ctypes.wintypes.UINT,
-	ctypes.wintypes.UINT,
-	ctypes.c_void_p,
-	ctypes.wintypes.UINT,
-	)
-
-SPI_GETACTIVEWINDOWTRACKING = 0x1000
-SPI_SETACTIVEWINDOWTRACKING = 0x1001
-SPI_GETACTIVEWNDTRKTIMEOUT = 0x2002
-SPI_SETACTIVEWNDTRKTIMEOUT = 0x2003
-
 def set(value):
-	result = SystemParametersInfo(
-		SPI_SETACTIVEWINDOWTRACKING,
+	result = system.SystemParametersInfo(
+		system.SPI_SETACTIVEWINDOWTRACKING,
 		0,
 		ctypes.cast(value, ctypes.c_void_p),
 		0,
@@ -32,8 +19,8 @@ def set(value):
 
 def get():
 	value = ctypes.wintypes.BOOL()
-	result = SystemParametersInfo(
-		SPI_GETACTIVEWINDOWTRACKING,
+	result = system.SystemParametersInfo(
+		system.SPI_GETACTIVEWINDOWTRACKING,
 		0,
 		ctypes.byref(value),
 		0,
@@ -42,8 +29,8 @@ def get():
 	return bool(value)
 
 def set_delay(milliseconds):
-	result = SystemParametersInfo(
-		SPI_SETACTIVEWNDTRKTIMEOUT,
+	result = system.SystemParametersInfo(
+		system.SPI_SETACTIVEWNDTRKTIMEOUT,
 		0,
 		ctypes.cast(milliseconds, ctypes.c_void_p),
 		0,
@@ -52,8 +39,8 @@ def set_delay(milliseconds):
 
 def get_delay():
 	value = ctypes.wintypes.DWORD()
-	result = SystemParametersInfo(
-		SPI_GETACTIVEWNDTRKTIMEOUT,
+	result = system.SystemParametersInfo(
+		system.SPI_GETACTIVEWNDTRKTIMEOUT,
 		0,
 		ctypes.byref(value),
 		0,
