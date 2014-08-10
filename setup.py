@@ -56,12 +56,12 @@ setup_params = dict(
 	dependency_links = [
 	],
 	tests_require=[
-		'nose>=0.10',
+		'pytest',
 	],
 	setup_requires=[
-		'hgtools >= 0.4.7',
+		'hgtools',
+		'pytest-runner',
 	],
-	test_suite = "nose.collector",
 )
 
 if __name__ == '__main__':
