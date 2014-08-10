@@ -133,7 +133,7 @@ def CryptUnprotectData(data, optional_entropy=None, prompt_struct=None, flags=0)
 		entropy,
 		None, # reserved
 		prompt_struct,
-		flags|CRYPTPROTECT_UI_FORBIDDEN,
+		flags | CRYPTPROTECT_UI_FORBIDDEN,
 		data_out,
 		)
 	handle_nonzero_success(res)
