@@ -1,3 +1,5 @@
+import ctypes.wintypes
+
 from ctypes import (
 	Structure, windll, POINTER, byref, cast, create_unicode_buffer,
 	c_size_t, c_int, create_string_buffer, c_uint64, c_ushort, c_short,
@@ -7,8 +9,6 @@ from ctypes.wintypes import (
 	BOOLEAN, LPWSTR, DWORD, LPVOID, HANDLE, FILETIME,
 	WCHAR, BOOL, HWND, WORD, UINT,
 	)
-from jaraco.windows.reparse import IO_REPARSE_TAG_SYMLINK, FSCTL_GET_REPARSE_POINT, REPARSE_DATA_BUFFER
-from jaraco.windows.reparse import DeviceIoControl
 
 CreateSymbolicLink = windll.kernel32.CreateSymbolicLinkW
 CreateSymbolicLink.argtypes = (
@@ -192,3 +192,47 @@ FindCloseChangeNotification.restype = BOOL
 FindNextChangeNotification = windll.kernel32.FindNextChangeNotification
 FindNextChangeNotification.argtypes = HANDLE,
 FindNextChangeNotification.restype = BOOL
+
+FILE_FLAG_OPEN_REPARSE_POINT = 0x00200000
+IO_REPARSE_TAG_SYMLINK = 0xA000000C
+FSCTL_GET_REPARSE_POINT = 0x900a8
+
+LPDWORD = ctypes.POINTER(ctypes.wintypes.DWORD)
+LPOVERLAPPED = ctypes.wintypes.LPVOID
+
+DeviceIoControl = ctypes.windll.kernel32.DeviceIoControl
+DeviceIoControl.argtypes = [
+	ctypes.wintypes.HANDLE,
+	ctypes.wintypes.DWORD,
+	ctypes.wintypes.LPVOID,
+	ctypes.wintypes.DWORD,
+	ctypes.wintypes.LPVOID,
+	ctypes.wintypes.DWORD,
+	LPDWORD,
+	LPOVERLAPPED,
+	]
+DeviceIoControl.restype = ctypes.wintypes.BOOL
+
+class REPARSE_DATA_BUFFER(ctypes.Structure):
+	_fields_ = [
+		('tag', ctypes.c_ulong),
+		('data_length', ctypes.c_ushort),
+		('reserved', ctypes.c_ushort),
+		('substitute_name_offset', ctypes.c_ushort),
+		('substitute_name_length', ctypes.c_ushort),
+		('print_name_offset', ctypes.c_ushort),
+		('print_name_length', ctypes.c_ushort),
+		('flags', ctypes.c_ulong),
+		('path_buffer', ctypes.c_byte*1),
+	]
+	def get_print_name(self):
+		wchar_size = ctypes.sizeof(ctypes.wintypes.WCHAR)
+		arr_typ = ctypes.wintypes.WCHAR*(self.print_name_length//wchar_size)
+		data = ctypes.byref(self.path_buffer, self.print_name_offset)
+		return ctypes.cast(data, ctypes.POINTER(arr_typ)).contents.value
+
+	def get_substitute_name(self):
+		wchar_size = ctypes.sizeof(ctypes.wintypes.WCHAR)
+		arr_typ = ctypes.wintypes.WCHAR*(self.substitute_name_length//wchar_size)
+		data = ctypes.byref(self.path_buffer, self.substitute_name_offset)
+		return ctypes.cast(data, ctypes.POINTER(arr_typ)).contents.value
