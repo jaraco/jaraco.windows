@@ -3,7 +3,7 @@ from __future__ import print_function
 import ctypes
 from ctypes import wintypes
 
-from . import constants
+from .api import constants
 
 GetCurrentProcess = ctypes.windll.kernel32.GetCurrentProcess
 GetCurrentProcess.restype = wintypes.HANDLE

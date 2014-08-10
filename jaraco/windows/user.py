@@ -1,5 +1,5 @@
 import ctypes
-from .constants import ERROR_INSUFFICIENT_BUFFER
+from .api.constants import ERROR_INSUFFICIENT_BUFFER
 from .error import WindowsError, handle_nonzero_success
 
 LPDWORD = ctypes.POINTER(ctypes.wintypes.DWORD)

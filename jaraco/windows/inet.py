@@ -15,7 +15,7 @@ try:
 except ImportError:
 	pass
 
-from .constants import *
+from .api.constants import *
 
 # from mprapi.h
 MAX_INTERFACE_NAME_LEN = 2**8
