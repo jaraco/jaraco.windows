@@ -20,22 +20,25 @@ SPI_GETACTIVEWINDOWTRACKING = 0x1000
 SPI_SETACTIVEWINDOWTRACKING = 0x1001
 SPI_GETACTIVEWNDTRKTIMEOUT = 0x2002
 SPI_SETACTIVEWNDTRKTIMEOUT = 0x2003
-set_constant = SPI_SETACTIVEWINDOWTRACKING
-get_constant = SPI_GETACTIVEWINDOWTRACKING
-
-options = None
 
 def set(value):
 	result = SystemParametersInfo(
-		set_constant, 0, ctypes.cast(value, ctypes.c_void_p), 0
+		SPI_SETACTIVEWINDOWTRACKING,
+		0,
+		ctypes.cast(value, ctypes.c_void_p),
+		0,
 	)
 	handle_nonzero_success(result)
 
 def get():
 	value = ctypes.wintypes.BOOL()
-	handle_nonzero_success(
-		SystemParametersInfo(get_constant, 0, ctypes.byref(value), 0)
+	result = SystemParametersInfo(
+		SPI_GETACTIVEWINDOWTRACKING,
+		0,
+		ctypes.byref(value),
+		0,
 	)
+	handle_nonzero_success(result)
 	return bool(value)
 
 def set_delay(milliseconds):
