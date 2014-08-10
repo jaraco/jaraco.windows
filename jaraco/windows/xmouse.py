@@ -27,10 +27,10 @@ get_constant = SPI_GETACTIVEWINDOWTRACKING
 options = None
 
 def set(value):
-	handle_nonzero_success(
-		SystemParametersInfo(
-			set_constant, 0, ctypes.cast(value, ctypes.c_void_p), 0
-	)	)
+	result = SystemParametersInfo(
+		set_constant, 0, ctypes.cast(value, ctypes.c_void_p), 0
+	)
+	handle_nonzero_success(result)
 	if value and hasattr(options, 'delay'):
 		set_delay(options.delay)
 
@@ -42,24 +42,23 @@ def get():
 	return bool(value)
 
 def set_delay(milliseconds):
-	handle_nonzero_success(
-		SystemParametersInfo(
-			SPI_SETACTIVEWNDTRKTIMEOUT,
-			0,
-			ctypes.cast(milliseconds, ctypes.c_void_p),
-			0,
-	)	)
+	result = SystemParametersInfo(
+		SPI_SETACTIVEWNDTRKTIMEOUT,
+		0,
+		ctypes.cast(milliseconds, ctypes.c_void_p),
+		0,
+	)
+	handle_nonzero_success(result)
 
 def get_delay():
 	value = ctypes.wintypes.DWORD()
-	handle_nonzero_success(
-		SystemParametersInfo(
-			SPI_GETACTIVEWNDTRKTIMEOUT,
-			0,
-			ctypes.byref(value),
-			0,
-			)
-		)
+	result = SystemParametersInfo(
+		SPI_GETACTIVEWNDTRKTIMEOUT,
+		0,
+		ctypes.byref(value),
+		0,
+	)
+	handle_nonzero_success(result)
 	return int(value.value)
 
 def enable():
