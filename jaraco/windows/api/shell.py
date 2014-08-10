@@ -1,6 +1,5 @@
-import ctypes
-from ctypes import wintypes
-BOOL = wintypes.BOOL
+import ctypes.wintypes
+BOOL = ctypes.wintypes.BOOL
 
 class SHELLSTATE(ctypes.Structure):
 	_fields_ = [
@@ -21,18 +20,18 @@ class SHELLSTATE(ctypes.Structure):
 		('filter', BOOL, 1),
 		('show_super_hidden', BOOL, 1),
 		('no_net_crawling', BOOL, 1),
-		('win95_unused', wintypes.DWORD),
-		('param_sort', wintypes.LONG),
+		('win95_unused', ctypes.wintypes.DWORD),
+		('param_sort', ctypes.wintypes.LONG),
 		('sort_direction', ctypes.c_int),
-		('version', wintypes.UINT),
-		('not_used', wintypes.UINT),
+		('version', ctypes.wintypes.UINT),
+		('not_used', ctypes.wintypes.UINT),
 		('sep_process', BOOL, 1),
 		('start_panel_on', BOOL, 1),
 		('show_start_page', BOOL, 1),
 		('auto_check_select', BOOL, 1),
 		('icons_only', BOOL, 1),
 		('show_type_overlay', BOOL, 1),
-		('spare_flags', wintypes.UINT, 13),
+		('spare_flags', ctypes.wintypes.UINT, 13),
 	]
 
 SSF_SHOWALLOBJECTS = 0x00000001
@@ -117,7 +116,7 @@ SSF_SHOWTYPEOVERLAY = 0x02000000
 SHGetSetSettings = ctypes.windll.shell32.SHGetSetSettings
 SHGetSetSettings.argtypes = [
 	ctypes.POINTER(SHELLSTATE),
-	wintypes.DWORD,
-	wintypes.BOOL, # get or set (True: set)
+	ctypes.wintypes.DWORD,
+	ctypes.wintypes.BOOL, # get or set (True: set)
 	]
 SHGetSetSettings.restype = None
