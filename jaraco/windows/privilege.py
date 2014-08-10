@@ -3,7 +3,7 @@ from __future__ import print_function
 import ctypes
 from ctypes import wintypes
 
-from .api import constants
+from .api import security
 
 GetCurrentProcess = ctypes.windll.kernel32.GetCurrentProcess
 GetCurrentProcess.restype = wintypes.HANDLE
@@ -219,7 +219,7 @@ def grant_symlink_privilege(who, machine=''):
 
 	Based on http://support.microsoft.com/kb/132958
 	"""
-	flags = constants.POLICY_CREATE_ACCOUNT | constants.POLICY_LOOKUP_NAMES
+	flags = security.POLICY_CREATE_ACCOUNT | security.POLICY_LOOKUP_NAMES
 	policy = OpenPolicy(machine, flags)
 	return policy
 

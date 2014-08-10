@@ -1,5 +1,5 @@
 import ctypes
-from .api.constants import ERROR_INSUFFICIENT_BUFFER
+from .api import errors
 from .api.user import GetUserName
 from .error import WindowsError, handle_nonzero_success
 
@@ -8,7 +8,7 @@ def get_user_name():
 	try:
 		handle_nonzero_success(GetUserName(None, size))
 	except WindowsError as e:
-		if e.code != ERROR_INSUFFICIENT_BUFFER:
+		if e.code != errors.ERROR_INSUFFICIENT_BUFFER:
 			raise
 	buffer = ctypes.create_unicode_buffer(size.value)
 	handle_nonzero_success(GetUserName(buffer, size))

@@ -15,7 +15,8 @@ try:
 except ImportError:
 	pass
 
-from .api.constants import *
+from jaraco.windows.api import errors
+
 
 # from mprapi.h
 MAX_INTERFACE_NAME_LEN = 2**8
@@ -219,14 +220,14 @@ ip_helper.GetAdaptersAddresses.restype = ctypes.c_ulong
 def GetAdaptersAddresses():
 	size = ctypes.c_ulong()
 	res = ip_helper.GetAdaptersAddresses(0,0,None, None,size)
-	if res != ERROR_BUFFER_OVERFLOW:
+	if res != errors.ERROR_BUFFER_OVERFLOW:
 		raise RuntimeError("Error getting structure length (%d)" % res)
 	print(size.value)
 	pointer_type = ctypes.POINTER(IP_ADAPTER_ADDRESSES)
 	buffer = ctypes.create_string_buffer(size.value)
 	struct_p = ctypes.cast(buffer, pointer_type)
 	res = ip_helper.GetAdaptersAddresses(0,0,None, struct_p, size)
-	if res != NO_ERROR:
+	if res != errors.NO_ERROR:
 		raise RuntimeError("Error retrieving table (%d)" % res)
 	while struct_p:
 		yield struct_p.contents
@@ -258,7 +259,7 @@ class AllocatedTable(object):
 		"""
 		length = DWORD()
 		res = self.method(None, length, False)
-		if res != ERROR_INSUFFICIENT_BUFFER:
+		if res != errors.ERROR_INSUFFICIENT_BUFFER:
 			raise RuntimeError("Error getting table length (%d)" % res)
 		return length.value
 
@@ -272,7 +273,7 @@ class AllocatedTable(object):
 		pointer_type = ctypes.POINTER(self.structure)
 		table_p = ctypes.cast(buffer, pointer_type)
 		res = self.method(table_p, returned_buffer_length, False)
-		if res != NO_ERROR:
+		if res != errors.NO_ERROR:
 			raise RuntimeError("Error retrieving table (%d)" % res)
 		return table_p.contents
 
