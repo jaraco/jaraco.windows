@@ -1,11 +1,7 @@
 import ctypes
 from .api.constants import ERROR_INSUFFICIENT_BUFFER
+from .api.user import GetUserName
 from .error import WindowsError, handle_nonzero_success
-
-LPDWORD = ctypes.POINTER(ctypes.wintypes.DWORD)
-GetUserName = ctypes.windll.advapi32.GetUserNameW
-GetUserName.argtypes = (ctypes.wintypes.LPWSTR, LPDWORD)
-GetUserName.restype = ctypes.wintypes.DWORD
 
 def get_user_name():
 	size = ctypes.wintypes.DWORD()
