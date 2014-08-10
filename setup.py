@@ -39,7 +39,7 @@ setup_params = dict(
 	],
 	entry_points = dict(
 		console_scripts = [
-			'xmouse = jaraco.windows.xmouse:run',
+			'xmouse = jaraco.windows.xmouse:Command.invoke',
 			'mklink = jaraco.windows.filesystem:mklink',
 			'find-symlinks = jaraco.windows.filesystem:find_symlinks_cmd',
 			'enver = jaraco.windows.environ:enver',

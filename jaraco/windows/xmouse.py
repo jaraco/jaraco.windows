@@ -2,12 +2,11 @@
 
 from __future__ import print_function
 
-from textwrap import dedent
-from optparse import OptionParser
-
 import ctypes
 import ctypes.wintypes
 from jaraco.windows.error import handle_nonzero_success
+from jaraco.util.cmdline import Command
+
 
 SystemParametersInfo = ctypes.windll.user32.SystemParametersInfoW
 SystemParametersInfo.argtypes = (
@@ -31,8 +30,6 @@ def set(value):
 		set_constant, 0, ctypes.cast(value, ctypes.c_void_p), 0
 	)
 	handle_nonzero_success(result)
-	if value and hasattr(options, 'delay'):
-		set_delay(options.delay)
 
 def get():
 	value = ctypes.wintypes.BOOL()
@@ -61,50 +58,50 @@ def get_delay():
 	handle_nonzero_success(result)
 	return int(value.value)
 
-def enable():
-	print("enabling xmouse")
-	set(True)
 
-def disable():
-	print("disabling xmouse")
-	set(False)
+class DelayParam(Command):
+	@staticmethod
+	def add_arguments(parser):
+		parser.add_argument(
+			'-d', '--delay', type=int,
+			help="Delay in milliseconds for active window tracking"
+		)
 
-def toggle():
-	value = get()
-	print("xmouse: %s -> %s" % (value, not value))
-	set(not value)
 
-def show():
-	msg = "xmouse: {enabled} (delay {delay}ms)".format(
-		enabled=get(),
-		delay=get_delay(),
-	)
-	print(msg)
+class Show(Command):
+	@classmethod
+	def run(cls, args):
+		msg = "xmouse: {enabled} (delay {delay}ms)".format(
+			enabled=get(),
+			delay=get_delay(),
+		)
+		print(msg)
 
-def get_options():
-	"""
-	%prog [<command>] [<options>]
 
-		command: show, enable, disable, toggle (defaults to toggle)
-	"""
-	usage = dedent(get_options.__doc__).strip()
-	parser = OptionParser(usage=usage)
-	parser.add_option('-d', '--delay', type="int",
-		help="Delay in milliseconds for active window tracking")
-	options, args = parser.parse_args()
-	try:
-		options.action = args.pop()
-	except IndexError:
-		options.action = 'toggle'
-	if not options.action in globals():
-		parser.error("Unrecognized command {0}".format(options.action))
-	if args: parser.error("Too many arguments specified")
-	return options
+class Enable(DelayParam):
+	@classmethod
+	def run(cls, args):
+		print("enabling xmouse")
+		set(True)
+		args.delay and set_delay(args.delay)
 
-def run():
-	global options
-	options = get_options()
-	globals()[options.action]()
+
+class Disable(DelayParam):
+	@classmethod
+	def run(cls, args):
+		print("disabling xmouse")
+		set(False)
+		args.delay and set_delay(args.delay)
+
+
+class Toggle(DelayParam):
+	@classmethod
+	def run(cls, args):
+		value = get()
+		print("xmouse: %s -> %s" % (value, not value))
+		set(not value)
+		args.delay and set_delay(args.delay)
+
 
 if __name__ == '__main__':
-	run()
+	Command.invoke()
