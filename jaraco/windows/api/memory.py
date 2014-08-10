@@ -17,3 +17,17 @@ GlobalUnlock.restype = ctypes.wintypes.BOOL
 GlobalSize = ctypes.windll.kernel32.GlobalSize
 GlobalSize.argtypes = ctypes.wintypes.HGLOBAL,
 GlobalSize.restype = ctypes.c_size_t
+
+CreateFileMapping = ctypes.windll.kernel32.CreateFileMappingW
+CreateFileMapping.argtypes = [
+	ctypes.wintypes.HANDLE,
+	ctypes.c_void_p,
+	ctypes.wintypes.DWORD,
+	ctypes.wintypes.DWORD,
+	ctypes.wintypes.DWORD,
+	ctypes.wintypes.LPWSTR,
+]
+CreateFileMapping.restype = ctypes.wintypes.HANDLE
+
+MapViewOfFile = ctypes.windll.kernel32.MapViewOfFile
+MapViewOfFile.restype = ctypes.wintypes.HANDLE
