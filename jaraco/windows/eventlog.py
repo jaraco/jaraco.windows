@@ -1,5 +1,6 @@
 import functools
-from itertools import imap
+
+from six.moves import map
 
 import win32api
 import win32evtlog
@@ -41,4 +42,4 @@ class EventLog(object):
 	def format_records(self, records=None):
 		if records is None:
 			records = self.get_records()
-		return imap(self.format_record, records)
+		return map(self.format_record, records)
