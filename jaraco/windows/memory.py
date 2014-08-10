@@ -1,34 +1,21 @@
 import ctypes
-from ctypes import windll
-from ctypes import c_size_t
 from ctypes import WinError
-from ctypes.wintypes import HGLOBAL, LPVOID, BOOL
 
-GlobalLock = windll.kernel32.GlobalLock
-GlobalLock.argtypes = HGLOBAL,
-GlobalLock.restype = LPVOID
-
-GlobalUnlock = windll.kernel32.GlobalUnlock
-GlobalUnlock.argtypes = HGLOBAL,
-GlobalUnlock.restype = BOOL
-
-GlobalSize = windll.kernel32.GlobalSize
-GlobalSize.argtypes = HGLOBAL,
-GlobalSize.restype = c_size_t
+from .api import memory
 
 class LockedMemory(object):
 	def __init__(self, handle):
 		self.handle = handle
 
 	def __enter__(self):
-		self.data_ptr = GlobalLock(self.handle)
+		self.data_ptr = memory.GlobalLock(self.handle)
 		if not self.data_ptr:
 			del self.data_ptr
 			raise WinError()
 		return self
 
 	def __exit__(self, *args):
-		GlobalUnlock(self.handle)
+		memory.GlobalUnlock(self.handle)
 		del self.data_ptr
 
 	@property
@@ -38,4 +25,4 @@ class LockedMemory(object):
 
 	@property
 	def size(self):
-		return GlobalSize(self.data_ptr)
+		return memory.GlobalSize(self.data_ptr)
