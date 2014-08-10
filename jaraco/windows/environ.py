@@ -12,7 +12,7 @@ winreg = six.moves.winreg
 from jaraco.util.editor import EditableFile
 
 from jaraco.windows import error
-from jaraco.windows import message
+from jaraco.windows.api import message
 from .registry import key_values as registry_key_values
 
 _SetEnvironmentVariable = ctypes.windll.kernel32.SetEnvironmentVariableW
