@@ -1,12 +1,6 @@
 import ctypes.wintypes
 
-from ctypes import (
-	Structure, windll, POINTER, cast,
-	c_int, c_uint64, c_ushort, c_short,
-	c_uint,
-	)
-
-CreateSymbolicLink = windll.kernel32.CreateSymbolicLinkW
+CreateSymbolicLink = ctypes.windll.kernel32.CreateSymbolicLinkW
 CreateSymbolicLink.argtypes = (
 	ctypes.wintypes.ctypes.wintypes.LPWSTR,
 	ctypes.wintypes.LPWSTR,
@@ -14,7 +8,7 @@ CreateSymbolicLink.argtypes = (
 	)
 CreateSymbolicLink.restype = ctypes.wintypes.BOOLEAN
 
-CreateHardLink = windll.kernel32.CreateHardLinkW
+CreateHardLink = ctypes.windll.kernel32.CreateHardLinkW
 CreateHardLink.argtypes = (
 	ctypes.wintypes.LPWSTR,
 	ctypes.wintypes.LPWSTR,
@@ -22,31 +16,31 @@ CreateHardLink.argtypes = (
 	)
 CreateHardLink.restype = ctypes.wintypes.BOOLEAN
 
-GetFileAttributes = windll.kernel32.GetFileAttributesW
+GetFileAttributes = ctypes.windll.kernel32.GetFileAttributesW
 GetFileAttributes.argtypes = ctypes.wintypes.LPWSTR,
 GetFileAttributes.restype = ctypes.wintypes.DWORD
 
-SetFileAttributes = windll.kernel32.SetFileAttributesW
+SetFileAttributes = ctypes.windll.kernel32.SetFileAttributesW
 SetFileAttributes.argtypes = ctypes.wintypes.LPWSTR, ctypes.wintypes.DWORD
 SetFileAttributes.restype = ctypes.wintypes.BOOL
 
 MAX_PATH = 260
 
-GetFinalPathNameByHandle = windll.kernel32.GetFinalPathNameByHandleW
+GetFinalPathNameByHandle = ctypes.windll.kernel32.GetFinalPathNameByHandleW
 GetFinalPathNameByHandle.argtypes = (
 	ctypes.wintypes.HANDLE, ctypes.wintypes.LPWSTR, ctypes.wintypes.DWORD, ctypes.wintypes.DWORD,
 	)
 GetFinalPathNameByHandle.restype = ctypes.wintypes.DWORD
 
-class SECURITY_ATTRIBUTES(Structure):
+class SECURITY_ATTRIBUTES(ctypes.Structure):
 	_fields_ = (
 		('length', ctypes.wintypes.DWORD),
 		('p_security_descriptor', ctypes.wintypes.LPVOID),
 		('inherit_handle', ctypes.wintypes.BOOLEAN),
 		)
-LPSECURITY_ATTRIBUTES = POINTER(SECURITY_ATTRIBUTES)
+LPSECURITY_ATTRIBUTES = ctypes.POINTER(SECURITY_ATTRIBUTES)
 
-CreateFile = windll.kernel32.CreateFileW
+CreateFile = ctypes.windll.kernel32.CreateFileW
 CreateFile.argtypes = (
 	ctypes.wintypes.LPWSTR,
 	ctypes.wintypes.DWORD,
@@ -79,11 +73,11 @@ ERROR_NO_MORE_FILES = 0x12
 
 VOLUME_NAME_DOS = 0
 
-CloseHandle = windll.kernel32.CloseHandle
+CloseHandle = ctypes.windll.kernel32.CloseHandle
 CloseHandle.argtypes = (ctypes.wintypes.HANDLE,)
 CloseHandle.restype = ctypes.wintypes.BOOLEAN
 
-class WIN32_FIND_DATA(Structure):
+class WIN32_FIND_DATA(ctypes.Structure):
 	_fields_ = [
 		('file_attributes', ctypes.wintypes.DWORD),
 		('creation_time', ctypes.wintypes.FILETIME),
@@ -97,14 +91,14 @@ class WIN32_FIND_DATA(Structure):
 
 	@property
 	def file_size(self):
-		return cast(self.file_size_words, POINTER(c_uint64)).contents
+		return ctypes.cast(self.file_size_words, ctypes.POINTER(ctypes.c_uint64)).contents
 
-LPWIN32_FIND_DATA = POINTER(WIN32_FIND_DATA)
+LPWIN32_FIND_DATA = ctypes.POINTER(WIN32_FIND_DATA)
 
-FindFirstFile = windll.kernel32.FindFirstFileW
+FindFirstFile = ctypes.windll.kernel32.FindFirstFileW
 FindFirstFile.argtypes = (ctypes.wintypes.LPWSTR, LPWIN32_FIND_DATA)
 FindFirstFile.restype = ctypes.wintypes.HANDLE
-FindNextFile = windll.kernel32.FindNextFileW
+FindNextFile = ctypes.windll.kernel32.FindNextFileW
 FindNextFile.argtypes = (ctypes.wintypes.HANDLE, LPWIN32_FIND_DATA)
 FindNextFile.restype = ctypes.wintypes.BOOLEAN
 
@@ -116,12 +110,12 @@ SCS_PIF_BINARY = 3 # A PIF file that executes an MS-DOS-based application
 SCS_POSIX_BINARY = 4 # A POSIX-based application
 SCS_WOW_BINARY = 2 # A 16-bit Windows-based application
 
-_GetBinaryType = windll.kernel32.GetBinaryTypeW
-_GetBinaryType.argtypes = (ctypes.wintypes.LPWSTR, POINTER(ctypes.wintypes.DWORD))
+_GetBinaryType = ctypes.windll.kernel32.GetBinaryTypeW
+_GetBinaryType.argtypes = (ctypes.wintypes.LPWSTR, ctypes.POINTER(ctypes.wintypes.DWORD))
 _GetBinaryType.restype = ctypes.wintypes.BOOL
 
 FILEOP_FLAGS = ctypes.wintypes.WORD
-class SHFILEOPSTRUCT(Structure):
+class SHFILEOPSTRUCT(ctypes.Structure):
 	_fields_ = [
 		('status_dialog', ctypes.wintypes.HWND),
 		('operation', ctypes.wintypes.UINT),
@@ -132,15 +126,15 @@ class SHFILEOPSTRUCT(Structure):
 		('name_mapping_handles', ctypes.wintypes.LPVOID),
 		('progress_title', ctypes.wintypes.LPWSTR),
 	]
-_SHFileOperation = windll.shell32.SHFileOperationW
-_SHFileOperation.argtypes = [POINTER(SHFILEOPSTRUCT)]
-_SHFileOperation.restype = c_int
+_SHFileOperation = ctypes.windll.shell32.SHFileOperationW
+_SHFileOperation.argtypes = [ctypes.POINTER(SHFILEOPSTRUCT)]
+_SHFileOperation.restype = ctypes.c_int
 
 FOF_ALLOWUNDO = 64
 FOF_NOCONFIRMATION = 16
 FO_DELETE = 3
 
-ReplaceFile = windll.kernel32.ReplaceFileW
+ReplaceFile = ctypes.windll.kernel32.ReplaceFileW
 ReplaceFile.restype = ctypes.wintypes.BOOL
 ReplaceFile.argtypes = [
 	ctypes.wintypes.LPWSTR,
@@ -155,37 +149,37 @@ REPLACEFILE_WRITE_THROUGH = 0x1
 REPLACEFILE_IGNORE_MERGE_ERRORS = 0x2
 REPLACEFILE_IGNORE_ACL_ERRORS = 0x4
 
-class STAT_STRUCT(Structure):
+class STAT_STRUCT(ctypes.Structure):
 	_fields_ = [
-		('dev', c_uint),
-		('ino', c_ushort),
-		('mode', c_ushort),
-		('nlink', c_short),
-		('uid', c_short),
-		('gid', c_short),
-		('rdev', c_uint),
-		# the following 4 fields are c_uint64 for _stat64
-		('size', c_uint),
-		('atime', c_uint),
-		('mtime', c_uint),
-		('ctime', c_uint),
+		('dev', ctypes.c_uint),
+		('ino', ctypes.c_ushort),
+		('mode', ctypes.c_ushort),
+		('nlink', ctypes.c_short),
+		('uid', ctypes.c_short),
+		('gid', ctypes.c_short),
+		('rdev', ctypes.c_uint),
+		# the following 4 fields are ctypes.c_uint64 for _stat64
+		('size', ctypes.c_uint),
+		('atime', ctypes.c_uint),
+		('mtime', ctypes.c_uint),
+		('ctime', ctypes.c_uint),
 	]
 
-_wstat = windll.msvcrt._wstat
-_wstat.argtypes = [ctypes.wintypes.LPWSTR, POINTER(STAT_STRUCT)]
-_wstat.restype = c_int
+_wstat = ctypes.windll.msvcrt._wstat
+_wstat.argtypes = [ctypes.wintypes.LPWSTR, ctypes.POINTER(STAT_STRUCT)]
+_wstat.restype = ctypes.c_int
 
 FILE_NOTIFY_CHANGE_LAST_WRITE = 0x10
 
-FindFirstChangeNotification = windll.kernel32.FindFirstChangeNotificationW
+FindFirstChangeNotification = ctypes.windll.kernel32.FindFirstChangeNotificationW
 FindFirstChangeNotification.argtypes = ctypes.wintypes.LPWSTR, ctypes.wintypes.BOOL, ctypes.wintypes.DWORD
 FindFirstChangeNotification.restype = ctypes.wintypes.HANDLE
 
-FindCloseChangeNotification = windll.kernel32.FindCloseChangeNotification
+FindCloseChangeNotification = ctypes.windll.kernel32.FindCloseChangeNotification
 FindCloseChangeNotification.argtypes = ctypes.wintypes.HANDLE,
 FindCloseChangeNotification.restype = ctypes.wintypes.BOOL
 
-FindNextChangeNotification = windll.kernel32.FindNextChangeNotification
+FindNextChangeNotification = ctypes.windll.kernel32.FindNextChangeNotification
 FindNextChangeNotification.argtypes = ctypes.wintypes.HANDLE,
 FindNextChangeNotification.restype = ctypes.wintypes.BOOL
 
