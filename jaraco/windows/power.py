@@ -5,16 +5,15 @@ from __future__ import print_function
 import itertools
 import contextlib
 import ctypes
-
 from ctypes import Structure, windll, POINTER
 from ctypes.wintypes import BYTE, DWORD, BOOL
 
+from more_itertools.recipes import consume, unique_justseen
 try:
 	import wmi as wmilib
 except ImportError:
 	pass
 
-import jaraco.util.itertools as jiter
 from jaraco.windows.error import handle_nonzero_success
 
 class SYSTEM_POWER_STATUS(Structure):
@@ -57,14 +56,14 @@ def wait_for_power_status_change():
 	def not_power_status_change(evt):
 		return evt.EventType != EVT_POWER_STATUS_CHANGE
 	events = get_power_management_events()
-	jiter.consume(itertools.takewhile(not_power_status_change, events))
+	consume(itertools.takewhile(not_power_status_change, events))
 
 def get_unique_power_states():
 	"""
 	Just like get_power_states, but ensures values are returned only
 	when the state changes.
 	"""
-	return jiter.unique_justseen(get_power_states())
+	return unique_justseen(get_power_states())
 
 def get_power_states():
 	"""

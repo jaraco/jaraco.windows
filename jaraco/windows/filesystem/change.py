@@ -17,7 +17,7 @@ from threading import Thread
 import itertools
 import logging
 
-from jaraco.util.itertools import consume
+from more_itertools.recipes import consume
 import jaraco.util.string
 
 import jaraco.windows.api.filesystem as fs
