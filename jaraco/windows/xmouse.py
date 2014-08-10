@@ -2,6 +2,9 @@
 
 from __future__ import print_function
 
+from textwrap import dedent
+from optparse import OptionParser
+
 import ctypes
 import ctypes.wintypes
 from jaraco.windows.error import handle_nonzero_success
@@ -85,9 +88,7 @@ def get_options():
 
 		command: show, enable, disable, toggle (defaults to toggle)
 	"""
-	from textwrap import dedent
 	usage = dedent(get_options.__doc__).strip()
-	from optparse import OptionParser
 	parser = OptionParser(usage=usage)
 	parser.add_option('-d', '--delay', type="int",
 		help="Delay in milliseconds for active window tracking")
