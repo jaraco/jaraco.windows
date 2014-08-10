@@ -37,28 +37,22 @@ WNetAddConnection2.argtypes = (
 	ctypes.wintypes.DWORD,
 	)
 
-def AddConnection(
-	remote_name,
-	type=RESOURCETYPE_ANY,
-	local_name=None,
-	provider_name=None,
-	user=None,
-	password=None,
-	flags=0):
+def AddConnection(remote_name, type=RESOURCETYPE_ANY, local_name=None,
+		provider_name=None, user=None, password=None, flags=0):
 	resource = NETRESOURCE(
 		type=type,
 		remote_name=remote_name,
 		local_name=local_name,
 		provider_name=provider_name,
 		# WNetAddConnection2 ignores the other members of NETRESOURCE
-		)
+	)
 
 	result = WNetAddConnection2(
 		resource,
 		password,
 		user,
 		flags,
-		)
+	)
 
 	if result != 0:
 		raise WindowsError(result)
