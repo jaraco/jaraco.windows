@@ -1,6 +1,11 @@
 Changes
 -------
 
+3.0
+~~~
+
+* Moved many of the API definitions to the ``jaraco.windows.api`` package.
+
 2.15.1
 ~~~~~~
 
