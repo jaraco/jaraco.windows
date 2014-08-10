@@ -1,9 +1,6 @@
 import ctypes
-from ctypes.wintypes import HANDLE, LPWSTR, DWORD
 
-GetModuleFileName = ctypes.windll.kernel32.GetModuleFileNameW
-GetModuleFileName.argtypes = (HANDLE, LPWSTR, DWORD)
-GetModuleFileName.restype = DWORD
+from .api import library
 
 def find_lib(lib):
 	r"""
@@ -19,5 +16,5 @@ def find_lib(lib):
 
 	size = 1024
 	result = ctypes.create_unicode_buffer(size)
-	GetModuleFileName(lib._handle, result, size)
+	library.GetModuleFileName(lib._handle, result, size)
 	return result.value
