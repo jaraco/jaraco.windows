@@ -12,7 +12,8 @@ class EventLog(object):
 	def __init__(self, name="Application", machine_name=None):
 		self.machine_name = machine_name
 		self.name = name
-		self.formatter = functools.partial(win32evtlogutil.FormatMessage, logType=self.name)
+		self.formatter = functools.partial(
+			win32evtlogutil.FormatMessage, logType=self.name)
 
 	def __enter__(self):
 		if hasattr(self, 'handle'):
@@ -24,7 +25,11 @@ class EventLog(object):
 		win32evtlog.CloseEventLog(self.handle)
 		del self.handle
 
-	def get_records(self, flags=win32evtlog.EVENTLOG_BACKWARDS_READ|win32evtlog.EVENTLOG_SEQUENTIAL_READ):
+	_default_flags = (
+		win32evtlog.EVENTLOG_BACKWARDS_READ
+		| win32evtlog.EVENTLOG_SEQUENTIAL_READ
+	)
+	def get_records(self, flags=_default_flags):
 		with self:
 			while True:
 				objects = win32evtlog.ReadEventLog(self.handle, flags, 0)
