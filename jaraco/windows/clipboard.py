@@ -9,9 +9,8 @@ import io
 import six
 import ctypes
 from ctypes import windll
-from ctypes.wintypes import UINT, HANDLE
 
-from jaraco.windows.api import clipboard
+from jaraco.windows.api import clipboard, memory
 from jaraco.windows.error import handle_nonzero_success, WindowsError
 from jaraco.windows.memory import LockedMemory
 
@@ -112,14 +111,6 @@ def GetClipboardData(type=clipboard.CF_UNICODETEXT):
 
 EmptyClipboard = lambda: handle_nonzero_success(windll.user32.EmptyClipboard())
 
-GMEM_MOVEABLE = 0x2
-
-GlobalAlloc = windll.kernel32.GlobalAlloc
-GlobalAlloc.argtypes = [
-	UINT, ctypes.c_ssize_t,
-]
-GlobalAlloc.restype = HANDLE
-
 def SetClipboardData(type, content):
 	"""
 	Modeled after http://msdn.microsoft.com/en-us/library/ms649016%28VS.85%29.aspx#_win32_Copying_Information_to_the_Clipboard
@@ -132,7 +123,7 @@ def SetClipboardData(type, content):
 		raise NotImplementedError("Only text types are supported at this time")
 	# allocate the memory for the data
 	content = allocators[type](content)
-	flags = GMEM_MOVEABLE
+	flags = memory.GMEM_MOVEABLE
 	size = ctypes.sizeof(content)
 	handle_to_copy = windll.kernel32.GlobalAlloc(flags, size)
 	with LockedMemory(handle_to_copy) as lm:
