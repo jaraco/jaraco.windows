@@ -135,17 +135,17 @@ def SetClipboardData(type, content):
 def set_text(source):
 	with context():
 		EmptyClipboard()
-		clipboard.SetClipboardData(clipboard.CF_TEXT, source)
+		SetClipboardData(clipboard.CF_TEXT, source)
 
 def get_text():
 	with context():
-		result = clipboard.GetClipboardData(clipboard.CF_TEXT)
+		result = GetClipboardData(clipboard.CF_TEXT)
 	return result
 
 def set_unicode_text(source):
 	with context():
 		EmptyClipboard()
-		clipboard.SetClipboardData(clipboard.CF_UNICODETEXT, source)
+		SetClipboardData(clipboard.CF_UNICODETEXT, source)
 
 def get_unicode_text():
 	with context():
@@ -153,7 +153,7 @@ def get_unicode_text():
 
 def get_html():
 	with context():
-		result = clipboard.GetClipboardData(clipboard.CF_HTML)
+		result = GetClipboardData(clipboard.CF_HTML)
 	return result
 
 def paste_stdout():
