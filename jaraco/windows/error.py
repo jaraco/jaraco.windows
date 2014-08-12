@@ -1,5 +1,7 @@
 #!/usr/bin/env python
 
+import sys
+
 import ctypes
 import ctypes.wintypes
 
@@ -50,7 +52,11 @@ class WindowsError(builtins.WindowsError):
 		if value is None:
 			value = ctypes.windll.kernel32.GetLastError()
 		strerror = format_system_message(value)
-		super(WindowsError, self).__init__(value, strerror)
+		if sys.version_info > (3,3):
+			args = 0, strerror, None, value
+		else:
+			args = value, strerror
+		super(WindowsError, self).__init__(*args)
 
 	@property
 	def message(self):
