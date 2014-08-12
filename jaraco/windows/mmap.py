@@ -37,6 +37,7 @@ class MemoryMap(object):
 		self.pos = pos
 
 	def write(self, msg):
+		assert isinstance(msg, bytes)
 		ctypes.windll.msvcrt.memcpy(self.view + self.pos, msg, len(msg))
 		self.pos += len(msg)
 
