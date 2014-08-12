@@ -8,7 +8,7 @@ timers
 from __future__ import absolute_import
 
 import time
-import thread
+from six.moves import _thread
 
 from jaraco.windows.api import event as win32event
 
@@ -27,7 +27,7 @@ class WaitableTimer:
 		self.stop_event = win32event.CreateEvent(None, 0, 0, None)
 
 	def set(self, due_time, period):
-		thread.start_new_thread(self._signal_loop, (due_time, period))
+		_thread.start_new_thread(self._signal_loop, (due_time, period))
 
 	def stop(self):
 		win32event.SetEvent(self.stop_event)

@@ -3,108 +3,95 @@
 from __future__ import print_function
 
 import ctypes
-import ctypes.wintypes
 from jaraco.windows.error import handle_nonzero_success
+from jaraco.windows.api import system
+from jaraco.util.cmdline import Command
 
-SystemParametersInfo = ctypes.windll.user32.SystemParametersInfoW
-SystemParametersInfo.argtypes = (
-	ctypes.wintypes.UINT,
-	ctypes.wintypes.UINT,
-	ctypes.c_void_p,
-	ctypes.wintypes.UINT,
-	)
-
-SPI_GETACTIVEWINDOWTRACKING = 0x1000
-SPI_SETACTIVEWINDOWTRACKING = 0x1001
-SPI_GETACTIVEWNDTRKTIMEOUT = 0x2002
-SPI_SETACTIVEWNDTRKTIMEOUT = 0x2003
-set_constant = SPI_SETACTIVEWINDOWTRACKING
-get_constant = SPI_GETACTIVEWINDOWTRACKING
-
-options = None
 
 def set(value):
-	handle_nonzero_success(
-		SystemParametersInfo(
-			set_constant, 0, ctypes.cast(value, ctypes.c_void_p), 0
-	)	)
-	if value and hasattr(options, 'delay'):
-		set_delay(options.delay)
+	result = system.SystemParametersInfo(
+		system.SPI_SETACTIVEWINDOWTRACKING,
+		0,
+		ctypes.cast(value, ctypes.c_void_p),
+		0,
+	)
+	handle_nonzero_success(result)
 
 def get():
 	value = ctypes.wintypes.BOOL()
-	handle_nonzero_success(
-		SystemParametersInfo(get_constant, 0, ctypes.byref(value), 0)
+	result = system.SystemParametersInfo(
+		system.SPI_GETACTIVEWINDOWTRACKING,
+		0,
+		ctypes.byref(value),
+		0,
 	)
+	handle_nonzero_success(result)
 	return bool(value)
 
 def set_delay(milliseconds):
-	handle_nonzero_success(
-		SystemParametersInfo(
-			SPI_SETACTIVEWNDTRKTIMEOUT,
-			0,
-			ctypes.cast(milliseconds, ctypes.c_void_p),
-			0,
-	)	)
+	result = system.SystemParametersInfo(
+		system.SPI_SETACTIVEWNDTRKTIMEOUT,
+		0,
+		ctypes.cast(milliseconds, ctypes.c_void_p),
+		0,
+	)
+	handle_nonzero_success(result)
 
 def get_delay():
 	value = ctypes.wintypes.DWORD()
-	handle_nonzero_success(
-		SystemParametersInfo(
-			SPI_GETACTIVEWNDTRKTIMEOUT,
-			0,
-			ctypes.byref(value),
-			0,
-			)
-		)
+	result = system.SystemParametersInfo(
+		system.SPI_GETACTIVEWNDTRKTIMEOUT,
+		0,
+		ctypes.byref(value),
+		0,
+	)
+	handle_nonzero_success(result)
 	return int(value.value)
 
-def enable():
-	print("enabling xmouse")
-	set(True)
 
-def disable():
-	print("disabling xmouse")
-	set(False)
+class DelayParam(Command):
+	@staticmethod
+	def add_arguments(parser):
+		parser.add_argument(
+			'-d', '--delay', type=int,
+			help="Delay in milliseconds for active window tracking"
+		)
 
-def toggle():
-	value = get()
-	print("xmouse: %s -> %s" % (value, not value))
-	set(not value)
 
-def show():
-	msg = "xmouse: {enabled} (delay {delay}ms)".format(
-		enabled=get(),
-		delay=get_delay(),
-	)
-	print(msg)
+class Show(Command):
+	@classmethod
+	def run(cls, args):
+		msg = "xmouse: {enabled} (delay {delay}ms)".format(
+			enabled=get(),
+			delay=get_delay(),
+		)
+		print(msg)
 
-def get_options():
-	"""
-	%prog [<command>] [<options>]
 
-		command: show, enable, disable, toggle (defaults to toggle)
-	"""
-	from textwrap import dedent
-	usage = dedent(get_options.__doc__).strip()
-	from optparse import OptionParser
-	parser = OptionParser(usage=usage)
-	parser.add_option('-d', '--delay', type="int",
-		help="Delay in milliseconds for active window tracking")
-	options, args = parser.parse_args()
-	try:
-		options.action = args.pop()
-	except IndexError:
-		options.action = 'toggle'
-	if not options.action in globals():
-		parser.error("Unrecognized command {0}".format(options.action))
-	if args: parser.error("Too many arguments specified")
-	return options
+class Enable(DelayParam):
+	@classmethod
+	def run(cls, args):
+		print("enabling xmouse")
+		set(True)
+		args.delay and set_delay(args.delay)
 
-def run():
-	global options
-	options = get_options()
-	globals()[options.action]()
+
+class Disable(DelayParam):
+	@classmethod
+	def run(cls, args):
+		print("disabling xmouse")
+		set(False)
+		args.delay and set_delay(args.delay)
+
+
+class Toggle(DelayParam):
+	@classmethod
+	def run(cls, args):
+		value = get()
+		print("xmouse: %s -> %s" % (value, not value))
+		set(not value)
+		args.delay and set_delay(args.delay)
+
 
 if __name__ == '__main__':
-	run()
+	Command.invoke()

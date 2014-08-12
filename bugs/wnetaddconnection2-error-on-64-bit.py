@@ -1,12 +1,12 @@
 # reported at http://social.msdn.microsoft.com/Forums/en-US/wsk/thread/f43c2faf-3df3-4f11-9f5e-1a9101753f93
 from win32wnet import WNetAddConnection2, NETRESOURCE
 resource = NETRESOURCE()
-resource.lpRemoteName = r'\\starbase1\jaraco'
-username = 'jaraco@imcva.com'
+resource.lpRemoteName = r'\\aoshi\users'
+username = 'jaraco'
 res = WNetAddConnection2(resource, UserName=username)
-print 'first result is', res
+print('first result is', res)
 res = WNetAddConnection2(resource, UserName=username)
-print 'second result is', res
+print('second result is', res)
 
 """
 Output is:

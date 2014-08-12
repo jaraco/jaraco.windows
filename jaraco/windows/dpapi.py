@@ -3,7 +3,7 @@
 Python routines to interface with the Microsoft
 Data Protection API (DPAPI).
 
->>> orig_data = 'Ipsum Lorem...'
+>>> orig_data = b'Ipsum Lorem...'
 >>> ciphertext = CryptProtectData(orig_data)
 >>> descr, data = CryptUnprotectData(ciphertext)
 >>> data == orig_data
@@ -19,11 +19,11 @@ class DATA_BLOB(ctypes.Structure):
 	A data blob structure for use with MS DPAPI functions.
 
 	Initialize with string of characters
-	>>> blob = DATA_BLOB('abc123\x00456')
+	>>> blob = DATA_BLOB(b'abc123\x00456')
 	>>> len(blob)
 	10
-	>>> str(blob)
-	'abc123\x00456'
+	>>> blob.get_data()
+	b'abc123\x00456'
 	"""
 	_fields_ = [
 		('data_size', wintypes.DWORD),
@@ -113,7 +113,7 @@ def CryptProtectData(
 		data_out,
 		)
 	handle_nonzero_success(res)
-	res = str(data_out)
+	res = data_out.get_data()
 	data_out.free()
 	return res
 
@@ -133,19 +133,13 @@ def CryptUnprotectData(data, optional_entropy=None, prompt_struct=None, flags=0)
 		entropy,
 		None, # reserved
 		prompt_struct,
-		flags|CRYPTPROTECT_UI_FORBIDDEN,
+		flags | CRYPTPROTECT_UI_FORBIDDEN,
 		data_out,
 		)
 	handle_nonzero_success(res)
 	description = ptr_description.value
 	if ptr_description.value is not None:
 		ctypes.windll.kernel32.LocalFree(ptr_description)
-	res = str(data_out)
+	res = data_out.get_data()
 	data_out.free()
 	return description, res
-
-if __name__ == '__main__':
-	orig_data = 'Ipsum Lorem...'
-	ciphertext = CryptProtectData(orig_data)
-	descr, data = CryptUnprotectData(ciphertext)
-	assert data == orig_data

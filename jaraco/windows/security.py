@@ -1,68 +1,7 @@
 import ctypes.wintypes
 
 from jaraco.windows.error import handle_nonzero_success
-
-class TokenInformationClass:
-	TokenUser = 1
-
-class TOKEN_USER(ctypes.Structure):
-	num = 1
-	_fields_ = [
-		('SID', ctypes.c_void_p),
-		('ATTRIBUTES', ctypes.wintypes.DWORD),
-	]
-
-
-class SECURITY_DESCRIPTOR(ctypes.Structure):
-	"""
-	typedef struct _SECURITY_DESCRIPTOR
-		{
-		UCHAR Revision;
-		UCHAR Sbz1;
-		SECURITY_DESCRIPTOR_CONTROL Control;
-		PSID Owner;
-		PSID Group;
-		PACL Sacl;
-		PACL Dacl;
-		}   SECURITY_DESCRIPTOR;
-	"""
-	SECURITY_DESCRIPTOR_CONTROL = ctypes.wintypes.USHORT
-	REVISION = 1
-
-	_fields_ = [
-		('Revision', ctypes.c_ubyte),
-		('Sbz1', ctypes.c_ubyte),
-		('Control', SECURITY_DESCRIPTOR_CONTROL),
-		('Owner', ctypes.c_void_p),
-		('Group', ctypes.c_void_p),
-		('Sacl', ctypes.c_void_p),
-		('Dacl', ctypes.c_void_p),
-	]
-
-class SECURITY_ATTRIBUTES(ctypes.Structure):
-	"""
-	typedef struct _SECURITY_ATTRIBUTES {
-		DWORD  nLength;
-		LPVOID lpSecurityDescriptor;
-		BOOL   bInheritHandle;
-	} SECURITY_ATTRIBUTES;
-	"""
-	_fields_ = [
-		('nLength', ctypes.wintypes.DWORD),
-		('lpSecurityDescriptor', ctypes.c_void_p),
-		('bInheritHandle', ctypes.wintypes.BOOL),
-	]
-
-	def __init__(self, *args, **kwargs):
-		super(SECURITY_ATTRIBUTES, self).__init__(*args, **kwargs)
-		self.nLength = ctypes.sizeof(SECURITY_ATTRIBUTES)
-
-	def _get_descriptor(self):
-		return self._descriptor
-	def _set_descriptor(self, descriptor):
-		self._descriptor = descriptor
-		self.lpSecurityDescriptor = ctypes.addressof(descriptor)
-	descriptor = property(_get_descriptor, _set_descriptor)
+from .api import security
 
 def GetTokenInformation(token, information_class):
 	"""
@@ -76,10 +15,7 @@ def GetTokenInformation(token, information_class):
 		information_class.num,
 		ctypes.byref(data), ctypes.sizeof(data),
 		ctypes.byref(data_size)))
-	return ctypes.cast(data, ctypes.POINTER(TOKEN_USER)).contents
-
-class TokenAccess:
-	TOKEN_QUERY = 0x8
+	return ctypes.cast(data, ctypes.POINTER(security.TOKEN_USER)).contents
 
 def OpenProcessToken(proc_handle, access):
 	result = ctypes.wintypes.HANDLE()
@@ -94,9 +30,9 @@ def get_current_user():
 	"""
 	process = OpenProcessToken(
 		ctypes.windll.kernel32.GetCurrentProcess(),
-		TokenAccess.TOKEN_QUERY,
+		security.TokenAccess.TOKEN_QUERY,
 	)
-	return GetTokenInformation(process, TOKEN_USER)
+	return security.GetTokenInformation(process, security.TOKEN_USER)
 
 def get_security_attributes_for_user(user=None):
 	"""
@@ -106,17 +42,17 @@ def get_security_attributes_for_user(user=None):
 	if user is None:
 		user = get_current_user()
 
-	assert isinstance(user, TOKEN_USER), "user must be TOKEN_USER instance"
+	assert isinstance(user, security.TOKEN_USER), "user must be TOKEN_USER instance"
 
-	SD = SECURITY_DESCRIPTOR()
-	SA = SECURITY_ATTRIBUTES()
+	SD = security.SECURITY_DESCRIPTOR()
+	SA = security.SECURITY_ATTRIBUTES()
 	# by attaching the actual security descriptor, it will be garbage-
 	# collected with the security attributes
 	SA.descriptor = SD
 	SA.bInheritHandle = 1
 
 	ctypes.windll.advapi32.InitializeSecurityDescriptor(ctypes.byref(SD),
-		SECURITY_DESCRIPTOR.REVISION)
+		security.SECURITY_DESCRIPTOR.REVISION)
 	ctypes.windll.advapi32.SetSecurityDescriptorOwner(ctypes.byref(SD),
 		user.SID, 0)
 	return SA

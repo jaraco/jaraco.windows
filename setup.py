@@ -39,7 +39,7 @@ setup_params = dict(
 	],
 	entry_points = dict(
 		console_scripts = [
-			'xmouse = jaraco.windows.xmouse:run',
+			'xmouse = jaraco.windows.xmouse:Command.invoke',
 			'mklink = jaraco.windows.filesystem:mklink',
 			'find-symlinks = jaraco.windows.filesystem:find_symlinks_cmd',
 			'enver = jaraco.windows.environ:enver',
@@ -49,6 +49,7 @@ setup_params = dict(
 	),
 	install_requires=[
 		'jaraco.util>=3.9dev',
+		'more_itertools',
 		'six',
 	],
 	extras_require = {
@@ -56,12 +57,12 @@ setup_params = dict(
 	dependency_links = [
 	],
 	tests_require=[
-		'nose>=0.10',
+		'pytest',
 	],
 	setup_requires=[
-		'hgtools >= 0.4.7',
+		'hgtools',
+		'pytest-runner',
 	],
-	test_suite = "nose.collector",
 )
 
 if __name__ == '__main__':

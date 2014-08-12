@@ -1,9 +1,6 @@
 import ctypes
-from ctypes.wintypes import HANDLE, LPWSTR, DWORD
 
-GetModuleFileName = ctypes.windll.kernel32.GetModuleFileNameW
-GetModuleFileName.argtypes = (HANDLE, LPWSTR, DWORD)
-GetModuleFileName.restype = DWORD
+from .api import library
 
 def find_lib(lib):
 	r"""
@@ -11,13 +8,13 @@ def find_lib(lib):
 
 	Accepts a string or loaded module
 
-	>>> find_lib('kernel32').lower()
-	u'c:\\windows\\system32\\kernel32.dll'
+	>>> print(find_lib('kernel32').lower())
+	c:\windows\system32\kernel32.dll
 	"""
 	if isinstance(lib, str):
 		lib = getattr(ctypes.windll, lib)
 
 	size = 1024
 	result = ctypes.create_unicode_buffer(size)
-	GetModuleFileName(lib._handle, result, size)
+	library.GetModuleFileName(lib._handle, result, size)
 	return result.value

@@ -13,7 +13,7 @@ def get_args():
 
 def main():
 	options = get_args()
-	print trace_symlink_target(options.filename)
+	print(trace_symlink_target(options.filename))
 
 if __name__ == '__main__':
 	main()

@@ -1,6 +1,18 @@
 Changes
 -------
 
+3.0.1
+~~~~~
+
+* Substantial fixes on Python 3.
+* Fixed regression in clipboard module.
+* Restored changes from 2.16, unintentionally omitted from 3.0.
+
+3.0
+~~~
+
+* Moved many of the API definitions to the ``jaraco.windows.api`` package.
+
 2.16
 ~~~~
 

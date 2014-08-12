@@ -12,30 +12,20 @@ winreg = six.moves.winreg
 from jaraco.util.editor import EditableFile
 
 from jaraco.windows import error
-from jaraco.windows import message
+from jaraco.windows.api import message, environ
 from .registry import key_values as registry_key_values
 
-_SetEnvironmentVariable = ctypes.windll.kernel32.SetEnvironmentVariableW
-_SetEnvironmentVariable.restype = ctypes.wintypes.BOOL
-_SetEnvironmentVariable.argtypes = [ctypes.wintypes.LPCWSTR]*2
-
-_GetEnvironmentVariable = ctypes.windll.kernel32.GetEnvironmentVariableW
-_GetEnvironmentVariable.restype = ctypes.wintypes.BOOL
-_GetEnvironmentVariable.argtypes = [
-	ctypes.wintypes.LPCWSTR,
-	ctypes.wintypes.LPWSTR, ctypes.wintypes.DWORD,
-	]
 
 def SetEnvironmentVariable(name, value):
-	error.handle_nonzero_success(_SetEnvironmentVariable(name, value))
+	error.handle_nonzero_success(environ.SetEnvironmentVariable(name, value))
 
 def ClearEnvironmentVariable(name):
-	error.handle_nonzero_success(_SetEnvironmentVariable(name, None))
+	error.handle_nonzero_success(environ.SetEnvironmentVariable(name, None))
 
 def GetEnvironmentVariable(name):
 	max_size = 2**15-1
 	buffer = ctypes.create_unicode_buffer(max_size)
-	error.handle_nonzero_success(_GetEnvironmentVariable(name, buffer, max_size))
+	error.handle_nonzero_success(environ.GetEnvironmentVariable(name, buffer, max_size))
 	return buffer.value
 
 ###

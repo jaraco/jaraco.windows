@@ -3,20 +3,7 @@ import ctypes
 import six
 
 from .error import handle_nonzero_success
-
-CreateFileMapping = ctypes.windll.kernel32.CreateFileMappingW
-CreateFileMapping.argtypes = [
-	ctypes.wintypes.HANDLE,
-	ctypes.c_void_p,
-	ctypes.wintypes.DWORD,
-	ctypes.wintypes.DWORD,
-	ctypes.wintypes.DWORD,
-	ctypes.wintypes.LPWSTR,
-]
-CreateFileMapping.restype = ctypes.wintypes.HANDLE
-
-MapViewOfFile = ctypes.windll.kernel32.MapViewOfFile
-MapViewOfFile.restype = ctypes.wintypes.HANDLE
+from .api import memory
 
 class MemoryMap(object):
 	"""
@@ -43,13 +30,14 @@ class MemoryMap(object):
 		if filemap == INVALID_HANDLE_VALUE:
 			raise Exception("Failed to create file mapping")
 		self.filemap = filemap
-		self.view = MapViewOfFile(filemap, FILE_MAP_WRITE, 0, 0, 0)
+		self.view = memory.MapViewOfFile(filemap, FILE_MAP_WRITE, 0, 0, 0)
 		return self
 
 	def seek(self, pos):
 		self.pos = pos
 
 	def write(self, msg):
+		assert isinstance(msg, bytes)
 		ctypes.windll.msvcrt.memcpy(self.view + self.pos, msg, len(msg))
 		self.pos += len(msg)
 

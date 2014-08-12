@@ -6,37 +6,17 @@ import itertools
 import contextlib
 import ctypes
 
-from ctypes import Structure, windll, POINTER
-from ctypes.wintypes import BYTE, DWORD, BOOL
-
+from more_itertools.recipes import consume, unique_justseen
 try:
 	import wmi as wmilib
 except ImportError:
 	pass
 
-import jaraco.util.itertools as jiter
 from jaraco.windows.error import handle_nonzero_success
+from .api import power
 
-class SYSTEM_POWER_STATUS(Structure):
-	_fields_ = (
-		('ac_line_status', BYTE),
-		('battery_flag', BYTE),
-		('battery_life_percent', BYTE),
-		('reserved', BYTE),
-		('battery_life_time', DWORD),
-		('battery_full_life_time', DWORD),
-		)
-
-	@property
-	def ac_line_status_string(self):
-		return {0:'offline', 1: 'online', 255: 'unknown'}[self.ac_line_status]
-
-LPSYSTEM_POWER_STATUS = POINTER(SYSTEM_POWER_STATUS)
 def GetSystemPowerStatus():
-	GetSystemPowerStatus = windll.kernel32.GetSystemPowerStatus
-	GetSystemPowerStatus.argtypes = (LPSYSTEM_POWER_STATUS,)
-	GetSystemPowerStatus.restype = BOOL
-	stat = SYSTEM_POWER_STATUS()
+	stat = power.SYSTEM_POWER_STATUS()
 	handle_nonzero_success(GetSystemPowerStatus(stat))
 	return stat
 
@@ -57,14 +37,14 @@ def wait_for_power_status_change():
 	def not_power_status_change(evt):
 		return evt.EventType != EVT_POWER_STATUS_CHANGE
 	events = get_power_management_events()
-	jiter.consume(itertools.takewhile(not_power_status_change, events))
+	consume(itertools.takewhile(not_power_status_change, events))
 
 def get_unique_power_states():
 	"""
 	Just like get_power_states, but ensures values are returned only
 	when the state changes.
 	"""
-	return jiter.unique_justseen(get_power_states())
+	return unique_justseen(get_power_states())
 
 def get_power_states():
 	"""
@@ -77,28 +57,14 @@ def get_power_states():
 		yield state.ac_line_status_string
 		wait_for_power_status_change()
 
-SetThreadExecutionState = ctypes.windll.kernel32.SetThreadExecutionState
-SetThreadExecutionState.argtypes = [ctypes.c_uint]
-SetThreadExecutionState.restype = ctypes.c_uint
-
-class ES:
-	"""
-	Execution state constants
-	"""
-	continuous = 0x80000000
-	system_required = 1
-	display_required = 2
-	awaymode_required = 0x40
-
-
 @contextlib.contextmanager
 def no_sleep():
 	"""
 	Context that prevents the computer from going to sleep.
 	"""
-	mode = ES.continuous | ES.system_required
-	handle_nonzero_success(SetThreadExecutionState(mode))
+	mode = power.ES.continuous | power.ES.system_required
+	handle_nonzero_success(power.SetThreadExecutionState(mode))
 	try:
 		yield
 	finally:
-		handle_nonzero_success(SetThreadExecutionState(ES.continuous))
+		handle_nonzero_success(power.SetThreadExecutionState(power.ES.continuous))
