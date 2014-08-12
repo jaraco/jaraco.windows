@@ -3,7 +3,7 @@
 Python routines to interface with the Microsoft
 Data Protection API (DPAPI).
 
->>> orig_data = 'Ipsum Lorem...'
+>>> orig_data = b'Ipsum Lorem...'
 >>> ciphertext = CryptProtectData(orig_data)
 >>> descr, data = CryptUnprotectData(ciphertext)
 >>> data == orig_data
@@ -113,7 +113,7 @@ def CryptProtectData(
 		data_out,
 		)
 	handle_nonzero_success(res)
-	res = str(data_out)
+	res = data_out.get_data()
 	data_out.free()
 	return res
 
@@ -140,12 +140,6 @@ def CryptUnprotectData(data, optional_entropy=None, prompt_struct=None, flags=0)
 	description = ptr_description.value
 	if ptr_description.value is not None:
 		ctypes.windll.kernel32.LocalFree(ptr_description)
-	res = str(data_out)
+	res = data_out.get_data()
 	data_out.free()
 	return description, res
-
-if __name__ == '__main__':
-	orig_data = 'Ipsum Lorem...'
-	ciphertext = CryptProtectData(orig_data)
-	descr, data = CryptUnprotectData(ciphertext)
-	assert data == orig_data
