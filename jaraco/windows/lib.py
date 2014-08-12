@@ -8,8 +8,8 @@ def find_lib(lib):
 
 	Accepts a string or loaded module
 
-	>>> find_lib('kernel32').lower()
-	u'c:\\windows\\system32\\kernel32.dll'
+	>>> print(find_lib('kernel32').lower())
+	c:\windows\system32\kernel32.dll
 	"""
 	if isinstance(lib, str):
 		lib = getattr(ctypes.windll, lib)
