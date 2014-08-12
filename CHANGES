@@ -1,6 +1,12 @@
 Changes
 -------
 
+3.0.1
+~~~~~
+
+* Substantial fixes on Python 3.
+* Fixed regression in clipboard module.
+
 3.0
 ~~~
 
