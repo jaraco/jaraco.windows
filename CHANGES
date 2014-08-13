@@ -1,6 +1,11 @@
 Changes
 -------
 
+3.1
+~~~
+
+* Added clipboard.get_image helper.
+
 3.0.1
 ~~~~~
 

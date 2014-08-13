@@ -156,6 +156,10 @@ def get_html():
 		result = GetClipboardData(clipboard.CF_HTML)
 	return result
 
+def get_image():
+	with context():
+		return GetClipboardData(clipboard.CF_DIB)
+
 def paste_stdout():
 	getter = get_unicode_text if six.PY3 else get_text
 	sys.stdout.write(getter())
