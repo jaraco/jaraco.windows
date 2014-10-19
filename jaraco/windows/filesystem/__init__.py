@@ -104,7 +104,8 @@ def is_symlink(path):
 	try:
 		return _is_symlink(next(find_files(path)))
 	except WindowsError as orig_error:
-		raise builtins.WindowsError(lf("Error accessing {path}: {orig_error.message}"))
+		tmpl = "Error accessing {path}: {orig_error.message}"
+		raise builtins.WindowsError(lf(tmpl))
 
 def _is_symlink(find_data):
 	return find_data.reserved[0] == api.IO_REPARSE_TAG_SYMLINK
