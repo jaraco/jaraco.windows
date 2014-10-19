@@ -344,7 +344,7 @@ def find_symlinks_cmd():
 		for symlink in find_symlinks(root):
 			target = readlink(symlink)
 			dir = ['', 'D'][os.path.isdir(symlink)]
-			msg = '{dir:2}{symlink} --> {target}'.format(**vars())
+			msg = '{dir:2}{symlink} --> {target}'.format(**locals())
 			print(msg)
 	except KeyboardInterrupt:
 		pass
