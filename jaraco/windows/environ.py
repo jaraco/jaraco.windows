@@ -239,4 +239,4 @@ def enver(*args):
 		options.class_.show()
 
 if __name__ == '__main__':
-	enver
+	enver()
