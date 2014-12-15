@@ -1,6 +1,16 @@
 Changes
 -------
 
+3.1.2
+~~~~~
+
+* Correct typo in jaraco.windows.api.filesystem (Issue #4).
+
+3.1.1
+~~~~~
+
+* Correct invocation of enver.
+
 3.1
 ~~~
 
