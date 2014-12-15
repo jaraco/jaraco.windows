@@ -2,7 +2,7 @@ import ctypes.wintypes
 
 CreateSymbolicLink = ctypes.windll.kernel32.CreateSymbolicLinkW
 CreateSymbolicLink.argtypes = (
-	ctypes.wintypes.ctypes.wintypes.LPWSTR,
+	ctypes.wintypes.LPWSTR,
 	ctypes.wintypes.LPWSTR,
 	ctypes.wintypes.DWORD,
 	)
