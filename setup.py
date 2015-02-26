@@ -2,7 +2,7 @@
 
 """ Setup script for building jaraco.windows distribution
 
-Copyright © 2009-2013 Jason R. Coombs
+Copyright © 2009-2015 Jason R. Coombs
 """
 
 from setuptools import find_packages
