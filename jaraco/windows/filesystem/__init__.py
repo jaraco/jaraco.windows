@@ -10,6 +10,7 @@ import functools
 from ctypes import (POINTER, byref, cast, create_unicode_buffer,
 	create_string_buffer, windll)
 
+import six
 from six.moves import builtins
 
 from jaraco.structures import binary
@@ -349,8 +350,8 @@ def find_symlinks_cmd():
 	except KeyboardInterrupt:
 		pass
 
+@six.add_metaclass(binary.BitMask)
 class FileAttributes(int):
-	__metaclass__ = binary.BitMask
 	archive = 0x20
 	compressed = 0x800
 	hidden = 0x2
