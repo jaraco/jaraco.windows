@@ -48,12 +48,12 @@ setup_params = dict(
 		],
 	),
 	install_requires=[
-		'jaraco.util>=3.9dev',
 		'more_itertools',
 		'six',
 		'jaraco.ui',
 		'jaraco.collections',
 		'jaraco.text',
+		'jaraco.structures',
 	],
 	extras_require = {
 	},
