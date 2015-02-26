@@ -1,6 +1,11 @@
 Changes
 -------
 
+3.2
+~~~
+
+* Dropped dependency on jaraco.util in favor of smaller packages.
+
 3.1.2
 ~~~~~
 
