@@ -6,7 +6,7 @@ import datetime
 from ctypes.wintypes import WORD, WCHAR, BOOL, LONG
 
 from jaraco.windows.util import Extended
-from jaraco.util.dictlib import RangeMap
+from jaraco.collections import RangeMap
 
 class AnyDict(object):
 	"A dictionary that returns the same value regardless of key"

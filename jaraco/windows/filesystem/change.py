@@ -18,7 +18,7 @@ import itertools
 import logging
 
 from more_itertools.recipes import consume
-import jaraco.util.string
+import jaraco.text
 
 import jaraco.windows.api.filesystem as fs
 from jaraco.windows.api import event
@@ -85,7 +85,7 @@ class GlobFilter(PatternFilter):
 		'/.*'
 		"""
 		subs = (('\\', '\\\\'), ('.', '\\.'), ('*', '.*'), ('?', '.'))
-		return jaraco.util.string.multi_substitution(*subs)(p)
+		return jaraco.text.multi_substitution(*subs)(p)
 
 
 class AggregateFilter(FileFilter):

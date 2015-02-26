@@ -9,7 +9,7 @@ import ctypes.wintypes
 import six
 winreg = six.moves.winreg
 
-from jaraco.util.editor import EditableFile
+from jaraco.ui.editor import EditableFile
 
 from jaraco.windows import error
 from jaraco.windows.api import message, environ

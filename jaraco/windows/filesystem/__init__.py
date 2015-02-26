@@ -13,7 +13,7 @@ from ctypes import (POINTER, byref, cast, create_unicode_buffer,
 from six.moves import builtins
 
 import jaraco.util.bitutil
-from jaraco.util.string import local_format as lf
+from jaraco.text import local_format as lf
 
 from jaraco.windows.error import WindowsError, handle_nonzero_success
 import jaraco.windows.api.filesystem as api
