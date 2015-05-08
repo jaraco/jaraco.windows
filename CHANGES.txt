@@ -5,7 +5,10 @@ Changes
 ~~~
 
 * Backported `Paramiko #193 <https://github.com/paramiko/paramiko/issues/193>`_
-  (`change <https://github.com/paramiko/paramiko/commit/d8738b1b0f10e2f70ac69c3e3dbf10e496c8a67f>`_).
+  (`change <https://github.com/paramiko/paramiko/commit/d8738b1b0f10e2f70ac69c3e3dbf10e496c8a67f>`_). Use RtlMoveMemory in favor
+  of memcpy.
+* Fixed AccessViolation on Python 3 in mmap module.
+* Fixed AttributeError in security module.
 
 3.2
 ~~~
