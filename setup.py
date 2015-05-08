@@ -11,10 +11,10 @@ __author__ = 'Jason R. Coombs <jaraco@jaraco.com>'
 
 name = 'jaraco.windows'
 
-with open('README') as readme:
+with open('README.txt') as readme:
 	long_description = readme.read()
 
-with open('CHANGES') as changes:
+with open('CHANGES.txt') as changes:
 	long_description += "\n" + changes.read()
 
 setup_params = dict(
