@@ -1,6 +1,12 @@
 Changes
 -------
 
+3.3
+~~~
+
+* Backported `Paramiko #193 <https://github.com/paramiko/paramiko/issues/193>`_
+  (`change <https://github.com/paramiko/paramiko/commit/d8738b1b0f10e2f70ac69c3e3dbf10e496c8a67f>`_).
+
 3.2
 ~~~
 
