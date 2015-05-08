@@ -32,7 +32,7 @@ def get_current_user():
 		ctypes.windll.kernel32.GetCurrentProcess(),
 		security.TokenAccess.TOKEN_QUERY,
 	)
-	return security.GetTokenInformation(process, security.TOKEN_USER)
+	return GetTokenInformation(process, security.TOKEN_USER)
 
 def get_security_attributes_for_user(user=None):
 	"""
