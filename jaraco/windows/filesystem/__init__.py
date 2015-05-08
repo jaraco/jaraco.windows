@@ -11,7 +11,7 @@ from ctypes import (POINTER, byref, cast, create_unicode_buffer,
 	create_string_buffer, windll)
 
 import six
-from six.moves import builtins
+from six.moves import builtins, filter, map
 
 from jaraco.structures import binary
 from jaraco.text import local_format as lf
