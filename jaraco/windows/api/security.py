@@ -118,9 +118,11 @@ class SECURITY_ATTRIBUTES(ctypes.Structure):
 		super(SECURITY_ATTRIBUTES, self).__init__(*args, **kwargs)
 		self.nLength = ctypes.sizeof(SECURITY_ATTRIBUTES)
 
-	def _get_descriptor(self):
+	@property
+	def descriptor(self):
 		return self._descriptor
-	def _set_descriptor(self, descriptor):
+
+	@descriptor.setter
+	def descriptor(self, value):
 		self._descriptor = descriptor
 		self.lpSecurityDescriptor = ctypes.addressof(descriptor)
-	descriptor = property(_get_descriptor, _set_descriptor)
