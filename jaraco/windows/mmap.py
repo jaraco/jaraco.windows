@@ -1,4 +1,4 @@
-import ctypes
+import ctypes.wintypes
 
 import six
 
@@ -41,7 +41,9 @@ class MemoryMap(object):
 		n = len(msg)
 		if self.pos + n >= self.length:  # A little safety.
 			raise ValueError("Refusing to write %d bytes" % n)
-		ctypes.windll.kernel32.RtlMoveMemory(self.view + self.pos, msg, n)
+		dest = self.view + self.pos
+		length = ctypes.wintypes.SIZE(n)
+		ctypes.windll.kernel32.RtlMoveMemory(dest, msg, length)
 		self.pos += n
 
 	def read(self, n):
@@ -49,7 +51,9 @@ class MemoryMap(object):
 		Read n bytes from mapped view.
 		"""
 		out = ctypes.create_string_buffer(n)
-		ctypes.windll.kernel32.RtlMoveMemory(out, self.view + self.pos, n)
+		source = self.view + self.pos
+		length = ctypes.wintypes.SIZE(n)
+		ctypes.windll.kernel32.RtlMoveMemory(out, source, length)
 		self.pos += n
 		return out.raw
 
