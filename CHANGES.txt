@@ -1,6 +1,11 @@
 Changes
 -------
 
+3.4
+~~~
+
+* Add ``set_html`` function to ``clipboard`` module.
+
 3.3
 ~~~
 

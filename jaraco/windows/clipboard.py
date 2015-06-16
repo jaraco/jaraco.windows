@@ -156,6 +156,11 @@ def get_html():
 		result = GetClipboardData(clipboard.CF_HTML)
 	return result
 
+def set_html(source):
+	with context():
+		EmptyClipboard()
+		SetClipboardData(clipboard.CF_UNICODETEXT, source)
+
 def get_image():
 	with context():
 		return GetClipboardData(clipboard.CF_DIB)
