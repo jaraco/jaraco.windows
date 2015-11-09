@@ -7,7 +7,7 @@ from .api import memory
 
 class MemoryMap(object):
 	"""
-	A memory map object which can have security attributes overrideden.
+	A memory map object which can have security attributes overridden.
 	"""
 	def __init__(self, name, length, security_attributes=None):
 		self.name = name
