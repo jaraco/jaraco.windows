@@ -19,11 +19,12 @@ class DATA_BLOB(ctypes.Structure):
 	A data blob structure for use with MS DPAPI functions.
 
 	Initialize with string of characters
-	>>> blob = DATA_BLOB(b'abc123\x00456')
+	>>> input = b'abc123\x00456'
+	>>> blob = DATA_BLOB(input)
 	>>> len(blob)
 	10
-	>>> blob.get_data()
-	b'abc123\x00456'
+	>>> blob.get_data() == input
+	True
 	"""
 	_fields_ = [
 		('data_size', wintypes.DWORD),
