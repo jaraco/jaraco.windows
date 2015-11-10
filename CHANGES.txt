@@ -1,6 +1,12 @@
 Changes
 -------
 
+3.4.1
+~~~~~
+
+* Issue #5: Fix ValueError in mmap memory copy routine on 32-bit
+  systems.
+
 3.4
 ~~~
 

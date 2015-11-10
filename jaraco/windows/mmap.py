@@ -42,7 +42,7 @@ class MemoryMap(object):
 		if self.pos + n >= self.length:  # A little safety.
 			raise ValueError("Refusing to write %d bytes" % n)
 		dest = self.view + self.pos
-		length = ctypes.wintypes.SIZE(n)
+		length = ctypes.c_size_t(n)
 		ctypes.windll.kernel32.RtlMoveMemory(dest, msg, length)
 		self.pos += n
 
@@ -52,7 +52,7 @@ class MemoryMap(object):
 		"""
 		out = ctypes.create_string_buffer(n)
 		source = self.view + self.pos
-		length = ctypes.wintypes.SIZE(n)
+		length = ctypes.c_size_t(n)
 		ctypes.windll.kernel32.RtlMoveMemory(out, source, length)
 		self.pos += n
 		return out.raw
