@@ -95,11 +95,6 @@ def _patch_path(path):
 def is_symlink(path):
 	"""
 	Assuming path is a reparse point, determine if it's a symlink.
-
-	>>> symlink('foobaz', 'foobar')
-	>>> is_symlink('foobar')
-	True
-	>>> os.remove('foobar')
 	"""
 	path = _patch_path(path)
 	try:
