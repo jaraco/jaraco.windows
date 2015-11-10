@@ -54,6 +54,7 @@ setup_params = dict(
 		'jaraco.collections',
 		'jaraco.text',
 		'jaraco.structures',
+		'path.py',
 	],
 	extras_require = {
 	},
