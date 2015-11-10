@@ -103,7 +103,7 @@ class Info(DYNAMIC_TIME_ZONE_INFORMATION):
 
 	def __init__(self, *args, **kwargs):
 		"""
-		Try to construct a TimeZoneDefinition from
+		Try to construct a timezone.Info from
 		a) [DYNAMIC_]TIME_ZONE_INFORMATION args
 		b) another Info
 		c) a REG_TZI_FORMAT
@@ -217,7 +217,7 @@ class Info(DYNAMIC_TIME_ZONE_INFORMATION):
 
 		# according to my calendar, the 4th Saturday in March in 2009 was the 28th
 		>>> expected_date = datetime.datetime(2009, 3, 28)
-		>>> TimeZoneDefinition._locate_day(2009, st) == expected_date
+		>>> Info._locate_day(2009, st) == expected_date
 		True
 		"""
 		# MS stores Sunday as 0, Python datetime stores Monday as zero
