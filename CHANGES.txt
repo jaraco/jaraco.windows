@@ -1,6 +1,11 @@
 Changes
 -------
 
+3.4.2
+~~~~~
+
+* Issue #6: Fix TypeError in os.readlink.
+
 3.4.1
 ~~~~~
 
