@@ -18,6 +18,7 @@ from jaraco.text import local_format as lf
 
 from jaraco.windows.error import WindowsError, handle_nonzero_success
 import jaraco.windows.api.filesystem as api
+from jaraco.windows import reparse
 
 def mklink():
 	"""
@@ -290,7 +291,7 @@ def readlink(link):
 	if handle == api.INVALID_HANDLE_VALUE:
 		raise WindowsError()
 
-	res = api.DeviceIoControl(handle, api.FSCTL_GET_REPARSE_POINT, None, 10240)
+	res = reparse.DeviceIoControl(handle, api.FSCTL_GET_REPARSE_POINT, None, 10240)
 
 	bytes = create_string_buffer(res)
 	p_rdb = cast(bytes, POINTER(api.REPARSE_DATA_BUFFER))
