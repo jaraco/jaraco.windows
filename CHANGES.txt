@@ -1,10 +1,12 @@
 Changes
 -------
 
-3.4.2
-~~~~~
+3.5
+~~~
 
 * Issue #6: Fix TypeError in os.readlink.
+* Updated project skeleton to include documentation and wheel
+  releases.
 
 3.4.1
 ~~~~~
