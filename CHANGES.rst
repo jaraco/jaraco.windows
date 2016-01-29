@@ -1,6 +1,11 @@
 Changes
 -------
 
+3.6
+~~~
+
+* Moved hosting to Github.
+
 3.5
 ~~~
 
