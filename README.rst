@@ -14,22 +14,17 @@ rather to supply interfaces as they are needed by the contributors.
 `MIT-style permissive license
 <http://www.opensource.org/licenses/mit-license.php>`_.
 
-You can install it with ``easy_install jaraco.util``, or from the
-`mercurial repository
-<http://bitbucket.org/jaraco/jaraco.windows/get/tip.zip#egg=jaraco.windows-dev>`_ with
-``easy_install jaraco.windows==dev``.
-
 Package Contents
 ----------------
 
 ``jaraco.windows`` contains several modules for different purposes. For now,
-read the source. Eventually, I will put high-level descriptions of the modules
+read the source. Eventually, I hope to put high-level descriptions of the modules
 here.
 
 Installation
 ------------
 
-You should install this module the normal way using setuptools or distribute.
+You should install this module the normal way using pip or easy_install.
 
 If you want to monkeypatch the os module to include symlink compatibility, you
 should add the following to your ``usercustomize`` or ``sitecustomize`` module:
