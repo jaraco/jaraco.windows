@@ -5,6 +5,7 @@ import re
 import itertools
 from contextlib import contextmanager
 import io
+import time
 
 import six
 import ctypes
@@ -13,9 +14,10 @@ from ctypes import windll
 from jaraco.windows.api import clipboard, memory
 from jaraco.windows.error import handle_nonzero_success, WindowsError
 from jaraco.windows.memory import LockedMemory
+from .api.errors import ERROR_ACCESS_DENIED
 
 __all__ = (
-	'CF_TEXT', 'GetClipboardData', 'CloseClipboard',
+	'GetClipboardData', 'CloseClipboard',
 	'SetClipboardData', 'OpenClipboard',
 )
 
@@ -173,9 +175,29 @@ def stdin_copy():
 	setter = set_unicode_text if six.PY3 else set_text
 	setter(sys.stdin.read())
 
+
+def _robust_open(retries=2):
+	"""
+	Make multiple attempts to open the clipboard, as it may be
+	currently locked by another process, which frequently happens
+	on a VM where the extensions periodically poll the clipboard.
+	"""
+	for attempt in range(1, retries+1):
+		try:
+			OpenClipboard()
+			return
+		except WindowsError as exc:
+			if exc.code != ERROR_ACCESS_DENIED:
+				raise
+
+		time.sleep(.1 * attempt)
+
+	OpenClipboard()
+
+
 @contextmanager
 def context():
-	OpenClipboard()
+	_robust_open()
 	try:
 		yield
 	finally:
