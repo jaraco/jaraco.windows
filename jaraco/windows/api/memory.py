@@ -31,3 +31,13 @@ CreateFileMapping.restype = ctypes.wintypes.HANDLE
 
 MapViewOfFile = ctypes.windll.kernel32.MapViewOfFile
 MapViewOfFile.restype = ctypes.wintypes.HANDLE
+
+UnmapViewOfFile = ctypes.windll.kernel32.UnmapViewOfFile
+UnmapViewOfFile.argtypes = ctypes.wintypes.HANDLE,
+
+RtlMoveMemory = ctypes.windll.kernel32.RtlMoveMemory
+RtlMoveMemory.argtypes = (
+	ctypes.c_void_p,
+	ctypes.c_void_p,
+	ctypes.c_size_t,
+)
