@@ -1,6 +1,12 @@
 Changes
 -------
 
+3.6.1
+~~~~~
+
+* Issue #7: Added declarations of arguments and result types
+  to some ctypes calls, correcting intermittent test failures.
+
 3.6
 ~~~
 
