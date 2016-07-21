@@ -10,6 +10,7 @@ import time
 import six
 import ctypes
 from ctypes import windll
+import jaraco.functools
 
 from jaraco.windows.api import clipboard, memory
 from jaraco.windows.error import handle_nonzero_success, WindowsError
@@ -182,17 +183,18 @@ def _robust_open(retries=2):
 	currently locked by another process, which frequently happens
 	on a VM where the extensions periodically poll the clipboard.
 	"""
-	for attempt in range(1, retries+1):
-		try:
-			OpenClipboard()
-			return
-		except WindowsError as exc:
-			if exc.code != ERROR_ACCESS_DENIED:
-				raise
+	def cleanup():
+		_, exc, _ = sys.exc_info()
+		if exc.code != ERROR_ACCESS_DENIED:
+			raise
+		time.sleep(.1)
 
-		time.sleep(.1 * attempt)
-
-	OpenClipboard()
+	jaraco.functools.retry_call(
+		OpenClipboard,
+		cleanup=cleanup,
+		trap=WindowsError,
+		retries=retries,
+	)
 
 
 @contextmanager
