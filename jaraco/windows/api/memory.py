@@ -41,3 +41,5 @@ RtlMoveMemory.argtypes = (
 	ctypes.c_void_p,
 	ctypes.c_size_t,
 )
+
+ctypes.windll.kernel32.LocalFree.argtypes = ctypes.wintypes.HLOCAL,

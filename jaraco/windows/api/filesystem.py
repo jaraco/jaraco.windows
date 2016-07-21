@@ -102,6 +102,8 @@ FindNextFile = ctypes.windll.kernel32.FindNextFileW
 FindNextFile.argtypes = (ctypes.wintypes.HANDLE, LPWIN32_FIND_DATA)
 FindNextFile.restype = ctypes.wintypes.BOOLEAN
 
+ctypes.windll.kernel32.FindClose.argtypes = ctypes.wintypes.HANDLE,
+
 SCS_32BIT_BINARY = 0 # A 32-bit Windows-based application
 SCS_64BIT_BINARY = 6 # A 64-bit Windows-based application
 SCS_DOS_BINARY = 1 # An MS-DOS-based application

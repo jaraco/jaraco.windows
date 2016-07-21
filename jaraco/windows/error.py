@@ -6,8 +6,11 @@ import ctypes
 import ctypes.wintypes
 
 import six
-
 builtins = six.moves.builtins
+
+
+__import__('jaraco.windows.api.memory')
+
 
 def format_system_message(errno):
 	"""

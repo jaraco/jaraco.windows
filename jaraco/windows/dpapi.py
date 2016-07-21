@@ -14,6 +14,11 @@ import ctypes
 from ctypes import wintypes
 from jaraco.windows.error import handle_nonzero_success
 
+
+# for type declarations
+__import__('jaraco.windows.api.memory')
+
+
 class DATA_BLOB(ctypes.Structure):
 	r"""
 	A data blob structure for use with MS DPAPI functions.
