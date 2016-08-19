@@ -364,11 +364,14 @@ class FileAttributes(int):
 	temporary = 0x100
 	virtual = 0x10000
 
-def GetFileAttributes(filepath):
-	attrs = api.GetFileAttributes(filepath)
-	if attrs == api.INVALID_FILE_ATTRIBUTES:
-		raise WindowsError()
-	return FileAttributes(attrs)
+	@classmethod
+	def get(cls, filepath):
+		attrs = api.GetFileAttributes(filepath)
+		if attrs == api.INVALID_FILE_ATTRIBUTES:
+			raise WindowsError()
+		return cls(attrs)
+
+GetFileAttributes = FileAttributes.get
 
 def SetFileAttributes(filepath, *attrs):
 	"""
