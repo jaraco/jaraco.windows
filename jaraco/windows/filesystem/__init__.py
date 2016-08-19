@@ -7,6 +7,7 @@ import sys
 import operator
 import collections
 import functools
+import stat
 from ctypes import (POINTER, byref, cast, create_unicode_buffer,
 	create_string_buffer, windll)
 
@@ -348,6 +349,16 @@ def find_symlinks_cmd():
 
 @six.add_metaclass(binary.BitMask)
 class FileAttributes(int):
+
+	# extract the values from the stat module on Python 3.5
+	# and later.
+	locals().update(
+		(name.split('FILE_ATTRIBUTES_')[1].lower(), value)
+		for name, value in vars(stat).items()
+		if name.startswith('FILE_ATTRIBUTES_')
+	)
+
+	# For Python 3.4 and earlier, define the constants here
 	archive = 0x20
 	compressed = 0x800
 	hidden = 0x2
