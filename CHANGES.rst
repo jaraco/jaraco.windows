@@ -1,6 +1,13 @@
 Changes
 -------
 
+3.6.2
+~~~~~
+
+* Issue #8: Correct argtype to ``c_size_t`` in
+  ``GlobalAlloc``. Better aligns with advertised
+  API and improves Python version support.
+
 3.6.1
 ~~~~~
 
