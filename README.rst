@@ -1,5 +1,12 @@
-jaraco.windows
-==============
+.. image:: https://img.shields.io/pypi/v/jaraco.windows.svg
+   :target: https://pypi.org/project/jaraco.windows
+
+.. image:: https://img.shields.io/pypi/pyversions/jaraco.windows.svg
+
+.. image:: https://img.shields.io/pypi/dm/jaraco.windows.svg
+
+.. image:: https://img.shields.io/travis/jaraco/jaraco.windows/master.svg
+   :target: http://travis-ci.org/jaraco/jaraco.windows
 
 .. contents::
 
