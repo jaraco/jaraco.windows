@@ -1,3 +1,8 @@
+3.6.3
+=====
+
+* Re-release using pypi.org to avoid caching issues.
+
 3.6.2
 =====
 
