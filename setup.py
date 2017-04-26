@@ -31,7 +31,7 @@ params = dict(
 		'jaraco.collections',
 		'jaraco.text',
 		'jaraco.structures>=1.1.1',
-		'path.py',
+		'path.py>=6.2',
 	],
 	extras_require={
 		'testing': [

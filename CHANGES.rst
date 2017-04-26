@@ -1,3 +1,9 @@
+3.6.4
+=====
+
+* Update reference to ``path.Path`` for compatibility
+  with ``path.py 10``.
+
 3.6.3
 =====
 
