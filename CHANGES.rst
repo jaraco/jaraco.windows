@@ -4,6 +4,9 @@
 * Update reference to ``path.Path`` for compatibility
   with ``path.py 10``.
 
+* Configured project to use `AppVeyor for tests
+  <https://ci.appveyor.com/project/jaraco/jaraco-windows>`_.
+
 3.6.3
 =====
 
