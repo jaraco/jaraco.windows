@@ -1,5 +1,5 @@
-3.6.4
-=====
+3.7
+===
 
 * Update reference to ``path.Path`` for compatibility
   with ``path.py 10``.
