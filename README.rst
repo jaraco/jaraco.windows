@@ -8,28 +8,26 @@
 .. image:: https://img.shields.io/travis/jaraco/jaraco.windows/master.svg
    :target: http://travis-ci.org/jaraco/jaraco.windows
 
-.. contents::
-
-Status and License
-------------------
-
-``jaraco.windows`` aims to provide a pure-python interface to Windows
+A pure-python interface to Windows
 APIs using ctypes. This package is not designed to be exhaustive, but
 rather to supply interfaces as they are needed by the contributors.
 
-``jaraco.windows`` is written by Jason R. Coombs.  It is licensed under an
-`MIT-style permissive license
-<http://www.opensource.org/licenses/mit-license.php>`_.
+License
+=======
+
+License is indicated in the project metadata (typically one or more
+of the Trove classifiers). For more details, see `this explanation
+<https://github.com/jaraco/skeleton/issues/1>`_.
 
 Package Contents
-----------------
+================
 
 ``jaraco.windows`` contains several modules for different purposes. For now,
 read the source. Eventually, I hope to put high-level descriptions of the modules
 here.
 
 Installation
-------------
+============
 
 You should install this module the normal way using pip or easy_install.
 
@@ -46,8 +44,8 @@ parameter ``target_is_directory``, which must be specified if the target is not
 present and is expected to be a directory once present.
 
 Contribute
-----------
+==========
 
 If jaraco.windows doesn't supply the interface you require for your
-application, consider creating the interface and providing a patch
-to the author.
+application, consider creating the interface and providing a pull request
+to the project.
