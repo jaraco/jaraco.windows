@@ -3,25 +3,19 @@
 
 .. image:: https://img.shields.io/pypi/pyversions/jaraco.windows.svg
 
-.. image:: https://img.shields.io/pypi/dm/jaraco.windows.svg
-
 .. image:: https://img.shields.io/travis/jaraco/jaraco.windows/master.svg
    :target: http://travis-ci.org/jaraco/jaraco.windows
 
 .. image:: https://ci.appveyor.com/api/projects/status/f5l6sv7ox8q1ypo6?svg=true
    :target: https://ci.appveyor.com/project/jaraco/jaraco-windows
 
+.. image:: https://readthedocs.org/projects/jaracowindows/badge/?version=latest
+:target: http://jaracowindows.readthedocs.io/en/latest/?badge=latest
+
 
 A pure-python interface to Windows
 APIs using ctypes. This package is not designed to be exhaustive, but
 rather to supply interfaces as they are needed by the contributors.
-
-License
-=======
-
-License is indicated in the project metadata (typically one or more
-of the Trove classifiers). For more details, see `this explanation
-<https://github.com/jaraco/skeleton/issues/1>`_.
 
 Package Contents
 ================
