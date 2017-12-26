@@ -8,7 +8,8 @@ import operator
 import collections
 import functools
 import stat
-from ctypes import (POINTER, byref, cast, create_unicode_buffer,
+from ctypes import (
+	POINTER, byref, cast, create_unicode_buffer,
 	create_string_buffer, windll)
 from ctypes.wintypes import LPWSTR
 
@@ -22,6 +23,7 @@ from jaraco.windows.error import WindowsError, handle_nonzero_success
 import jaraco.windows.api.filesystem as api
 from jaraco.windows import reparse
 
+
 def mklink():
 	"""
 	Like cmd.exe's mklink except it will infer directory status of the
@@ -29,7 +31,8 @@ def mklink():
 	"""
 	from optparse import OptionParser
 	parser = OptionParser(usage="usage: %prog [options] link target")
-	parser.add_option('-d', '--directory',
+	parser.add_option(
+		'-d', '--directory',
 		help="Target is a directory (only necessary if not present)",
 		action="store_true")
 	options, args = parser.parse_args()
@@ -40,6 +43,7 @@ def mklink():
 	symlink(target, link, options.directory)
 	sys.stdout.write("Symbolic link created: %(link)s --> %(target)s\n" % vars())
 
+
 def _is_target_a_directory(link, rel_target):
 	"""
 	If creating a symlink from link to a target, determine if target
@@ -48,21 +52,27 @@ def _is_target_a_directory(link, rel_target):
 	target = os.path.join(os.path.dirname(link), rel_target)
 	return os.path.isdir(target)
 
-def symlink(target, link, target_is_directory = False):
+
+def symlink(target, link, target_is_directory=False):
 	"""
 	An implementation of os.symlink for Windows (Vista and greater)
 	"""
-	target_is_directory = (target_is_directory or
-		_is_target_a_directory(link, target))
+	target_is_directory = (
+		target_is_directory or
+		_is_target_a_directory(link, target)
+	)
 	# normalize the target (MS symlinks don't respect forward slashes)
 	target = os.path.normpath(target)
-	handle_nonzero_success(api.CreateSymbolicLink(link, target, target_is_directory))
+	handle_nonzero_success(
+		api.CreateSymbolicLink(link, target, target_is_directory))
+
 
 def link(target, link):
 	"""
 	Establishes a hard link between an existing file and a new file.
 	"""
 	handle_nonzero_success(api.CreateHardLink(link, target, None))
+
 
 def is_reparse_point(path):
 	"""
@@ -76,9 +86,11 @@ def is_reparse_point(path):
 		and bool(res & api.FILE_ATTRIBUTE_REPARSE_POINT)
 	)
 
+
 def islink(path):
 	"Determine if the given path is a symlink"
 	return is_reparse_point(path) and is_symlink(path)
+
 
 def _patch_path(path):
 	"""
@@ -88,12 +100,14 @@ def _patch_path(path):
 	See http://msdn.microsoft.com/en-us/library/aa365247%28v=vs.85%29.aspx for
 	details.
 	"""
-	if path.startswith('\\\\?\\'): return path
+	if path.startswith('\\\\?\\'):
+		return path
 	abs_path = os.path.abspath(path)
 	if not abs_path[1] == ':':
 		# python doesn't include the drive letter, but \\?\ requires it
 		abs_path = os.getcwd()[:2] + abs_path
 	return '\\\\?\\' + abs_path
+
 
 def is_symlink(path):
 	"""
@@ -106,8 +120,10 @@ def is_symlink(path):
 		tmpl = "Error accessing {path}: {orig_error.message}"
 		raise builtins.WindowsError(lf(tmpl))
 
+
 def _is_symlink(find_data):
 	return find_data.reserved[0] == api.IO_REPARSE_TAG_SYMLINK
+
 
 def find_files(spec):
 	"""
@@ -135,10 +151,12 @@ def find_files(spec):
 			error = WindowsError()
 			if error.code == api.ERROR_NO_MORE_FILES:
 				break
-			else: raise error
+			else:
+				raise error
 	# todo: how to close handle when generator is destroyed?
 	# hint: catch GeneratorExit
 	windll.kernel32.FindClose(handle)
+
 
 def get_final_path(path):
 	"""
@@ -152,7 +170,9 @@ def get_final_path(path):
 	trace_symlink_target instead.
 	"""
 	desired_access = api.NULL
-	share_mode = api.FILE_SHARE_READ | api.FILE_SHARE_WRITE | api.FILE_SHARE_DELETE
+	share_mode = (
+		api.FILE_SHARE_READ | api.FILE_SHARE_WRITE | api.FILE_SHARE_DELETE
+	)
 	security_attributes = api.LPSECURITY_ATTRIBUTES()  # NULL pointer
 	hFile = api.CreateFile(
 		path,
@@ -162,15 +182,17 @@ def get_final_path(path):
 		api.OPEN_EXISTING,
 		api.FILE_FLAG_BACKUP_SEMANTICS,
 		api.NULL,
-		)
+	)
 
 	if hFile == api.INVALID_HANDLE_VALUE:
 		raise WindowsError()
 
-	buf_size = api.GetFinalPathNameByHandle(hFile, LPWSTR(), 0, api.VOLUME_NAME_DOS)
+	buf_size = api.GetFinalPathNameByHandle(
+		hFile, LPWSTR(), 0, api.VOLUME_NAME_DOS)
 	handle_nonzero_success(buf_size)
 	buf = create_unicode_buffer(buf_size)
-	result_length = api.GetFinalPathNameByHandle(hFile, buf, len(buf), api.VOLUME_NAME_DOS)
+	result_length = api.GetFinalPathNameByHandle(
+		hFile, buf, len(buf), api.VOLUME_NAME_DOS)
 
 	assert result_length < len(buf)
 	handle_nonzero_success(result_length)
@@ -178,21 +200,27 @@ def get_final_path(path):
 
 	return buf[:result_length]
 
+
 def GetBinaryType(filepath):
 	res = api.DWORD()
 	handle_nonzero_success(api._GetBinaryType(filepath, res))
 	return res
 
+
 def _make_null_terminated_list(obs):
 	obs = _makelist(obs)
-	if obs is None: return
+	if obs is None:
+		return
 	return u'\x00'.join(obs) + u'\x00\x00'
 
+
 def _makelist(ob):
-	if ob is None: return
+	if ob is None:
+		return
 	if not isinstance(ob, (list, tuple, set)):
 		return [ob]
 	return ob
+
 
 def SHFileOperation(operation, from_, to=None, flags=[]):
 	flags = functools.reduce(operator.or_, flags, 0)
@@ -202,6 +230,7 @@ def SHFileOperation(operation, from_, to=None, flags=[]):
 	res = api._SHFileOperation(params)
 	if res != 0:
 		raise RuntimeError("SHFileOperation returned %d" % res)
+
 
 def join(*paths):
 	r"""
@@ -215,6 +244,7 @@ def join(*paths):
 	# the drive we care about is the last one in the list
 	drive = next(filter(None, reversed(drives)), '')
 	return os.path.join(drive, os.path.join(*paths))
+
 
 def resolve_path(target, start=os.path.curdir):
 	r"""
@@ -256,7 +286,9 @@ def resolve_path(target, start=os.path.curdir):
 	"""
 	return os.path.normpath(join(start, target))
 
+
 findpath = resolve_path
+
 
 def trace_symlink_target(link):
 	"""
@@ -275,6 +307,7 @@ def trace_symlink_target(link):
 		link = resolve_path(link, orig)
 	return link
 
+
 def readlink(link):
 	"""
 	readlink(link) -> target
@@ -288,12 +321,13 @@ def readlink(link):
 		api.OPEN_EXISTING,
 		api.FILE_FLAG_OPEN_REPARSE_POINT | api.FILE_FLAG_BACKUP_SEMANTICS,
 		None,
-		)
+	)
 
 	if handle == api.INVALID_HANDLE_VALUE:
 		raise WindowsError()
 
-	res = reparse.DeviceIoControl(handle, api.FSCTL_GET_REPARSE_POINT, None, 10240)
+	res = reparse.DeviceIoControl(
+		handle, api.FSCTL_GET_REPARSE_POINT, None, 10240)
 
 	bytes = create_string_buffer(res)
 	p_rdb = cast(bytes, POINTER(api.REPARSE_DATA_BUFFER))
@@ -303,6 +337,7 @@ def readlink(link):
 
 	handle_nonzero_success(api.CloseHandle(handle))
 	return rdb.get_substitute_name()
+
 
 def patch_os_module():
 	"""
@@ -315,6 +350,7 @@ def patch_os_module():
 	if not hasattr(os, 'readlink'):
 		os.readlink = readlink
 
+
 def find_symlinks(root):
 	for dirpath, dirnames, filenames in os.walk(root):
 		for name in dirnames + filenames:
@@ -324,6 +360,7 @@ def find_symlinks(root):
 				# don't traverse symlinks
 				if name in dirnames:
 					dirnames.remove(name)
+
 
 def find_symlinks_cmd():
 	"""
@@ -335,7 +372,8 @@ def find_symlinks_cmd():
 	from textwrap import dedent
 	parser = OptionParser(usage=dedent(find_symlinks_cmd.__doc__).strip())
 	options, args = parser.parse_args()
-	if not args: args = ['.']
+	if not args:
+		args = ['.']
 	root = args.pop()
 	if args:
 		parser.error("unexpected argument(s)")
@@ -347,6 +385,7 @@ def find_symlinks_cmd():
 			print(msg)
 	except KeyboardInterrupt:
 		pass
+
 
 @six.add_metaclass(binary.BitMask)
 class FileAttributes(int):
@@ -383,7 +422,9 @@ class FileAttributes(int):
 			raise WindowsError()
 		return cls(attrs)
 
+
 GetFileAttributes = FileAttributes.get
+
 
 def SetFileAttributes(filepath, *attrs):
 	"""
@@ -397,8 +438,8 @@ def SetFileAttributes(filepath, *attrs):
 	"""
 	nice_names = collections.defaultdict(
 		lambda key: key,
-		hidden = 'FILE_ATTRIBUTE_HIDDEN',
-		read_only = 'FILE_ATTRIBUTE_READONLY',
+		hidden='FILE_ATTRIBUTE_HIDDEN',
+		read_only='FILE_ATTRIBUTE_READONLY',
 	)
 	flags = (getattr(api, nice_names[attr], attr) for attr in attrs)
 	flags = functools.reduce(operator.or_, flags)
