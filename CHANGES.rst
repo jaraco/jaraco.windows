@@ -1,3 +1,8 @@
+3.7.1
+=====
+
+* Fixed AttributeError in ``get_final_path``.
+
 3.7
 ===
 
