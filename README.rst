@@ -10,7 +10,7 @@
    :target: https://ci.appveyor.com/project/jaraco/jaraco-windows
 
 .. image:: https://readthedocs.org/projects/jaracowindows/badge/?version=latest
-:target: http://jaracowindows.readthedocs.io/en/latest/?badge=latest
+   :target: http://jaracowindows.readthedocs.io/en/latest/?badge=latest
 
 
 A pure-python interface to Windows
