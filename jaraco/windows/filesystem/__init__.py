@@ -10,6 +10,7 @@ import functools
 import stat
 from ctypes import (POINTER, byref, cast, create_unicode_buffer,
 	create_string_buffer, windll)
+from ctypes.wintypes import LPWSTR
 
 import six
 from six.moves import builtins, filter, map
@@ -166,7 +167,7 @@ def get_final_path(path):
 	if hFile == api.INVALID_HANDLE_VALUE:
 		raise WindowsError()
 
-	buf_size = api.GetFinalPathNameByHandle(hFile, api.LPWSTR(), 0, api.VOLUME_NAME_DOS)
+	buf_size = api.GetFinalPathNameByHandle(hFile, LPWSTR(), 0, api.VOLUME_NAME_DOS)
 	handle_nonzero_success(buf_size)
 	buf = create_unicode_buffer(buf_size)
 	result_length = api.GetFinalPathNameByHandle(hFile, buf, len(buf), api.VOLUME_NAME_DOS)
