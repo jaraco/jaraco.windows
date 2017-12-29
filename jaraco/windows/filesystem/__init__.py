@@ -12,6 +12,8 @@ from ctypes import (
 	POINTER, byref, cast, create_unicode_buffer,
 	create_string_buffer, windll)
 from ctypes.wintypes import LPWSTR
+import nt
+import posixpath
 
 import six
 from six.moves import builtins, filter, map
@@ -199,6 +201,27 @@ def get_final_path(path):
 	handle_nonzero_success(api.CloseHandle(hFile))
 
 	return buf[:result_length]
+
+
+def compat_stat(path):
+	"""
+	Generate stat as found on Python 3.2 and later.
+	"""
+	stat = os.stat(path)
+	info = get_file_info(path)
+	# rewrite st_ino, st_dev, and st_nlink based on file info
+	return nt.stat_result(
+		(stat.st_mode,) +
+		(info.file_index, info.volume_serial_number, info.number_of_links) +
+		stat[4:]
+	)
+
+
+def samefile(f1, f2):
+	"""
+	Backport of samefile from Python 3.2 with support for Windows.
+	"""
+	return posixpath.samestat(compat_stat(f1), compat_stat(f2))
 
 
 def get_file_info(path):
