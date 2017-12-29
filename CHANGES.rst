@@ -1,3 +1,11 @@
+3.8
+===
+
+* #10: Added new method to ``jaraco.windows.filesystem``:
+
+  - ``samefile``: backport of os.path.samefile from Python 3.2
+    with Windows support for Python 2.7.
+
 3.7.1
 =====
 
