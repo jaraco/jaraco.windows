@@ -5,15 +5,15 @@ CreateSymbolicLink.argtypes = (
 	ctypes.wintypes.LPWSTR,
 	ctypes.wintypes.LPWSTR,
 	ctypes.wintypes.DWORD,
-	)
+)
 CreateSymbolicLink.restype = ctypes.wintypes.BOOLEAN
 
 CreateHardLink = ctypes.windll.kernel32.CreateHardLinkW
 CreateHardLink.argtypes = (
 	ctypes.wintypes.LPWSTR,
 	ctypes.wintypes.LPWSTR,
-	ctypes.wintypes.LPVOID, # reserved for LPSECURITY_ATTRIBUTES
-	)
+	ctypes.wintypes.LPVOID,  # reserved for LPSECURITY_ATTRIBUTES
+)
 CreateHardLink.restype = ctypes.wintypes.BOOLEAN
 
 GetFileAttributes = ctypes.windll.kernel32.GetFileAttributesW
@@ -28,16 +28,20 @@ MAX_PATH = 260
 
 GetFinalPathNameByHandle = ctypes.windll.kernel32.GetFinalPathNameByHandleW
 GetFinalPathNameByHandle.argtypes = (
-	ctypes.wintypes.HANDLE, ctypes.wintypes.LPWSTR, ctypes.wintypes.DWORD, ctypes.wintypes.DWORD,
-	)
+	ctypes.wintypes.HANDLE, ctypes.wintypes.LPWSTR, ctypes.wintypes.DWORD,
+	ctypes.wintypes.DWORD,
+)
 GetFinalPathNameByHandle.restype = ctypes.wintypes.DWORD
+
 
 class SECURITY_ATTRIBUTES(ctypes.Structure):
 	_fields_ = (
 		('length', ctypes.wintypes.DWORD),
 		('p_security_descriptor', ctypes.wintypes.LPVOID),
 		('inherit_handle', ctypes.wintypes.BOOLEAN),
-		)
+	)
+
+
 LPSECURITY_ATTRIBUTES = ctypes.POINTER(SECURITY_ATTRIBUTES)
 
 CreateFile = ctypes.windll.kernel32.CreateFileW
@@ -49,7 +53,7 @@ CreateFile.argtypes = (
 	ctypes.wintypes.DWORD,
 	ctypes.wintypes.DWORD,
 	ctypes.wintypes.HANDLE,
-	)
+)
 CreateFile.restype = ctypes.wintypes.HANDLE
 FILE_SHARE_READ = 1
 FILE_SHARE_WRITE = 2
@@ -77,21 +81,26 @@ CloseHandle = ctypes.windll.kernel32.CloseHandle
 CloseHandle.argtypes = (ctypes.wintypes.HANDLE,)
 CloseHandle.restype = ctypes.wintypes.BOOLEAN
 
+
 class WIN32_FIND_DATA(ctypes.Structure):
 	_fields_ = [
 		('file_attributes', ctypes.wintypes.DWORD),
 		('creation_time', ctypes.wintypes.FILETIME),
 		('last_access_time', ctypes.wintypes.FILETIME),
 		('last_write_time', ctypes.wintypes.FILETIME),
-		('file_size_words', ctypes.wintypes.DWORD*2),
-		('reserved', ctypes.wintypes.DWORD*2),
-		('filename', ctypes.wintypes.WCHAR*MAX_PATH),
-		('alternate_filename', ctypes.wintypes.WCHAR*14),
+		('file_size_words', ctypes.wintypes.DWORD * 2),
+		('reserved', ctypes.wintypes.DWORD * 2),
+		('filename', ctypes.wintypes.WCHAR * MAX_PATH),
+		('alternate_filename', ctypes.wintypes.WCHAR * 14),
 	]
 
 	@property
 	def file_size(self):
-		return ctypes.cast(self.file_size_words, ctypes.POINTER(ctypes.c_uint64)).contents
+		return ctypes.cast(
+			self.file_size_words,
+			ctypes.POINTER(ctypes.c_uint64),
+		).contents
+
 
 LPWIN32_FIND_DATA = ctypes.POINTER(WIN32_FIND_DATA)
 
@@ -104,19 +113,23 @@ FindNextFile.restype = ctypes.wintypes.BOOLEAN
 
 ctypes.windll.kernel32.FindClose.argtypes = ctypes.wintypes.HANDLE,
 
-SCS_32BIT_BINARY = 0 # A 32-bit Windows-based application
-SCS_64BIT_BINARY = 6 # A 64-bit Windows-based application
-SCS_DOS_BINARY = 1 # An MS-DOS-based application
-SCS_OS216_BINARY = 5 # A 16-bit OS/2-based application
-SCS_PIF_BINARY = 3 # A PIF file that executes an MS-DOS-based application
-SCS_POSIX_BINARY = 4 # A POSIX-based application
-SCS_WOW_BINARY = 2 # A 16-bit Windows-based application
+SCS_32BIT_BINARY = 0  # A 32-bit Windows-based application
+SCS_64BIT_BINARY = 6  # A 64-bit Windows-based application
+SCS_DOS_BINARY = 1  # An MS-DOS-based application
+SCS_OS216_BINARY = 5  # A 16-bit OS/2-based application
+SCS_PIF_BINARY = 3  # A PIF file that executes an MS-DOS-based application
+SCS_POSIX_BINARY = 4  # A POSIX-based application
+SCS_WOW_BINARY = 2  # A 16-bit Windows-based application
 
 _GetBinaryType = ctypes.windll.kernel32.GetBinaryTypeW
-_GetBinaryType.argtypes = (ctypes.wintypes.LPWSTR, ctypes.POINTER(ctypes.wintypes.DWORD))
+_GetBinaryType.argtypes = (
+	ctypes.wintypes.LPWSTR, ctypes.POINTER(ctypes.wintypes.DWORD),
+)
 _GetBinaryType.restype = ctypes.wintypes.BOOL
 
 FILEOP_FLAGS = ctypes.wintypes.WORD
+
+
 class SHFILEOPSTRUCT(ctypes.Structure):
 	_fields_ = [
 		('status_dialog', ctypes.wintypes.HWND),
@@ -128,6 +141,8 @@ class SHFILEOPSTRUCT(ctypes.Structure):
 		('name_mapping_handles', ctypes.wintypes.LPVOID),
 		('progress_title', ctypes.wintypes.LPWSTR),
 	]
+
+
 _SHFileOperation = ctypes.windll.shell32.SHFileOperationW
 _SHFileOperation.argtypes = [ctypes.POINTER(SHFILEOPSTRUCT)]
 _SHFileOperation.restype = ctypes.c_int
@@ -145,11 +160,12 @@ ReplaceFile.argtypes = [
 	ctypes.wintypes.DWORD,
 	ctypes.wintypes.LPVOID,
 	ctypes.wintypes.LPVOID,
-	]
+]
 
 REPLACEFILE_WRITE_THROUGH = 0x1
 REPLACEFILE_IGNORE_MERGE_ERRORS = 0x2
 REPLACEFILE_IGNORE_ACL_ERRORS = 0x4
+
 
 class STAT_STRUCT(ctypes.Structure):
 	_fields_ = [
@@ -167,17 +183,22 @@ class STAT_STRUCT(ctypes.Structure):
 		('ctime', ctypes.c_uint),
 	]
 
+
 _wstat = ctypes.windll.msvcrt._wstat
 _wstat.argtypes = [ctypes.wintypes.LPWSTR, ctypes.POINTER(STAT_STRUCT)]
 _wstat.restype = ctypes.c_int
 
 FILE_NOTIFY_CHANGE_LAST_WRITE = 0x10
 
-FindFirstChangeNotification = ctypes.windll.kernel32.FindFirstChangeNotificationW
-FindFirstChangeNotification.argtypes = ctypes.wintypes.LPWSTR, ctypes.wintypes.BOOL, ctypes.wintypes.DWORD
+FindFirstChangeNotification = (
+	ctypes.windll.kernel32.FindFirstChangeNotificationW)
+FindFirstChangeNotification.argtypes = (
+	ctypes.wintypes.LPWSTR, ctypes.wintypes.BOOL, ctypes.wintypes.DWORD,
+)
 FindFirstChangeNotification.restype = ctypes.wintypes.HANDLE
 
-FindCloseChangeNotification = ctypes.windll.kernel32.FindCloseChangeNotification
+FindCloseChangeNotification = (
+	ctypes.windll.kernel32.FindCloseChangeNotification)
 FindCloseChangeNotification.argtypes = ctypes.wintypes.HANDLE,
 FindCloseChangeNotification.restype = ctypes.wintypes.BOOL
 
@@ -202,8 +223,9 @@ DeviceIoControl.argtypes = [
 	ctypes.wintypes.DWORD,
 	LPDWORD,
 	LPOVERLAPPED,
-	]
+]
 DeviceIoControl.restype = ctypes.wintypes.BOOL
+
 
 class REPARSE_DATA_BUFFER(ctypes.Structure):
 	_fields_ = [
@@ -215,16 +237,17 @@ class REPARSE_DATA_BUFFER(ctypes.Structure):
 		('print_name_offset', ctypes.c_ushort),
 		('print_name_length', ctypes.c_ushort),
 		('flags', ctypes.c_ulong),
-		('path_buffer', ctypes.c_byte*1),
+		('path_buffer', ctypes.c_byte * 1),
 	]
+
 	def get_print_name(self):
 		wchar_size = ctypes.sizeof(ctypes.wintypes.WCHAR)
-		arr_typ = ctypes.wintypes.WCHAR*(self.print_name_length//wchar_size)
+		arr_typ = ctypes.wintypes.WCHAR * (self.print_name_length // wchar_size)
 		data = ctypes.byref(self.path_buffer, self.print_name_offset)
 		return ctypes.cast(data, ctypes.POINTER(arr_typ)).contents.value
 
 	def get_substitute_name(self):
 		wchar_size = ctypes.sizeof(ctypes.wintypes.WCHAR)
-		arr_typ = ctypes.wintypes.WCHAR*(self.substitute_name_length//wchar_size)
+		arr_typ = ctypes.wintypes.WCHAR * (self.substitute_name_length // wchar_size)
 		data = ctypes.byref(self.path_buffer, self.substitute_name_offset)
 		return ctypes.cast(data, ctypes.POINTER(arr_typ)).contents.value
