@@ -201,6 +201,39 @@ def get_final_path(path):
 	return buf[:result_length]
 
 
+def get_file_info(path):
+	# open the file the same way CPython does in posixmodule.c
+	desired_access = api.FILE_READ_ATTRIBUTES
+	share_mode = 0
+	security_attributes = None
+	creation_disposition = api.OPEN_EXISTING
+	flags_and_attributes = (
+		api.FILE_ATTRIBUTE_NORMAL |
+		api.FILE_FLAG_BACKUP_SEMANTICS |
+		api.FILE_FLAG_OPEN_REPARSE_POINT
+	)
+	template_file = None
+
+	handle = api.CreateFile(
+		path,
+		desired_access,
+		share_mode,
+		security_attributes,
+		creation_disposition,
+		flags_and_attributes,
+		template_file,
+	)
+
+	if handle == api.INVALID_HANDLE_VALUE:
+		raise WindowsError()
+
+	info = api.BY_HANDLE_FILE_INFORMATION()
+	res = api.GetFileInformationByHandle(handle, info)
+	handle_nonzero_success(res)
+
+	return info
+
+
 def GetBinaryType(filepath):
 	res = api.DWORD()
 	handle_nonzero_success(api._GetBinaryType(filepath, res))

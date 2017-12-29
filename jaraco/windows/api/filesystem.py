@@ -153,6 +153,14 @@ class BY_HANDLE_FILE_INFORMATION(ctypes.Structure):
 		return (self.file_index_high << 32) + self.file_index_low
 
 
+GetFileInformationByHandle = ctypes.windll.kernel32.GetFileInformationByHandle
+GetFileInformationByHandle.restype = ctypes.wintypes.BOOL
+GetFileInformationByHandle.argtypes = (
+	ctypes.wintypes.HANDLE,
+	ctypes.POINTER(BY_HANDLE_FILE_INFORMATION),
+)
+
+
 class SHFILEOPSTRUCT(ctypes.Structure):
 	_fields_ = [
 		('status_dialog', ctypes.wintypes.HWND),
