@@ -1,3 +1,10 @@
+3.8.1
+=====
+
+* #11: ``jaraco.windows.api.filesystem`` now relies on
+  ``ctypes.wintypes.WIN32_FIND_DATAW``, avoiding conflict
+  with scandir.
+
 3.8
 ===
 

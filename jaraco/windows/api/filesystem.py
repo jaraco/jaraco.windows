@@ -82,27 +82,60 @@ CloseHandle.argtypes = (ctypes.wintypes.HANDLE,)
 CloseHandle.restype = ctypes.wintypes.BOOLEAN
 
 
-class WIN32_FIND_DATA(ctypes.Structure):
+class WIN32_FIND_DATA(ctypes.wintypes.WIN32_FIND_DATAW):
+	"""
 	_fields_ = [
-		('file_attributes', ctypes.wintypes.DWORD),
-		('creation_time', ctypes.wintypes.FILETIME),
-		('last_access_time', ctypes.wintypes.FILETIME),
-		('last_write_time', ctypes.wintypes.FILETIME),
-		('file_size_words', ctypes.wintypes.DWORD * 2),
-		('reserved', ctypes.wintypes.DWORD * 2),
-		('filename', ctypes.wintypes.WCHAR * MAX_PATH),
-		('alternate_filename', ctypes.wintypes.WCHAR * 14),
+		("dwFileAttributes", DWORD),
+		("ftCreationTime", FILETIME),
+		("ftLastAccessTime", FILETIME),
+		("ftLastWriteTime", FILETIME),
+		("nFileSizeHigh", DWORD),
+		("nFileSizeLow", DWORD),
+		("dwReserved0", DWORD),
+		("dwReserved1", DWORD),
+		("cFileName", WCHAR * MAX_PATH),
+		("cAlternateFileName", WCHAR * 14)]
 	]
+	"""
+
+	@property
+	def file_attributes(self):
+		return self.dwFileAttributes
+
+	@property
+	def creation_time(self):
+		return self.ftCreationTime
+
+	@property
+	def last_access_time(self):
+		return self.ftLastAccessTime
+
+	@property
+	def last_write_time(self):
+		return self.ftLastWriteTime
+
+	@property
+	def file_size_words(self):
+		return [self.nFileSizeHigh, self.nFileSizeLow]
+
+	@property
+	def reserved(self):
+		return [self.dwReserved0, self.dwReserved1]
+
+	@property
+	def filename(self):
+		return self.cFileName
+
+	@property
+	def alternate_filename(self):
+		return self.cAlternateFileName
 
 	@property
 	def file_size(self):
-		return ctypes.cast(
-			self.file_size_words,
-			ctypes.POINTER(ctypes.c_uint64),
-		).contents
+		return self.nFileSizeHigh << 32 + self.nFileSizeLow
 
 
-LPWIN32_FIND_DATA = ctypes.POINTER(WIN32_FIND_DATA)
+LPWIN32_FIND_DATA = ctypes.POINTER(ctypes.wintypes.WIN32_FIND_DATAW)
 
 FindFirstFile = ctypes.windll.kernel32.FindFirstFileW
 FindFirstFile.argtypes = (ctypes.wintypes.LPWSTR, LPWIN32_FIND_DATA)
