@@ -4,13 +4,13 @@
 .. image:: https://img.shields.io/pypi/pyversions/jaraco.windows.svg
 
 .. image:: https://img.shields.io/travis/jaraco/jaraco.windows/master.svg
-   :target: http://travis-ci.org/jaraco/jaraco.windows
+   :target: https://travis-ci.org/jaraco/jaraco.windows
 
 .. image:: https://ci.appveyor.com/api/projects/status/f5l6sv7ox8q1ypo6?svg=true
    :target: https://ci.appveyor.com/project/jaraco/jaraco-windows
 
 .. image:: https://readthedocs.org/projects/jaracowindows/badge/?version=latest
-   :target: http://jaracowindows.readthedocs.io/en/latest/?badge=latest
+   :target: https://jaracowindows.readthedocs.io/en/latest/?badge=latest
 
 
 A pure-python interface to Windows
