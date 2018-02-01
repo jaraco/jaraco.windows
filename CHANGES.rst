@@ -1,3 +1,10 @@
+3.9
+===
+
+* Added new module ``jaraco.windows.filesystem.backports``
+  with ``realpath`` backport from `issue9949-v4.patch
+  <https://bugs.python.org/issue9949>`_.
+
 3.8.1
 =====
 
