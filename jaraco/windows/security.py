@@ -48,7 +48,8 @@ def get_security_attributes_for_user(user=None):
 	if user is None:
 		user = get_current_user()
 
-	assert isinstance(user, security.TOKEN_USER), "user must be TOKEN_USER instance"
+	assert isinstance(user, security.TOKEN_USER), (
+		"user must be TOKEN_USER instance")
 
 	SD = security.SECURITY_DESCRIPTOR()
 	SA = security.SECURITY_ATTRIBUTES()

@@ -5,8 +5,14 @@ import ctypes
 import datetime
 from ctypes.wintypes import WORD, WCHAR, BOOL, LONG
 
+import six
+
 from jaraco.windows.util import Extended
 from jaraco.collections import RangeMap
+
+if six.PY2:
+	import __builtin__
+	memoryview = __builtin__.buffer
 
 
 class AnyDict(object):
@@ -132,7 +138,7 @@ class Info(DYNAMIC_TIME_ZONE_INFORMATION):
 	def __init_from_bytes(self, bytes, **kwargs):
 		reg_tzi = REG_TZI_FORMAT()
 		# todo: use buffer API in Python 3
-		buffer = buffer(bytes)
+		buffer = memoryview(bytes)
 		ctypes.memmove(ctypes.addressof(reg_tzi), buffer, len(buffer))
 		self.__init_from_reg_tzi(self, reg_tzi, **kwargs)
 

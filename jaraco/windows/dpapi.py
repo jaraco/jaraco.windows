@@ -88,7 +88,7 @@ _CryptProtectData.restype = wintypes.BOOL
 _CryptUnprotectData = ctypes.windll.crypt32.CryptUnprotectData
 _CryptUnprotectData.argtypes = [
 	p_DATA_BLOB,       # data in
-	ctypes.POINTER(wintypes.LPWSTR), # data description
+	ctypes.POINTER(wintypes.LPWSTR),  # data description
 	p_DATA_BLOB,       # optional entropy
 	ctypes.c_void_p,   # reserved
 	ctypes.c_void_p,   # POINTER(CRYPTPROTECT_PROMPTSTRUCT), # prompt struct

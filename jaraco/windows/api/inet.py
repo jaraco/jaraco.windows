@@ -2,6 +2,9 @@ import struct
 import ctypes.wintypes
 from ctypes.wintypes import DWORD, WCHAR, BYTE, BOOL
 
+import six
+
+
 # from mprapi.h
 MAX_INTERFACE_NAME_LEN = 2**8
 
@@ -12,6 +15,11 @@ MAXLEN_IFDESCR = 2**8
 # from iptypes.h
 MAX_ADAPTER_ADDRESS_LENGTH = 8
 MAX_DHCPV6_DUID_LENGTH = 130
+
+
+if six.PY2:
+	import __builtin__
+	memoryview = __builtin__.buffer
 
 
 class MIB_IFROW(ctypes.Structure):
@@ -47,7 +55,7 @@ class MIB_IFROW(ctypes.Structure):
 		val = getattr(self, val_prop)
 		len_prop = '{0}_length'.format(name)
 		length = getattr(self, len_prop)
-		return str(buffer(val))[:length]
+		return str(memoryview(val))[:length]
 
 	@property
 	def physical_address(self):

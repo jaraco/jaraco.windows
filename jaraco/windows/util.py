@@ -2,6 +2,13 @@
 
 import ctypes
 
+import six
+
+
+if six.PY2:
+	import __builtin__
+	memoryview = __builtin__.buffer
+
 
 def ensure_unicode(param):
 	try:
@@ -14,7 +21,7 @@ def ensure_unicode(param):
 class Extended(object):
 	"Used to add extended capability to structures"
 	def __eq__(self, other):
-		return buffer(self) == buffer(other)
+		return memoryview(self) == memoryview(other)
 
 	def __ne__(self, other):
-		return buffer(self) != buffer(other)
+		return memoryview(self) != memoryview(other)
