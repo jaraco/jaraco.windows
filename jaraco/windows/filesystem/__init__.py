@@ -19,7 +19,6 @@ import six
 from six.moves import builtins, filter, map
 
 from jaraco.structures import binary
-from jaraco.text import local_format as lf
 
 from jaraco.windows.error import WindowsError, handle_nonzero_success
 import jaraco.windows.api.filesystem as api
@@ -120,7 +119,7 @@ def is_symlink(path):
 		return _is_symlink(next(find_files(path)))
 	except WindowsError as orig_error:
 		tmpl = "Error accessing {path}: {orig_error.message}"
-		raise builtins.WindowsError(lf(tmpl))
+		raise builtins.WindowsError(tmpl.format(**locals()))
 
 
 def _is_symlink(find_data):
