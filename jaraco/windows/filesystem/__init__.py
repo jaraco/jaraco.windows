@@ -305,7 +305,7 @@ def resolve_path(target, start=os.path.curdir):
 	r"""
 	Find a path from start to target where target is relative to start.
 
-	>>> tmp = getfixture('tmpdir_as_cwd')
+	>>> tmp = str(getfixture('tmpdir_as_cwd'))
 
 	>>> findpath('d:\\')
 	'd:\\'
