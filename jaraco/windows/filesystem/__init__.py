@@ -306,13 +306,12 @@ def resolve_path(target, start=os.path.curdir):
 	r"""
 	Find a path from start to target where target is relative to start.
 
-	>>> orig_wd = os.getcwd()
-	>>> os.chdir('c:\\windows') # so we know what the working directory is
+	>>> tmp = getfixture('tmpdir_as_cwd')
 
 	>>> findpath('d:\\')
 	'd:\\'
 
-	>>> findpath('d:\\', 'c:\\windows')
+	>>> findpath('d:\\', tmp)
 	'd:\\'
 
 	>>> findpath('\\bar', 'd:\\')
@@ -331,7 +330,7 @@ def resolve_path(target, start=os.path.curdir):
 	'c:\\bar'
 
 	>>> os.path.abspath(findpath('bar'))
-	'c:\\windows\\bar'
+	'...\\bar'
 
 	>>> findpath('..', 'd:\\foo\\bar')
 	'd:\\foo'

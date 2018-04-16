@@ -1,6 +1,8 @@
 import platform
 import os
 
+import pytest
+
 
 collect_ignore = [
 	'bugs',
@@ -29,3 +31,13 @@ if platform.system() != 'Windows':
 		if filename.endswith('.py')
 		and not filename.startswith('test_root')
 	]
+
+
+@pytest.fixture
+def tmpdir_as_cwd(tmpdir):
+	orig_dir = os.getcwd()
+	try:
+		os.chdir(tmpdir)
+		yield
+	finally:
+		os.chdir(orig_dir)
