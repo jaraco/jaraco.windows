@@ -326,7 +326,7 @@ def resolve_path(target, start=os.path.curdir):
 	'd:\\baz'
 
 	>>> os.path.abspath(findpath('\\bar'))
-	'C:\\bar'
+	'c:\\bar'
 
 	>>> os.path.abspath(findpath('bar'))
 	'...\\bar'
