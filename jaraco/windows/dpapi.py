@@ -34,7 +34,7 @@ class DATA_BLOB(ctypes.Structure):
 	_fields_ = [
 		('data_size', wintypes.DWORD),
 		('data', ctypes.c_void_p),
-		]
+	]
 
 	def __init__(self, data=None):
 		super(DATA_BLOB, self).__init__()
@@ -53,7 +53,7 @@ class DATA_BLOB(ctypes.Structure):
 
 	def get_data(self):
 		"Get the data for this blob"
-		array = ctypes.POINTER(ctypes.c_char*len(self))
+		array = ctypes.POINTER(ctypes.c_char * len(self))
 		return ctypes.cast(self.data, array).contents.raw
 
 	def __len__(self):
@@ -70,18 +70,19 @@ class DATA_BLOB(ctypes.Structure):
 		"""
 		ctypes.windll.kernel32.LocalFree(self.data)
 
+
 p_DATA_BLOB = ctypes.POINTER(DATA_BLOB)
 
 _CryptProtectData = ctypes.windll.crypt32.CryptProtectData
 _CryptProtectData.argtypes = [
 	p_DATA_BLOB,      # data in
-	wintypes.LPCWSTR, # data description
+	wintypes.LPCWSTR,  # data description
 	p_DATA_BLOB,      # optional entropy
 	ctypes.c_void_p,  # reserved
 	ctypes.c_void_p,  # POINTER(CRYPTPROTECT_PROMPTSTRUCT), # prompt struct
 	wintypes.DWORD,   # flags
 	p_DATA_BLOB,      # data out
-	]
+]
 _CryptProtectData.restype = wintypes.BOOL
 
 _CryptUnprotectData = ctypes.windll.crypt32.CryptUnprotectData
@@ -93,15 +94,16 @@ _CryptUnprotectData.argtypes = [
 	ctypes.c_void_p,   # POINTER(CRYPTPROTECT_PROMPTSTRUCT), # prompt struct
 	wintypes.DWORD,    # flags
 	p_DATA_BLOB,       # data out
-	]
+]
 _CryptUnprotectData.restype = wintypes.BOOL
 
 CRYPTPROTECT_UI_FORBIDDEN = 0x01
 
+
 def CryptProtectData(
 	data, description=None, optional_entropy=None,
 	prompt_struct=None, flags=0,
-	):
+):
 	"""
 	Encrypt data
 	"""
@@ -113,17 +115,19 @@ def CryptProtectData(
 		data_in,
 		description,
 		entropy,
-		None, # reserved
+		None,  # reserved
 		prompt_struct,
 		flags,
 		data_out,
-		)
+	)
 	handle_nonzero_success(res)
 	res = data_out.get_data()
 	data_out.free()
 	return res
 
-def CryptUnprotectData(data, optional_entropy=None, prompt_struct=None, flags=0):
+
+def CryptUnprotectData(
+	data, optional_entropy=None, prompt_struct=None, flags=0):
 	"""
 	Returns a tuple of (description, data) where description is the
 	the description that was passed to the CryptProtectData call and
@@ -137,11 +141,11 @@ def CryptUnprotectData(data, optional_entropy=None, prompt_struct=None, flags=0)
 		data_in,
 		ctypes.byref(ptr_description),
 		entropy,
-		None, # reserved
+		None,  # reserved
 		prompt_struct,
 		flags | CRYPTPROTECT_UI_FORBIDDEN,
 		data_out,
-		)
+	)
 	handle_nonzero_success(res)
 	description = ptr_description.value
 	if ptr_description.value is not None:

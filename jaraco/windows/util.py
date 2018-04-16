@@ -2,12 +2,14 @@
 
 import ctypes
 
+
 def ensure_unicode(param):
 	try:
 		param = ctypes.create_unicode_buffer(param)
 	except TypeError:
-		pass # just return the param as is
+		pass  # just return the param as is
 	return param
+
 
 class Extended(object):
 	"Used to add extended capability to structures"

@@ -60,11 +60,14 @@ POLICY_EXECUTE = (
 	POLICY_VIEW_LOCAL_INFORMATION |
 	POLICY_LOOKUP_NAMES)
 
+
 class TokenAccess:
 	TOKEN_QUERY = 0x8
 
+
 class TokenInformationClass:
 	TokenUser = 1
+
 
 class TOKEN_USER(ctypes.Structure):
 	num = 1
@@ -99,6 +102,7 @@ class SECURITY_DESCRIPTOR(ctypes.Structure):
 		('Sacl', ctypes.c_void_p),
 		('Dacl', ctypes.c_void_p),
 	]
+
 
 class SECURITY_ATTRIBUTES(ctypes.Structure):
 	"""
