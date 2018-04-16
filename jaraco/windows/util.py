@@ -2,13 +2,6 @@
 
 import ctypes
 
-import six
-
-
-if six.PY2:
-	import __builtin__
-	memoryview = __builtin__.buffer
-
 
 def ensure_unicode(param):
 	try:

@@ -5,14 +5,8 @@ import ctypes
 import datetime
 from ctypes.wintypes import WORD, WCHAR, BOOL, LONG
 
-import six
-
 from jaraco.windows.util import Extended
 from jaraco.collections import RangeMap
-
-if six.PY2:
-	import __builtin__
-	memoryview = __builtin__.buffer
 
 
 class AnyDict(object):
