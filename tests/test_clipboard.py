@@ -53,4 +53,14 @@ def sample_html():
 
 
 def test_html_paste(sample_html):
-	wc.get_html()
+	res = wc.get_html()
+	assert len(res.html) < len(res.data)
+	assert res.headers == dict(
+		StartHTML=71,
+		Version=0.9,
+		EndHTML=170,
+		StartFragment=140,
+		EndFragment=160,
+		StartSelection=140,
+		EndSelection=160,
+	)
