@@ -139,9 +139,11 @@ def SetClipboardData(type, content):
 	allocators = {
 		clipboard.CF_TEXT: ctypes.create_string_buffer,
 		clipboard.CF_UNICODETEXT: ctypes.create_unicode_buffer,
+		clipboard.CF_HTML: ctypes.create_string_buffer,
 	}
 	if type not in allocators:
-		raise NotImplementedError("Only text types are supported at this time")
+		raise NotImplementedError(
+			"Only text and HTML types are supported at this time")
 	# allocate the memory for the data
 	content = allocators[type](content)
 	flags = memory.GMEM_MOVEABLE
