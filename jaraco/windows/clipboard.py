@@ -47,12 +47,12 @@ def handles(*formats):
 	return register
 
 
-def nts(s):
+def nts(buffer):
 	"""
 	Null Terminated String
-	Get the portion of s up to a null character.
+	Get the portion of bytestring buffer up to a null character.
 	"""
-	result, null, rest = s.partition('\x00')
+	result, null, rest = buffer.partition(b'\x00')
 	return result
 
 
