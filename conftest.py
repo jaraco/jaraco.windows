@@ -35,9 +35,5 @@ if platform.system() != 'Windows':
 
 @pytest.fixture
 def tmpdir_as_cwd(tmpdir):
-	orig_dir = os.getcwd()
-	try:
-		os.chdir(tmpdir)
+	with tmpdir.as_cwd():
 		yield tmpdir
-	finally:
-		os.chdir(orig_dir)
