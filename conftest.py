@@ -38,6 +38,6 @@ def tmpdir_as_cwd(tmpdir):
 	orig_dir = os.getcwd()
 	try:
 		os.chdir(tmpdir)
-		yield
+		yield tmpdir
 	finally:
 		os.chdir(orig_dir)
