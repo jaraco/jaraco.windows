@@ -1,3 +1,8 @@
+3.9.1
+=====
+
+* #13: Fixed TypeError on Python 3 in clipboard.get_html().
+
 3.9
 ===
 
