@@ -2,7 +2,10 @@ import platform
 import os
 
 
-collect_ignore = []
+collect_ignore = [
+	'bugs',
+	'incubator',
+]
 
 
 try:
