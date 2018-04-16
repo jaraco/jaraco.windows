@@ -1,5 +1,6 @@
 import jaraco.windows.mmap as mmap
 
+
 def test_mmap_simple():
 	map = mmap.MemoryMap('foo', 50)
 	with map:
@@ -8,6 +9,7 @@ def test_mmap_simple():
 		map.seek(0)
 		assert map.read(4) == b'abcd'
 		assert map.read(2) == b'ef'
+
 
 def test_mmap_null_bytes():
 	map = mmap.MemoryMap('foo', 50)
