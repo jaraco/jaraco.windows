@@ -82,7 +82,7 @@ def as_bitmap(handle):
 @handles(clipboard.CF_HTML)
 class HTMLSnippet(object):
 	def __init__(self, handle):
-		self.data = text_string(handle)
+		self.data = nts(raw_data(handle).decode('utf-8'))
 		self.headers = self.parse_headers(self.data)
 
 	@property
