@@ -5,10 +5,11 @@ import re
 import itertools
 from contextlib import contextmanager
 import io
-
-import six
 import ctypes
 from ctypes import windll
+
+import six
+from six.moves import map
 
 from jaraco.windows.api import clipboard, memory
 from jaraco.windows.error import handle_nonzero_success, WindowsError
@@ -95,7 +96,7 @@ class HTMLSnippet(object):
 
 		def header_line(line):
 			return re.match('(\w+):(.*)', line)
-		headers = itertools.imap(header_line, d)
+		headers = map(header_line, d)
 		# grab headers until they no longer match
 		headers = itertools.takewhile(bool, headers)
 
