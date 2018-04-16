@@ -52,7 +52,7 @@ def nts(buffer):
 	Null Terminated String
 	Get the portion of bytestring buffer up to a null character.
 	"""
-	result, null, rest = buffer.partition(b'\x00')
+	result, null, rest = buffer.partition('\x00')
 	return result
 
 

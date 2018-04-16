@@ -325,7 +325,7 @@ def resolve_path(target, start=os.path.curdir):
 	>>> findpath('\\baz', 'd:\\foo\\bar') # fails with '\\baz'
 	'd:\\baz'
 
-	>>> os.path.abspath(findpath('\\bar'))
+	>>> os.path.abspath(findpath('\\bar')).lower()
 	'c:\\bar'
 
 	>>> os.path.abspath(findpath('bar'))
