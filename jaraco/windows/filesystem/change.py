@@ -17,6 +17,8 @@ from threading import Thread
 import itertools
 import logging
 
+import six
+
 from more_itertools.recipes import consume
 import jaraco.text
 
@@ -65,7 +67,7 @@ class PatternFilter(FileFilter):
 	"""
 	def __init__(self, pattern):
 		self.pattern = (
-			re.compile(pattern) if isinstance(pattern, basestring)
+			re.compile(pattern) if isinstance(pattern, six.string_types)
 			else pattern
 		)
 
