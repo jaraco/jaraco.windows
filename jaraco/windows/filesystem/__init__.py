@@ -252,6 +252,7 @@ def get_file_info(path):
 	info = api.BY_HANDLE_FILE_INFORMATION()
 	res = api.GetFileInformationByHandle(handle, info)
 	handle_nonzero_success(res)
+	handle_nonzero_success(api.CloseHandle(handle))
 
 	return info
 

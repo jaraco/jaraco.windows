@@ -1,3 +1,8 @@
+3.9.2
+=====
+
+* #14: Ensure handle is closed in ``filesystem.get_file_info``.
+
 3.9.1
 =====
 
