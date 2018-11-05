@@ -95,7 +95,7 @@ class HTMLSnippet(object):
 		d = io.StringIO(data)
 
 		def header_line(line):
-			return re.match('(\w+):(.*)', line)
+			return re.match(r'(\w+):(.*)', line)
 		headers = map(header_line, d)
 		# grab headers until they no longer match
 		headers = itertools.takewhile(bool, headers)

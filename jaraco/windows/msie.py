@@ -19,7 +19,7 @@ class CookieMonster(object):
 		import _winreg as winreg
 		key = winreg.OpenKeyEx(
 			winreg.HKEY_CURRENT_USER, 'Software'
-			'\Microsoft\Windows\CurrentVersion\Explorer\Shell Folders')
+			r'\Microsoft\Windows\CurrentVersion\Explorer\Shell Folders')
 		cookie_dir, type = winreg.QueryValueEx(key, 'Cookies')
 		return cookie_dir
 
