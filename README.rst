@@ -27,7 +27,7 @@ here.
 Installation
 ============
 
-You should install this module the normal way using pip or easy_install.
+You should install this module the normal way using pip.
 
 If you want to monkeypatch the os module to include symlink compatibility, you
 should add the following to your ``usercustomize`` or ``sitecustomize`` module:
