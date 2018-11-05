@@ -117,7 +117,8 @@ def is_symlink(path):
 	path = _patch_path(path)
 	try:
 		return _is_symlink(next(find_files(path)))
-	except WindowsError as orig_error:
+	# comment below workaround for PyCQA/pyflakes#376
+	except WindowsError as orig_error:  # noqa: F841
 		tmpl = "Error accessing {path}: {orig_error.message}"
 		raise builtins.WindowsError(tmpl.format(**locals()))
 
