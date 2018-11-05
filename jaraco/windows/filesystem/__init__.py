@@ -94,7 +94,7 @@ def islink(path):
 
 
 def _patch_path(path):
-	"""
+	r"""
 	Paths have a max length of api.MAX_PATH characters (260). If a target path
 	is longer than that, it needs to be made absolute and prepended with
 	\\?\ in order to work with API calls.
@@ -127,7 +127,7 @@ def _is_symlink(find_data):
 
 
 def find_files(spec):
-	"""
+	r"""
 	A pythonic wrapper around the FindFirstFile/FindNextFile win32 api.
 
 	>>> root_files = tuple(find_files(r'c:\*'))
@@ -160,7 +160,7 @@ def find_files(spec):
 
 
 def get_final_path(path):
-	"""
+	r"""
 	For a given path, determine the ultimate location of that path.
 	Useful for resolving symlink targets.
 	This functions wraps the GetFinalPathNameByHandle from the Windows
