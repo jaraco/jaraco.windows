@@ -1,3 +1,14 @@
+4.1
+===
+
+``symlink`` function now supplies the
+``SYMBOLIC_LINK_FLAG_ALLOW_UNPRIVILEGED_CREATE`` flag
+so that symbolic links can be created without elevated
+privileges as long as developer mode is enabled. See
+`this blog
+<https://blogs.windows.com/windowsdeveloper/2016/12/02/symlinks-windows-10/>`_
+for more details.
+
 4.0
 ===
 

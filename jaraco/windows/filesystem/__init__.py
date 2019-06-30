@@ -63,13 +63,21 @@ def _is_target_a_directory(link, rel_target):
 
 
 def symlink(target, link, target_is_directory=False):
-    """
-    An implementation of os.symlink for Windows (Vista and greater)
-    """
-    target_is_directory = target_is_directory or _is_target_a_directory(link, target)
-    # normalize the target (MS symlinks don't respect forward slashes)
-    target = os.path.normpath(target)
-    handle_nonzero_success(api.CreateSymbolicLink(link, target, target_is_directory))
+	"""
+	An implementation of os.symlink for Windows (Vista and greater)
+	"""
+	target_is_directory = (
+		target_is_directory or
+		_is_target_a_directory(link, target)
+	)
+	# normalize the target (MS symlinks don't respect forward slashes)
+	target = os.path.normpath(target)
+	flags = (
+		target_is_directory |
+		api.SYMBOLIC_LINK_FLAG_ALLOW_UNPRIVILEGED_CREATE
+	)
+	handle_nonzero_success(
+		api.CreateSymbolicLink(link, target, flags))
 
 
 def link(target, link):
