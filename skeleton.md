@@ -10,6 +10,8 @@ It's intended to be used by a new or existing project to adopt these practices a
 
 The primary advantage to using an SCM for maintaining these techniques is that those tools help facilitate the merge between the template and its adopting projects.
 
+Another advantage to using an SCM-managed approach is that tools like GitHub recognize that a change in the skeleton is the _same change_ across all projects that merge with that skeleton. Without the ancestry, with a traditional copy/paste approach, a [commit like this](https://github.com/jaraco/skeleton/commit/12eed1326e1bc26ce256e7b3f8cd8d3a5beab2d5) would produce notifications in the upstream project issue for each and every application, but because it's centralized, GitHub provides just the one notification when the change is added to the skeleton.
+
 # Usage
 
 ## new projects
@@ -48,7 +50,8 @@ The features/techniques employed by the skeleton include:
 - setuptools declarative configuration using setup.cfg
 - tox for running tests
 - A README.rst as reStructuredText with some popular badges, but with readthedocs and appveyor badges commented out
-- A CHANGES.rst file intended for publishing release notes about the project.
+- A CHANGES.rst file intended for publishing release notes about the project
+- Use of [black](https://black.readthedocs.io/en/stable/) for code formatting (disabled on unsupported Python 3.5 and earlier)
 
 ## Packaging Conventions
 
@@ -95,8 +98,8 @@ A pytest.ini is included to define common options around running tests. In parti
 
 Relies a .flake8 file to correct some default behaviors:
 
-- allow tabs for indentation (legacy for jaraco projects)
-- disable mutually incompatible rules W503 and W504.
+- disable mutually incompatible rules W503 and W504
+- support for black format
 
 ## Continuous Integration
 
