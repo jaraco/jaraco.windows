@@ -1,5 +1,6 @@
 # reported at http://social.msdn.microsoft.com/Forums/en-US/wsk/thread/f43c2faf-3df3-4f11-9f5e-1a9101753f93
 from win32wnet import WNetAddConnection2, NETRESOURCE
+
 resource = NETRESOURCE()
 resource.lpRemoteName = r'\\aoshi\users'
 username = 'jaraco'

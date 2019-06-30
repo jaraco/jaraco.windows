@@ -1,63 +1,69 @@
 import os
 
+
 def findpath(target, start=os.path.curdir):
-	r"""
-	Find a path from start to target where target is relative to start.
-	
-	>>> orig_wd = os.getcwd()
-	>>> os.chdir('c:\\windows') # so we know what the working directory is
+    r"""
+    Find a path from start to target where target is relative to start.
 
-	>>> findpath('d:\\')
-	'd:\\'
+    >>> orig_wd = os.getcwd()
+    >>> os.chdir('c:\\windows') # so we know what the working directory is
 
-	>>> findpath('d:\\', 'c:\\windows')
-	'd:\\'
+    >>> findpath('d:\\')
+    'd:\\'
 
-	>>> findpath('\\bar', 'd:\\')
-	'd:\\bar'
+    >>> findpath('d:\\', 'c:\\windows')
+    'd:\\'
 
-	>>> findpath('\\bar', 'd:\\foo') # fails with '\\bar'
-	'd:\\bar'
+    >>> findpath('\\bar', 'd:\\')
+    'd:\\bar'
 
-	>>> findpath('bar', 'd:\\foo')
-	'd:\\foo\\bar'
+    >>> findpath('\\bar', 'd:\\foo') # fails with '\\bar'
+    'd:\\bar'
 
-	>>> findpath('bar\\baz', 'd:\\foo')
-	'd:\\foo\\bar\\baz'
+    >>> findpath('bar', 'd:\\foo')
+    'd:\\foo\\bar'
 
-	>>> findpath('\\baz', 'd:\\foo\\bar') # fails with '\\baz'
-	'd:\\baz'
+    >>> findpath('bar\\baz', 'd:\\foo')
+    'd:\\foo\\bar\\baz'
 
-	Since we're on the C drive, findpath may be allowed to return
-	relative paths for targets on the same drive. I use abspath to
-	confirm that the ultimate target is what we expect.
-	>>> os.path.abspath(findpath('\\bar'))
-	'c:\\bar'
+    >>> findpath('\\baz', 'd:\\foo\\bar') # fails with '\\baz'
+    'd:\\baz'
 
-	>>> os.path.abspath(findpath('bar'))
-	'c:\\windows\\bar'
+    Since we're on the C drive, findpath may be allowed to return
+    relative paths for targets on the same drive. I use abspath to
+    confirm that the ultimate target is what we expect.
+    >>> os.path.abspath(findpath('\\bar'))
+    'c:\\bar'
 
-	>>> findpath('..', 'd:\\foo\\bar')
-	'd:\\foo'
+    >>> os.path.abspath(findpath('bar'))
+    'c:\\windows\\bar'
 
-	>>> findpath('..\\bar', 'd:\\foo')
-	'd:\\bar'
+    >>> findpath('..', 'd:\\foo\\bar')
+    'd:\\foo'
 
-	The parent of the root directory is the root directory.
-	>>> findpath('..', 'd:\\')
-	'd:\\'
-	
-	restore the original working directory
-	>>> os.chdir(orig_wd)
-	"""
-	return os.path.normpath(os.path.join(start, target))
+    >>> findpath('..\\bar', 'd:\\foo')
+    'd:\\bar'
+
+    The parent of the root directory is the root directory.
+    >>> findpath('..', 'd:\\')
+    'd:\\'
+
+    restore the original working directory
+    >>> os.chdir(orig_wd)
+    """
+    return os.path.normpath(os.path.join(start, target))
+
 
 def main():
-	import sys
-	if sys.argv[1:]:
-		print findpath(*sys.argv[1:])
-	else:
-		import doctest
-		doctest.testmod()
+    import sys
 
-if __name__ == '__main__': main()
+    if sys.argv[1:]:
+        print(findpath(*sys.argv[1:]))
+    else:
+        import doctest
+
+        doctest.testmod()
+
+
+if __name__ == '__main__':
+    main()
