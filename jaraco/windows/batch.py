@@ -1,19 +1,7 @@
-import sys
 import subprocess
 import itertools
 
 from more_itertools import consume, always_iterable
-
-
-def validate_pair(ob):
-    "Return True if the object represents a pair"
-    try:
-        if len(ob) != 2:
-            print("Unexpected result:", ob, file=sys.stderr)
-            raise ValueError
-    except Exception:
-        return False
-    return True
 
 
 def extract_environment(env_cmd, initial=None):
@@ -44,17 +32,8 @@ def extract_environment(env_cmd, initial=None):
     lines = map(make_str, lines)
     # consume whatever output occurs until the tag is reached
     consume(itertools.takewhile(lambda l: tag not in l, lines))
-    # define a way to handle each KEY=VALUE line
-
-    def handle_line(line):
-        return line.rstrip().split('=', 1)
-
-    # parse key/values into pairs
-    pairs = map(handle_line, lines)
-    # make sure the pairs are valid
-    valid_pairs = filter(validate_pair, pairs)
     # construct a dictionary of the pairs
-    result = dict(valid_pairs)
+    result = dict(line.rstrip().split('=', 1) for line in lines)
     # let the process finish
     proc.communicate()
     return result
