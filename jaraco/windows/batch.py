@@ -2,7 +2,7 @@ import sys
 import subprocess
 import itertools
 
-from more_itertools.recipes import consume
+from more_itertools import consume, always_iterable
 
 
 def validate_pair(ob):
@@ -26,10 +26,8 @@ def extract_environment(env_cmd, initial=None):
     If initial is supplied, it is used as the initial environment passed
     to the child process.
     """
-    if not isinstance(env_cmd, (list, tuple)):
-        env_cmd = [env_cmd]
     # construct the command that will alter the environment
-    env_cmd = subprocess.list2cmdline(env_cmd)
+    env_cmd = subprocess.list2cmdline(always_iterable(env_cmd))
     # create a tag so we can tell in the output when the proc is done
     tag = 'Done running command'
     # construct a cmd.exe command to do accomplish this
