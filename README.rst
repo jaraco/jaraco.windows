@@ -6,18 +6,13 @@
 
 .. _PyPI link: https://pypi.org/project/jaraco.windows
 
-.. image:: https://dev.azure.com/jaraco/jaraco.windows/_apis/build/status/jaraco.jaraco.windows?branchName=master
-   :target: https://dev.azure.com/jaraco/jaraco.windows/_build/latest?definitionId=1&branchName=master
-
-.. image:: https://img.shields.io/travis/jaraco/jaraco.windows/master.svg
-   :target: https://travis-ci.org/jaraco/jaraco.windows
+.. image:: https://github.com/jaraco/jaraco.windows/workflows/Automated%20Tests/badge.svg
+   :target: https://github.com/jaraco/jaraco.windows/actions?query=workflow%3A%22Automated+Tests%22
+   :alt: Automated Tests
 
 .. image:: https://img.shields.io/badge/code%20style-black-000000.svg
    :target: https://github.com/psf/black
    :alt: Code style: Black
-
-.. image:: https://ci.appveyor.com/api/projects/status/f5l6sv7ox8q1ypo6?svg=true
-   :target: https://ci.appveyor.com/project/jaraco/jaraco-windows
 
 .. image:: https://readthedocs.org/projects/jaracowindows/badge/?version=latest
    :target: https://jaracowindows.readthedocs.io/en/latest/?badge=latest
