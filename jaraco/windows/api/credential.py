@@ -5,14 +5,15 @@ Support for Credential Vault
 import ctypes
 from ctypes.wintypes import DWORD, LPCWSTR, BOOL, LPWSTR, FILETIME
 
+
 try:
     from ctypes.wintypes import LPBYTE
 except ImportError:
-    LPBYTE = ctypes.POINTER(ctypes.wintypes.BYTE)
+    LPBYTE = ctypes.POINTER(ctypes.wintypes.BYTE)  # type: ignore
 
 
 class CredentialAttribute(ctypes.Structure):
-    _fields_ = []
+    _fields_ = []  # type: ignore
 
 
 class Credential(ctypes.Structure):

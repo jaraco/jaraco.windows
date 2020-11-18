@@ -7,7 +7,7 @@ import ctypes
 import ctypes.wintypes
 
 import six
-from six.moves import winreg
+from six.moves import winreg  # type: ignore
 
 from jaraco.ui.editor import EditableFile
 

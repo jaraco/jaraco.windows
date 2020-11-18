@@ -1,8 +1,6 @@
 from itertools import count
 
-import six
-
-winreg = six.moves.winreg
+from six.moves import winreg  # type: ignore
 
 
 def key_values(key):
