@@ -66,3 +66,9 @@ def test_html_paste(sample_html):
         StartSelection=140,
         EndSelection=160,
     )
+
+
+@pytest.mark.xfail(reason="example is buggy")
+def test_html_fragment(sample_html):
+    snippet = wc.get_html()
+    assert snippet.fragment == '<LI> The Fragment </LI>'
