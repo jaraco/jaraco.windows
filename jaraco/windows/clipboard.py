@@ -7,6 +7,8 @@ from contextlib import contextmanager
 import io
 import ctypes
 from ctypes import windll
+import textwrap
+import collections
 
 import six
 from six.moves import map
@@ -80,6 +82,11 @@ def as_bitmap(handle):
 
 @handles(clipboard.CF_HTML)
 class HTMLSnippet(object):
+    """
+    HTML Snippet representing the Microsoft `HTML snippet format
+    <https://docs.microsoft.com/en-us/windows/win32/dataxchg/html-clipboard-format>`_.
+    """
+
     def __init__(self, handle):
         self.data = nts(raw_data(handle).decode('utf-8'))
         self.headers = self.parse_headers(self.data)
@@ -87,6 +94,10 @@ class HTMLSnippet(object):
     @property
     def html(self):
         return self.data[self.headers['StartHTML'] :]
+
+    @property
+    def fragment(self):
+        return self.data[self.headers['StartFragment'] : self.headers['EndFragment']]
 
     @staticmethod
     def parse_headers(data):
@@ -112,6 +123,39 @@ class HTMLSnippet(object):
 
         pairs = ((header.group(1), best_type(header.group(2))) for header in headers)
         return dict(pairs)
+
+    @classmethod
+    def from_string(cls, source):
+        """
+        Construct an HTMLSnippet with all the headers, modeled after
+        https://docs.microsoft.com/en-us/troubleshoot/cpp/add-html-code-clipboard
+        """
+        tmpl = textwrap.dedent(
+            """
+            Version:0.9
+            StartHTML:{start_html:08d}
+            EndHTML:{end_html:08d}
+            StartFragment:{start_fragment:08d}
+            EndFragment:{end_fragment:08d}
+            <html><body>
+            <!--StartFragment -->
+            {source}
+            <!--EndFragment -->
+            </body></html>
+            """
+        ).strip()
+        zeros = collections.defaultdict(lambda: 0, locals())
+        pre_value = tmpl.format_map(zeros)
+        start_html = pre_value.find('<html>')
+        end_html = len(tmpl)
+        assert end_html < 100000000
+        start_fragment = pre_value.find(source)
+        end_fragment = pre_value.rfind('\n<!--EndFragment')
+        tmpl_length = len(tmpl) - len('{source}')
+        snippet = cls.__new__(cls)
+        snippet.data = tmpl.format_map(locals())
+        snippet.headers = cls.parse_headers(snippet.data)
+        return snippet
 
 
 def GetClipboardData(type=clipboard.CF_UNICODETEXT):
@@ -176,15 +220,26 @@ def get_unicode_text():
 
 
 def get_html():
+    """
+    >>> set_html('<b>foo</b>')
+    >>> get_html().html
+    '<html><body>...<b>foo</b>...</body></html>'
+    >>> get_html().fragment
+    '<b>foo</b>'
+    """
     with context():
         result = GetClipboardData(clipboard.CF_HTML)
     return result
 
 
 def set_html(source):
+    """
+    >>> set_html('<b>foo</b>')
+    """
+    snippet = HTMLSnippet.from_string(source)
     with context():
         EmptyClipboard()
-        SetClipboardData(clipboard.CF_UNICODETEXT, source)
+        SetClipboardData(clipboard.CF_HTML, snippet.data.encode('utf-8'))
 
 
 def get_image():
