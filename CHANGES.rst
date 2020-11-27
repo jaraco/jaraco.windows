@@ -1,7 +1,14 @@
+v5.1.0
+======
+
+* #16: Added ability to construct HTMLSnippet from a fragment,
+  utilizing that function in set_html. Now ``get/set_html`` are
+  tested and work as intended.
+
 v5.0.0
 ======
 
-Require Python 3.6 and later.
+* Require Python 3.6 and later.
 
 4.0
 ===
