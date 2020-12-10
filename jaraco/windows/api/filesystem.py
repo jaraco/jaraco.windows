@@ -8,6 +8,8 @@ CreateSymbolicLink.argtypes = (
 )
 CreateSymbolicLink.restype = ctypes.wintypes.BOOLEAN
 
+SYMBOLIC_LINK_FLAG_ALLOW_UNPRIVILEGED_CREATE = 0x2
+
 CreateHardLink = ctypes.windll.kernel32.CreateHardLinkW
 CreateHardLink.argtypes = (
     ctypes.wintypes.LPWSTR,
