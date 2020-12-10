@@ -1,3 +1,8 @@
+v5.2.0
+======
+
+* Add ``batch`` module from ``jaraco.develop.environ``.
+
 v5.1.0
 ======
 
