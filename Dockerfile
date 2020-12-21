@@ -7,5 +7,9 @@ RUN setx path "%path%;C:\Users\ContainerAdministrator\.local\bin;C:\programdata\
 RUN pipx install tox
 RUN pipx install httpie
 RUN http GET https://bootstrap.pypa.io/get-pip.py | pypy3
+
+# install certificates (https://bugs.python.org/issue36137#msg336806)
+RUN certutil -generateSSTFromWU roots.sst && certutil -addstore -f root roots.sst && del roots.sst
+
 RUN setx TOX_WORK_DIR C:\tox
 CMD powershell
