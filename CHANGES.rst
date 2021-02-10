@@ -1,3 +1,8 @@
+v5.4.0
+======
+
+* Switch to PEP 420 for namespace package.
+
 v5.3.0
 ======
 
