@@ -5,8 +5,6 @@ Based on http://code.activestate.com
 /recipes/115875-controlling-windows-services/
 """
 
-from __future__ import print_function
-
 import sys
 import time
 

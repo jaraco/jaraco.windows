@@ -1,7 +1,5 @@
 import functools
 
-from six.moves import map
-
 import win32api
 import win32evtlog
 import win32evtlogutil

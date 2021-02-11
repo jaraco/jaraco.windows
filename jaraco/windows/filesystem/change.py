@@ -1,13 +1,9 @@
-# -*- coding: UTF-8 -*-
-
 """
 FileChange
     Classes and routines for monitoring the file system for changes.
 
 Copyright © 2004, 2011, 2013 Jason R. Coombs
 """
-
-from __future__ import print_function
 
 import os
 import sys
@@ -16,8 +12,6 @@ import re
 from threading import Thread
 import itertools
 import logging
-
-import six
 
 from more_itertools.recipes import consume
 import jaraco.text
@@ -67,9 +61,7 @@ class PatternFilter(FileFilter):
     """
 
     def __init__(self, pattern):
-        self.pattern = (
-            re.compile(pattern) if isinstance(pattern, six.string_types) else pattern
-        )
+        self.pattern = re.compile(pattern) if isinstance(pattern, str) else pattern
 
     def __call__(self, file):
         return bool(self.pattern.match(file, re.I))

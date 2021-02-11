@@ -1,7 +1,3 @@
-#!/usr/bin/env python
-
-from __future__ import print_function
-
 import os
 import sys
 import operator
@@ -19,9 +15,7 @@ from ctypes import (
 from ctypes.wintypes import LPWSTR
 import nt
 import posixpath
-
-import six
-from six.moves import builtins, filter, map
+import builtins
 
 from jaraco.structures import binary
 
@@ -445,8 +439,7 @@ def find_symlinks_cmd():
         pass
 
 
-@six.add_metaclass(binary.BitMask)
-class FileAttributes(int):
+class FileAttributes(int, metaclass=binary.BitMask):
 
     # extract the values from the stat module on Python 3.5
     # and later.

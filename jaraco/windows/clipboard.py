@@ -1,5 +1,3 @@
-from __future__ import with_statement, print_function
-
 import sys
 import re
 import itertools
@@ -9,9 +7,6 @@ import ctypes
 from ctypes import windll
 import textwrap
 import collections
-
-import six
-from six.moves import map
 
 from jaraco.windows.api import clipboard, memory
 from jaraco.windows.error import handle_nonzero_success, WindowsError
@@ -248,13 +243,11 @@ def get_image():
 
 
 def paste_stdout():
-    getter = get_unicode_text if six.PY3 else get_text
-    sys.stdout.write(getter())
+    sys.stdout.write(get_unicode_text())
 
 
 def stdin_copy():
-    setter = set_unicode_text if six.PY3 else set_text
-    setter(sys.stdin.read())
+    set_unicode_text(sys.stdin.read())
 
 
 @contextmanager

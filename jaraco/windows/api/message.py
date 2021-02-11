@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 """
 jaraco.windows.message
 
@@ -8,8 +6,6 @@ Windows Messaging support
 
 import ctypes
 from ctypes.wintypes import HWND, UINT, WPARAM, LPARAM, DWORD, LPVOID
-
-import six
 
 LRESULT = LPARAM
 
@@ -23,8 +19,8 @@ class LPARAM_wstr(LPARAM):
 
     @classmethod
     def from_param(cls, param):
-        if isinstance(param, six.string_types):
-            return LPVOID.from_param(six.text_type(param))
+        if isinstance(param, str):
+            return LPVOID.from_param(str(param))
         return LPARAM.from_param(param)
 
 

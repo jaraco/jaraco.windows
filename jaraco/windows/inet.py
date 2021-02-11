@@ -3,8 +3,6 @@ Some routines for retrieving the addresses from the local
 network config.
 """
 
-from __future__ import print_function
-
 import itertools
 import ctypes
 

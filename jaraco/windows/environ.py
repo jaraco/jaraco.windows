@@ -1,13 +1,7 @@
-#!/usr/bin/env python
-from __future__ import absolute_import
-
 import sys
-
+import winreg
 import ctypes
 import ctypes.wintypes
-
-import six
-from six.moves import winreg  # type: ignore
 
 from jaraco.ui.editor import EditableFile
 
@@ -59,7 +53,7 @@ class RegisteredEnvironment(object):
     @classmethod
     def get_values_list(class_, name, sep):
         res = class_.get(name.upper(), [])
-        if isinstance(res, six.string_types):
+        if isinstance(res, str):
             res = res.split(sep)
         return res
 

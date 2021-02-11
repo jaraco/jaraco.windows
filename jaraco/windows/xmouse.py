@@ -1,7 +1,3 @@
-#!python
-
-from __future__ import print_function
-
 import ctypes
 from jaraco.windows.error import handle_nonzero_success
 from jaraco.windows.api import system

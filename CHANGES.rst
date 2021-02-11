@@ -1,7 +1,13 @@
+v5.5.0
+======
+
+* Removed Python 2 compatibility.
+
 v5.4.0
 ======
 
 * Switch to PEP 420 for namespace package.
+* Require Python 3.6 or later.
 
 v5.3.0
 ======

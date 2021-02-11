@@ -1,5 +1,3 @@
-from __future__ import division
-
 import ctypes.wintypes
 
 from .error import handle_nonzero_success

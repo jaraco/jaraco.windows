@@ -1,7 +1,5 @@
 import ctypes.wintypes
 
-import six
-
 from .error import handle_nonzero_success
 from .api import memory
 
@@ -30,7 +28,7 @@ class MemoryMap(object):
             PAGE_READWRITE,
             0,
             self.length,
-            six.text_type(self.name),
+            str(self.name),
         )
         handle_nonzero_success(filemap)
         if filemap == INVALID_HANDLE_VALUE:

@@ -1,18 +1,12 @@
-# -*- coding: UTF-8 -*-
-
 """
 timers
     In particular, contains a waitable timer.
 """
 
-from __future__ import absolute_import
-
 import time
-from six.moves import _thread
+import _thread
 
 from jaraco.windows.api import event as win32event
-
-__author__ = 'Jason R. Coombs <jaraco@jaraco.com>'
 
 
 class WaitableTimer:

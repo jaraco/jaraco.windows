@@ -1,13 +1,7 @@
-#!/usr/bin/env python
-
 import sys
-
+import builtins
 import ctypes
 import ctypes.wintypes
-
-import six
-
-builtins = six.moves.builtins
 
 
 __import__('jaraco.windows.api.memory')

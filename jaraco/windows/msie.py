@@ -1,5 +1,3 @@
-# -*- coding: UTF-8 -*-
-
 """cookies.py
 
 Cookie support utilities
@@ -7,8 +5,6 @@ Cookie support utilities
 
 import os
 import itertools
-
-import six
 
 
 class CookieMonster(object):
@@ -29,7 +25,7 @@ class CookieMonster(object):
         with open(os.path.join(self.cookie_dir, filename)) as cookie_file:
             while True:
                 entry = itertools.takewhile(self.is_not_cookie_delimiter, cookie_file)
-                entry = list(map(six.text_type.rstrip, entry))
+                entry = [item.rstrip() for item in entry]
                 if not entry:
                     break
                 cookie = self.make_cookie(*entry)
