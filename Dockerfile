@@ -25,4 +25,10 @@ RUN pipx install httpie
 RUN pypy3 -m ensurepip
 RUN pypy3 -m pip install -U pip
 
+# install certificates (https://bugs.python.org/issue36137#msg336806)
+RUN cmd /c 'certutil -generateSSTFromWU roots.sst && certutil -addstore -f root roots.sst && del roots.sst'
+
+
+RUN setx TOX_WORK_DIR \tox
+
 ENTRYPOINT ["powershell.exe", "-NoLogo", "-ExecutionPolicy", "Bypass"]
