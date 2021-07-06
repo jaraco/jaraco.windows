@@ -17,6 +17,9 @@
 .. image:: https://readthedocs.org/projects/jaracowindows/badge/?version=latest
    :target: https://jaracowindows.readthedocs.io/en/latest/?badge=latest
 
+.. image:: https://img.shields.io/badge/skeleton-2021-informational
+   :target: https://blog.jaraco.com/skeleton
+
 
 A pure-python interface to Windows
 APIs using ctypes. This package is not designed to be exhaustive, but
