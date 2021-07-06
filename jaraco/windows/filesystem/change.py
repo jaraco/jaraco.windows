@@ -177,7 +177,7 @@ class Notifier(object):
 class BlockingNotifier(Notifier):
     @staticmethod
     def wait_results(*args):
-        """ calls WaitForMultipleObjects repeatedly with args """
+        """calls WaitForMultipleObjects repeatedly with args"""
         return itertools.starmap(event.WaitForMultipleObjects, itertools.repeat(args))
 
     def get_changed_files(self):
