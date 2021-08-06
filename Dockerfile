@@ -24,14 +24,10 @@ RUN pypy3 -m pip install -U pip
 # install certificates (https://bugs.python.org/issue36137#msg336806)
 RUN cmd /c 'certutil -generateSSTFromWU roots.sst && certutil -addstore -f root roots.sst && del roots.sst'
 
-
 RUN setx TOX_WORK_DIR \tox
 
 # Install Visual Studio
-RUN py -m pip-run -q git+https://github.com/jaraco/jaraco.windows@feature/dockerfile-compiler -- -m jaraco.windows.msvc
-
-RUN & \"${env:programfiles(x86)}\Microsoft Visual Studio\Installer\vswhere.exe\" -latest -prerelease -requiresAny -property installationPath -products *
-
-RUN py -c 'from setuptools import msvc; print(msvc._msvc14_find_vc2017())'
+COPY . jaraco.windows
+RUN py -m pip-run -q ./jaraco.windows -- -m jaraco.windows.msvc
 
 ENTRYPOINT ["powershell.exe", "-NoLogo", "-ExecutionPolicy", "Bypass"]
