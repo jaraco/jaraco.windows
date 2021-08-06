@@ -9,8 +9,14 @@ default_components = [
 
 def install(components=default_components):
     cmd = [
-        'vs_buildtools', '--quiet', '--wait', '--norestart',
-        '--nocache', '--installPath', 'C:\\BuildTools']
+        'vs_buildtools',
+        '--quiet',
+        '--wait',
+        '--norestart',
+        '--nocache',
+        '--installPath',
+        'C:\\BuildTools',
+    ]
     for component in components:
         cmd += ['--add', component]
     res = subprocess.Popen(cmd).wait()
