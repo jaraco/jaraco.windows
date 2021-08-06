@@ -28,19 +28,7 @@ RUN cmd /c 'certutil -generateSSTFromWU roots.sst && certutil -addstore -f root 
 RUN setx TOX_WORK_DIR \tox
 
 # Install Visual Studio
-RUN cmd /c start /w vs_buildtools --quiet --wait --norestart --nocache modify \
- --add Microsoft.VisualStudio.Component.CoreEditor \
- --add Microsoft.VisualStudio.Workload.CoreEditor \
- --add Microsoft.VisualStudio.Component.Roslyn.Compiler \
- --add Microsoft.Component.MSBuild \
- --add Microsoft.VisualStudio.Component.TextTemplating \
- --add Microsoft.VisualStudio.Component.VC.CoreIde \
- --add Microsoft.VisualStudio.Component.VC.Tools.x86.x64 \
- --add Microsoft.VisualStudio.Component.Windows10SDK.19041 \
- --add Microsoft.VisualStudio.Component.VC.Redist.14.Latest \
- --add Microsoft.VisualStudio.ComponentGroup.NativeDesktop.Core \
- --add Microsoft.VisualStudio.Workload.NativeDesktop \
- --add Microsoft.VisualStudio.Workload.WDExpress
+RUN py -m pip-run -q git+https://github.com/jaraco/jaraco.windows@feature/dockerfile-compiler -- -m jaraco.windows.msvc
 
 RUN & \"${env:programfiles(x86)}\Microsoft Visual Studio\Installer\vswhere.exe\" -latest -prerelease -requiresAny -property installationPath -products *
 
