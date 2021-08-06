@@ -6,10 +6,6 @@ FROM mcr.microsoft.com/dotnet/framework/sdk:4.8-windowsservercore-ltsc2019
 # Download the Build Tools bootstrapper.
 ADD https://aka.ms/vs/16/release/vs_buildtools.exe vs_buildtools.exe
 
-# Install Build Tools with the Microsoft.VisualStudio.Workload.AzureBuildTools workload.
-# Exclude workloads and components with known issues.
-RUN ./vs_buildtools.exe --quiet --wait --norestart --nocache --installPath C:\BuildTools --add Microsoft.VisualStudio.Workload.AzureBuildTools --remove Microsoft.VisualStudio.Component.Windows10SDK.10240 --remove Microsoft.VisualStudio.Component.Windows10SDK.10586 --remove Microsoft.VisualStudio.Component.Windows10SDK.14393 --remove Microsoft.VisualStudio.Component.Windows81SDK
-
 # Install chocolatey
 RUN powershell -c "Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iwr https://chocolatey.org/install.ps1 -UseBasicParsing | iex"
 RUN choco feature enable -n allowGlobalConfirmation
@@ -28,7 +24,10 @@ RUN pypy3 -m pip install -U pip
 # install certificates (https://bugs.python.org/issue36137#msg336806)
 RUN cmd /c 'certutil -generateSSTFromWU roots.sst && certutil -addstore -f root roots.sst && del roots.sst'
 
-
 RUN setx TOX_WORK_DIR \tox
+
+# Install Visual Studio
+COPY . jaraco.windows
+RUN py -m pip-run -q ./jaraco.windows -- -m jaraco.windows.msvc
 
 ENTRYPOINT ["powershell.exe", "-NoLogo", "-ExecutionPolicy", "Bypass"]
