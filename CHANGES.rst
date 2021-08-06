@@ -1,3 +1,10 @@
+v5.6.0
+======
+
+* Added jaraco.windows.msvc, containing a routine for
+  installing MSVC in a Docker image. Docker image now
+  builds with MSVC support.
+
 v5.5.0
 ======
 
