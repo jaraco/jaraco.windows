@@ -1,3 +1,8 @@
+v5.7.0
+======
+
+* Include ARM64 support in MSVC routine.
+
 v5.6.0
 ======
 

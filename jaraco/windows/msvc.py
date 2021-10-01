@@ -9,6 +9,7 @@ default_components = [
     'Microsoft.VisualStudio.Component.TextTemplating',
     'Microsoft.VisualStudio.Component.VC.CoreIde',
     'Microsoft.VisualStudio.Component.VC.Tools.x86.x64',
+    'Microsoft.VisualStudio.Component.VC.Tools.ARM64',
     'Microsoft.VisualStudio.Component.Windows10SDK.19041',
     'Microsoft.VisualStudio.Component.VC.Redist.14.Latest',
     'Microsoft.VisualStudio.ComponentGroup.NativeDesktop.Core',

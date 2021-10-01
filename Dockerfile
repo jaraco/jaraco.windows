@@ -27,6 +27,7 @@ RUN cmd /c 'certutil -generateSSTFromWU roots.sst && certutil -addstore -f root 
 RUN setx TOX_WORK_DIR \tox
 
 # Install Visual Studio
-RUN py -m pip-run -q jaraco.windows -- -m jaraco.windows.msvc
+COPY . jaraco.windows
+RUN py -m pip-run -q ./jaraco.windows -- -m jaraco.windows.msvc
 
 ENTRYPOINT ["powershell.exe", "-NoLogo", "-ExecutionPolicy", "Bypass"]
