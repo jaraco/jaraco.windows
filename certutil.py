@@ -43,5 +43,5 @@ def generate_key(length):
 
 generate_request()
 enrollment.InitializeFromRequest(pkcs10_request)
-print 'Request'
-print enrollment.createRequest(1)
+print('Request')
+print(enrollment.createRequest(1))
