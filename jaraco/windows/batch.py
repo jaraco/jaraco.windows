@@ -31,7 +31,7 @@ def extract_environment(env_cmd, initial=None):
 
     lines = map(make_str, lines)
     # consume whatever output occurs until the tag is reached
-    consume(itertools.takewhile(lambda l: tag not in l, lines))
+    consume(itertools.takewhile(lambda ln: tag not in ln, lines))
     # construct a dictionary of the pairs
     result = dict(line.rstrip().split('=', 1) for line in lines)
     # let the process finish
