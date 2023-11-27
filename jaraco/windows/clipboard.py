@@ -9,7 +9,7 @@ import textwrap
 import collections
 
 from jaraco.windows.api import clipboard, memory
-from jaraco.windows.error import handle_nonzero_success, WindowsError
+from jaraco.windows.error import handle_nonzero_success
 from jaraco.windows.memory import LockedMemory
 
 __all__ = ('GetClipboardData', 'CloseClipboard', 'SetClipboardData', 'OpenClipboard')
@@ -188,7 +188,7 @@ def SetClipboardData(type, content):
         ctypes.memmove(lm.data_ptr, content, size)
     result = clipboard.SetClipboardData(type, handle_to_copy)
     if result is None:
-        raise WindowsError()
+        raise ctypes.WinError()
 
 
 def set_text(source):

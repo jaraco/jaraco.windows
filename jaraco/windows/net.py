@@ -2,10 +2,10 @@
 API hooks for network stuff.
 """
 
-__all__ = 'AddConnection'
-
-from jaraco.windows.error import WindowsError
 from .api import net
+from .error import handle_nonzero_success
+
+__all__ = 'AddConnection'
 
 
 def AddConnection(
@@ -25,7 +25,4 @@ def AddConnection(
         # WNetAddConnection2 ignores the other members of NETRESOURCE
     )
 
-    result = net.WNetAddConnection2(resource, password, user, flags)
-
-    if result != 0:
-        raise WindowsError(result)
+    handle_nonzero_success(net.WNetAddConnection2(resource, password, user, flags))

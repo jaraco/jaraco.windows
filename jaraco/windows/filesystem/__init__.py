@@ -1,3 +1,4 @@
+import ctypes
 import os
 import sys
 import operator
@@ -15,11 +16,10 @@ from ctypes import (
 from ctypes.wintypes import LPWSTR
 import nt
 import posixpath
-import builtins
 
 from jaraco.structures import binary
 
-from jaraco.windows.error import WindowsError, handle_nonzero_success
+from jaraco.windows.error import handle_nonzero_success
 import jaraco.windows.api.filesystem as api
 from jaraco.windows import reparse
 
@@ -116,9 +116,9 @@ def is_symlink(path):
     try:
         return _is_symlink(next(find_files(path)))
     # comment below workaround for PyCQA/pyflakes#376
-    except WindowsError as orig_error:  # noqa: F841
-        tmpl = "Error accessing {path}: {orig_error.message}"
-        raise builtins.WindowsError(tmpl.format(**locals()))
+    except OSError as orig_error:  # noqa: F841
+        orig_error.strerror = f"Error accessing {path}: {orig_error.message}"
+        raise
 
 
 def _is_symlink(find_data):
@@ -143,13 +143,13 @@ def find_files(spec):
     handle = api.FindFirstFile(spec, byref(fd))
     while True:
         if handle == api.INVALID_HANDLE_VALUE:
-            raise WindowsError()
+            raise ctypes.WinError()
         yield fd
         fd = api.WIN32_FIND_DATA()
         res = api.FindNextFile(handle, byref(fd))
         if res == 0:  # error
-            error = WindowsError()
-            if error.code == api.ERROR_NO_MORE_FILES:
+            error = ctypes.WinError()
+            if error.winerror == api.ERROR_NO_MORE_FILES:
                 break
             else:
                 raise error
@@ -183,7 +183,7 @@ def get_final_path(path):
     )
 
     if hFile == api.INVALID_HANDLE_VALUE:
-        raise WindowsError()
+        raise ctypes.WinError()
 
     buf_size = api.GetFinalPathNameByHandle(hFile, LPWSTR(), 0, api.VOLUME_NAME_DOS)
     handle_nonzero_success(buf_size)
@@ -244,7 +244,7 @@ def get_file_info(path):
     )
 
     if handle == api.INVALID_HANDLE_VALUE:
-        raise WindowsError()
+        raise ctypes.WinError()
 
     info = api.BY_HANDLE_FILE_INFORMATION()
     res = api.GetFileInformationByHandle(handle, info)
@@ -376,7 +376,7 @@ def readlink(link):
     )
 
     if handle == api.INVALID_HANDLE_VALUE:
-        raise WindowsError()
+        raise ctypes.WinError()
 
     res = reparse.DeviceIoControl(handle, api.FSCTL_GET_REPARSE_POINT, None, 10240)
 
@@ -469,7 +469,7 @@ class FileAttributes(int, metaclass=binary.BitMask):
     def get(cls, filepath):
         attrs = api.GetFileAttributes(filepath)
         if attrs == api.INVALID_FILE_ATTRIBUTES:
-            raise WindowsError()
+            raise ctypes.WinError()
         return cls(attrs)
 
 
