@@ -1,3 +1,12 @@
+v5.8.0
+======
+
+Features
+--------
+
+- Require Python 3.8 or later.
+
+
 v5.7.0
 ======
 
