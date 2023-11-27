@@ -5,7 +5,7 @@ API hooks for network stuff.
 from .api import net
 from .error import handle_nonzero_success
 
-__all__ = 'AddConnection'
+__all__ = ['AddConnection']
 
 
 def AddConnection(
