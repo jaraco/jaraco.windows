@@ -21,7 +21,7 @@ Welcome to |project| documentation!
     :undoc-members:
     :show-inheritance:
 
-.. automodule:: jaraco.windows.dbapi
+.. automodule:: jaraco.windows.dpapi
     :members:
     :undoc-members:
     :show-inheritance:
