@@ -19,7 +19,7 @@ def ClearEnvironmentVariable(name):
 
 
 def GetEnvironmentVariable(name):
-    max_size = 2 ** 15 - 1
+    max_size = 2**15 - 1
     buffer = ctypes.create_unicode_buffer(max_size)
     error.handle_nonzero_success(environ.GetEnvironmentVariable(name, buffer, max_size))
     return buffer.value

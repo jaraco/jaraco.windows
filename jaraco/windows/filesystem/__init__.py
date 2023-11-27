@@ -440,7 +440,6 @@ def find_symlinks_cmd():
 
 
 class FileAttributes(int, metaclass=binary.BitMask):
-
     # extract the values from the stat module on Python 3.5
     # and later.
     locals().update(

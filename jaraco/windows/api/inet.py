@@ -4,11 +4,11 @@ from ctypes.wintypes import DWORD, WCHAR, BYTE, BOOL
 
 
 # from mprapi.h
-MAX_INTERFACE_NAME_LEN = 2 ** 8
+MAX_INTERFACE_NAME_LEN = 2**8
 
 # from iprtrmib.h
-MAXLEN_PHYSADDR = 2 ** 3
-MAXLEN_IFDESCR = 2 ** 8
+MAXLEN_PHYSADDR = 2**3
+MAXLEN_IFDESCR = 2**8
 
 # from iptypes.h
 MAX_ADAPTER_ADDRESS_LENGTH = 8
