@@ -29,38 +29,56 @@ class Service(object):
 
     Creating an instance of the Service class is done by passing the name of
     the service as it appears in the Management Console or the short name as
-    it appears in the registry. Mixed case is ok.
+    it appears in the registry. Mixed case is ok:
+
         cvs = services.Service("CVS NT Service 1.11.1.2 (Build 41)")
-            or
+
+    or
+
         cvs = services.Service("cvs")
 
     If needing remote service control try this:
+
         cvs = services.Service("cvs", r"\\CVS_SERVER")
-            or
+
+    or
+
         cvs = services.Service("cvs", "\\\\CVS_SERVER")
 
     The Service Class supports these methods:
 
         start: Starts service.
+
         stop: Stops service.
+
         restart: Stops and restarts service.
+
         pause: Pauses service (Only if service supports feature).
+
         resume: Resumes service that has been paused.
+
         status: Queries current status of service.
+
         fetchstatus: Continually queries service until requested
-            status(STARTING, RUNNING,
-            STOPPING & STOPPED) is met or timeout value(in seconds) reached.
-            Default timeout value is infinite.
+        status(STARTING, RUNNING,
+        STOPPING & STOPPED) is met or timeout value(in seconds) reached.
+        Default timeout value is infinite.
+
         infotype: Queries service for process type. (Single, shared and/or
-            interactive process)
+        interactive process)
+
         infoctrl: Queries control information about a running service.
-            i.e. Can it be paused, stopped, etc?
+        i.e. Can it be paused, stopped, etc?
+
         infostartup: Queries service Startup type. (Boot, System,
-            Automatic, Manual, Disabled)
+        Automatic, Manual, Disabled)
+
         setstartup: Changes/sets Startup type. (Boot, System,
-            Automatic, Manual, Disabled)
-        getname: Gets the long and short service names used by Windowin32service.
-            (Generally used for internal purposes)
+        Automatic, Manual, Disabled)
+
+        getname: Gets the long and short service names used by
+        Windowin32service.
+        (Generally used for internal purposes)
     """
 
     def __init__(self, service, machinename=None, dbname=None):

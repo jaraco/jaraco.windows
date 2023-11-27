@@ -57,7 +57,7 @@ jobs:
       fail-fast: false
       matrix:
         job: [diffcov, docs]
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
     steps:
       - uses: actions/checkout@v4
         with:

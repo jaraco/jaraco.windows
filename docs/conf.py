@@ -30,6 +30,15 @@ link_files = {
 
 # Be strict about any broken references
 nitpicky = True
+nitpick_ignore = [
+    ('py:class', 'jaraco.ui.cmdline.Command'),
+    ('py:class', '_ctypes.Structure'),
+    ('py:class', 'jaraco.windows.api.inet.MIB_IPADDRROW'),
+    ('py:class', 'jaraco.windows.api.inet.MIB_IPADDRTABLE'),
+    ('py:class', 'jaraco.windows.api.inet.MIB_IFROW'),
+    ('py:class', 'jaraco.windows.api.inet.MIB_IFTABLE'),
+    ('py:class', 'jaraco.windows.dpapi.LP_DATA_BLOB'),
+]
 
 # Include Python intersphinx mapping to prevent failures
 # jaraco/skeleton#51

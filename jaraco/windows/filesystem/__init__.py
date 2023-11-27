@@ -362,7 +362,6 @@ def trace_symlink_target(link):
 
 def readlink(link):
     """
-    readlink(link) -> target
     Return a string representing the path to which the symbolic link points.
     """
     handle = api.CreateFile(
