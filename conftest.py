@@ -4,7 +4,7 @@ import os
 import pytest
 
 
-collect_ignore = ['bugs', 'incubator']
+collect_ignore = ['jaraco/windows/bugs', 'jaraco/windows/incubator']
 
 
 try:
