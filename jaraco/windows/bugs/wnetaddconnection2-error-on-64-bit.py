@@ -9,7 +9,7 @@ print('first result is', res)
 res = WNetAddConnection2(resource, UserName=username)
 print('second result is', res)
 
-"""
+r"""
 Output is:
 
 first result is None
