@@ -30,6 +30,7 @@ class DATA_BLOB(ctypes.Structure):
     >>> blob.get_data() == input
     True
     """
+
     _fields_ = [('data_size', wintypes.DWORD), ('data', ctypes.c_void_p)]
 
     def __init__(self, data=None):
@@ -107,7 +108,13 @@ def CryptProtectData(
     data_out = DATA_BLOB()
 
     res = _CryptProtectData(
-        data_in, description, entropy, None, prompt_struct, flags, data_out  # reserved
+        data_in,
+        description,
+        entropy,
+        None,
+        prompt_struct,
+        flags,
+        data_out,  # reserved
     )
     handle_nonzero_success(res)
     res = data_out.get_data()

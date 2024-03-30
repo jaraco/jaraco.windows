@@ -264,7 +264,7 @@ def _make_null_terminated_list(obs):
     obs = _makelist(obs)
     if obs is None:
         return
-    return u'\x00'.join(obs) + u'\x00\x00'
+    return '\x00'.join(obs) + '\x00\x00'
 
 
 def _makelist(ob):
