@@ -140,7 +140,7 @@ class Service(object):
             else:
                 return "RUNNING"
 
-    def fetchstatus(self, fstatus, timeout=None):
+    def fetchstatus(self, fstatus, timeout=None):  # noqa: C901
         self.fstatus = fstatus.upper()
         if timeout is not None:
             timeout = int(timeout)
