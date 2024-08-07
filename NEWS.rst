@@ -1,3 +1,12 @@
+v5.9.0
+======
+
+Features
+--------
+
+- Add console history manipulation functions. (#5650)
+
+
 v5.8.0
 ======
 
