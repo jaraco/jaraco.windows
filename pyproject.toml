@@ -83,4 +83,9 @@ gclip = "jaraco.windows.clipboard:stdin_copy"
 [tool.distutils.sdist]
 formats = "zip"
 
+
 [tool.setuptools_scm]
+
+
+[tool.pytest-enabler.mypy]
+# Disabled due to jaraco/skeleton#143
