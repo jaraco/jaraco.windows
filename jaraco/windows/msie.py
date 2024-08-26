@@ -3,8 +3,8 @@
 Cookie support utilities
 """
 
-import os
 import itertools
+import os
 
 
 class CookieMonster(object):
@@ -12,7 +12,7 @@ class CookieMonster(object):
 
     @property
     def cookie_dir(self):
-        import _winreg as winreg
+        import winreg
 
         key = winreg.OpenKeyEx(
             winreg.HKEY_CURRENT_USER,

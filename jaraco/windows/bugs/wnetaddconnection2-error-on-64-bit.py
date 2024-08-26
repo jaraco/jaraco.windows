@@ -1,12 +1,12 @@
 # reported at http://social.msdn.microsoft.com/Forums/en-US/wsk/thread/f43c2faf-3df3-4f11-9f5e-1a9101753f93
-from win32wnet import WNetAddConnection2, NETRESOURCE
+from win32wnet import NETRESOURCE, WNetAddConnection2
 
 resource = NETRESOURCE()
 resource.lpRemoteName = r'\\aoshi\users'
 username = 'jaraco'
-res = WNetAddConnection2(resource, UserName=username)
+res = WNetAddConnection2(resource, UserName=username)  # type: ignore[func-returns-value] # python/typeshed#12595
 print('first result is', res)
-res = WNetAddConnection2(resource, UserName=username)
+res = WNetAddConnection2(resource, UserName=username)  # type: ignore[func-returns-value] # python/typeshed#12595
 print('second result is', res)
 
 r"""
