@@ -12,9 +12,7 @@ except ImportError:
     CreateSymbolicLink.argtypes = (LPWSTR, LPWSTR, DWORD)
     CreateSymbolicLink.restype = BOOLEAN
 
-    # FIXME: link and target are inverted from jaraco.windows.filesystem
-    # https://github.com/jaraco/jaraco.windows/issues/27
-    def symlink(link, target, target_is_directory=False):  # type: ignore[misc]
+    def symlink(target, link, target_is_directory=False):
         """
         An implementation of os.symlink for Windows (Vista and greater)
         """
@@ -26,6 +24,6 @@ assert sys.platform in ('win32',)
 os.makedirs(r'.\foo')
 assert os.path.isdir(r'.\foo')
 
-symlink(r'.\foo_sym', r'.\foo')
+symlink(r'.\foo', r'.\foo_sym')
 assert os.path.isdir(r'.\foo_sym')
 assert os.path.islink(r'.\foo_sym')  # fails
