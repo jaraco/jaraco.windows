@@ -1,3 +1,12 @@
+v5.9.1
+======
+
+Bugfixes
+--------
+
+- Fixed clipboard handling HTML with multibyte characters. (#24)
+
+
 v5.9.0
 ======
 
