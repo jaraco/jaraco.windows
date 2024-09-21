@@ -11,8 +11,9 @@ def get_libc():
 
 
 getenv = get_libc().getenv
+getenv.argtypes = (c_char_p,)
 getenv.restype = c_char_p
 
 # call into your linked module here
 
-print('FOO is', getenv('FOO'))
+print('FOO is', getenv('FOO'.encode('utf-8')).decode('utf-8'))
