@@ -6,13 +6,15 @@ try:
 except ImportError:
     # a dirty reimplementation of symlink from jaraco.windows
     from ctypes import windll
-    from ctypes.wintypes import LPWSTR, DWORD, BOOLEAN
+    from ctypes.wintypes import BOOLEAN, DWORD, LPWSTR
 
     CreateSymbolicLink = windll.kernel32.CreateSymbolicLinkW
     CreateSymbolicLink.argtypes = (LPWSTR, LPWSTR, DWORD)
     CreateSymbolicLink.restype = BOOLEAN
 
-    def symlink(link, target, target_is_directory=False):
+    # FIXME: link and target are inverted from jaraco.windows.filesystem
+    # https://github.com/jaraco/jaraco.windows/issues/27
+    def symlink(link, target, target_is_directory=False):  # type: ignore[misc]
         """
         An implementation of os.symlink for Windows (Vista and greater)
         """

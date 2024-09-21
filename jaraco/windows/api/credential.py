@@ -2,18 +2,15 @@
 Support for Credential Vault
 """
 
+from __future__ import annotations
+
 import ctypes
-from ctypes.wintypes import DWORD, LPCWSTR, BOOL, LPWSTR, FILETIME
-
-
-try:
-    from ctypes.wintypes import LPBYTE
-except ImportError:
-    LPBYTE = ctypes.POINTER(ctypes.wintypes.BYTE)  # type: ignore
+from ctypes.wintypes import BOOL, DWORD, FILETIME, LPBYTE, LPCWSTR, LPWSTR
+from typing import ClassVar
 
 
 class CredentialAttribute(ctypes.Structure):
-    _fields_ = []  # type: ignore
+    _fields_: ClassVar[list[tuple[str, type[ctypes._CData]]]] = []
 
 
 class Credential(ctypes.Structure):
