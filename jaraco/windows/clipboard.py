@@ -82,24 +82,60 @@ class HTMLSnippet(object):
     <https://docs.microsoft.com/en-us/windows/win32/dataxchg/html-clipboard-format>`_.
     """
 
+    # The non-normative grammar defines markers with a space before "-->",
+    # but the body text defines them without spaces and states "with no
+    # whitespace chars within each comment itself".
+    # Actually, Edge and Firefox don't include spaces, so we also don't include
+    # a space.
+    START_FRAGMENT_MARKER = b'<!--StartFragment-->'
+    END_FRAGMENT_MARKER = b'<!--EndFragment-->'
+
     def __init__(self, handle):
         self.data = nts(raw_data(handle).decode('utf-8'))
         self.headers = self.parse_headers(self.data)
 
     @property
     def html(self):
-        return self.data[self.headers['StartHTML'] :]
+        start_html = self.headers['StartHTML']
+        end_html = self.headers['EndHTML']
+        if start_html == -1:
+            start_html = self.headers['StartFragment'] - len(
+                HTMLSnippet.START_FRAGMENT_MARKER
+            )
+        if end_html == -1:
+            end_html = self.headers['EndFragment'] + len(
+                HTMLSnippet.END_FRAGMENT_MARKER
+            )
+        return self.__slice_data(start_html, end_html)
 
     @property
     def fragment(self):
-        return self.data[self.headers['StartFragment'] : self.headers['EndFragment']]
+        start_fragment = self.headers['StartFragment']
+        end_fragment = self.headers['EndFragment']
+        return self.__slice_data(start_fragment, end_fragment)
+
+    @property
+    def selection(self):
+        start_selection = (
+            self.headers.get('StartSelection') or self.headers['StartFragment']
+        )
+        end_selection = self.headers.get('EndSelection') or self.headers['EndFragment']
+        return self.__slice_data(start_selection, end_selection)
+
+    def __slice_data(self, start, end):
+        return self.data.encode('utf-8')[start:end].decode('utf-8')
 
     @staticmethod
     def parse_headers(data):
-        d = io.StringIO(data)
+        d = io.StringIO(data, None)
+
+        if not re.match(r'Version:(?:0\.9|1\.0)\n', d.readline()):
+            raise ValueError('Unsupported format')
+
+        d.seek(0)
 
         def header_line(line):
-            return re.match(r'(\w+):(.*)', line)
+            return re.match(r'(\w+):(.*)\n', line)
 
         headers = map(header_line, d)
         # grab headers until they no longer match
@@ -133,20 +169,19 @@ class HTMLSnippet(object):
             StartFragment:{start_fragment:08d}
             EndFragment:{end_fragment:08d}
             <html><body>
-            <!--StartFragment -->
-            {source}
-            <!--EndFragment -->
+            <!--StartFragment-->{source}<!--EndFragment-->
             </body></html>
             """
         ).strip()
         zeros = collections.defaultdict(lambda: 0, locals())
-        pre_value = tmpl.format_map(zeros)
-        start_html = pre_value.find('<html>')
-        end_html = len(tmpl)
+        pre_value = tmpl.format_map(zeros).encode('utf-8')
+        start_html = pre_value.find(b'<html>')
+        end_html = len(pre_value)
         assert end_html < 100000000
-        start_fragment = pre_value.find(source)
-        end_fragment = pre_value.rfind('\n<!--EndFragment')
-        tmpl_length = len(tmpl) - len('{source}')
+        start_fragment = pre_value.find(HTMLSnippet.START_FRAGMENT_MARKER) + len(
+            HTMLSnippet.START_FRAGMENT_MARKER
+        )
+        end_fragment = pre_value.rfind(HTMLSnippet.END_FRAGMENT_MARKER)
         snippet = cls.__new__(cls)
         snippet.data = tmpl.format_map(locals())
         snippet.headers = cls.parse_headers(snippet.data)

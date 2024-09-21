@@ -1,0 +1,1 @@
+Fixed clipboard handling HTML with multibyte characters.
