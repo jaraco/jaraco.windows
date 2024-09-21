@@ -3,7 +3,7 @@ from ctypes import CDLL, c_char_p
 
 
 def get_libc():
-    libnames = ('msvcrt', 'libc.so.6')
+    libnames = ('msvcrt', 'libc.so.6', 'libc.dylib')
     for libname in libnames:
         with contextlib.suppress(OSError):
             return CDLL(libname)
