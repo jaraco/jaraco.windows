@@ -47,6 +47,7 @@ https://msdn.microsoft.com/en-us/library/windows/desktop/ms649015(v=vs.85).aspx#
 @pytest.fixture
 def sample_html():
     with wc.context():
+        wc.EmptyClipboard()
         wc.SetClipboardData(api.CF_HTML, example_html.encode('utf-8'))
 
 
@@ -68,3 +69,42 @@ def test_html_paste(sample_html):
 def test_html_fragment(sample_html):
     snippet = wc.get_html()
     assert snippet.fragment == '<LI> The Fragment </LI>'
+
+
+multibyte_example_html = textwrap.dedent(
+    """
+    Version:0.9
+    StartHTML:00000138
+    EndHTML:00000215
+    StartFragment:00000171
+    EndFragment:00000182
+    StartSelection:00000174
+    EndSelection:00000178
+    <html><body>
+    <!--StartFragment--><p>😀</p><!--EndFragment-->
+    </body></html>
+    """
+).strip()
+
+
+@pytest.fixture
+def multibyte_sample_html():
+    with wc.context():
+        wc.EmptyClipboard()
+        wc.SetClipboardData(api.CF_HTML, multibyte_example_html.encode('utf-8'))
+
+
+def test_html_multibyte_characters(multibyte_sample_html):
+    res = wc.get_html()
+    assert (
+        res.html
+        == textwrap.dedent(
+            """
+            <html><body>
+            <!--StartFragment--><p>😀</p><!--EndFragment-->
+            </body></html>
+            """
+        ).strip()
+    )
+    assert res.fragment == '<p>😀</p>'
+    assert res.selection == '😀'
