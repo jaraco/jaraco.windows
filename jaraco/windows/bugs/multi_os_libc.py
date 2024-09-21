@@ -14,4 +14,5 @@ getenv = get_libc().getenv
 getenv.argtypes = (c_char_p,)
 getenv.restype = c_char_p
 
-print('FOO is', getenv('FOO'.encode('utf-8')).decode('utf-8'))
+if __name__ == '__main__':
+    print('FOO is', getenv('FOO'.encode('utf-8')).decode('utf-8'))
