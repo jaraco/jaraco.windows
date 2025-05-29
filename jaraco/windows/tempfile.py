@@ -4,6 +4,8 @@ from tempora.timing import BackoffDelay
 
 from jaraco.functools import retry
 
+from .compat.py310 import PermissionError
+
 
 class TemporaryDirectory(tempfile.TemporaryDirectory):
     """
