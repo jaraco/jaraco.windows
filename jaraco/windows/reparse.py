@@ -1,7 +1,7 @@
 import ctypes.wintypes
 
-from .error import handle_nonzero_success
 from .api import filesystem
+from .error import handle_nonzero_success
 
 
 def DeviceIoControl(device, io_control_code, in_buffer, out_buffer, overlapped=None):

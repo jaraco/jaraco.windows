@@ -1,27 +1,26 @@
-import ctypes
-import os
-import sys
-import operator
 import collections
+import ctypes
 import functools
+import nt
+import operator
+import os
+import posixpath
 import stat
+import sys
 from ctypes import (
     POINTER,
     byref,
     cast,
-    create_unicode_buffer,
     create_string_buffer,
+    create_unicode_buffer,
     windll,
 )
 from ctypes.wintypes import LPWSTR
-import nt
-import posixpath
 
-from jaraco.structures import binary
-
-from jaraco.windows.error import handle_nonzero_success
 import jaraco.windows.api.filesystem as api
+from jaraco.structures import binary
 from jaraco.windows import reparse
+from jaraco.windows.error import handle_nonzero_success
 
 
 def mklink():

@@ -1,6 +1,6 @@
-import traceback
-import sys
 import logging
+import sys
+import traceback
 
 from jaraco.windows.filesystem import change
 

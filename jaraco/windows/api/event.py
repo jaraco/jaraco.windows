@@ -1,5 +1,5 @@
-from ctypes import windll, POINTER
-from ctypes.wintypes import LPWSTR, DWORD, LPVOID, HANDLE, BOOL
+from ctypes import POINTER, windll
+from ctypes.wintypes import BOOL, DWORD, HANDLE, LPVOID, LPWSTR
 
 CreateEvent = windll.kernel32.CreateEventW
 CreateEvent.argtypes = (LPVOID, BOOL, BOOL, LPWSTR)  # LPSECURITY_ATTRIBUTES

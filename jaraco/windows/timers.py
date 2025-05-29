@@ -3,8 +3,8 @@ timers
     In particular, contains a waitable timer.
 """
 
-import time
 import _thread
+import time
 
 from jaraco.windows.api import event as win32event
 

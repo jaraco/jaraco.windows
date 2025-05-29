@@ -1,8 +1,7 @@
-import platform
 import os
+import platform
 
 import pytest
-
 
 collect_ignore = ['jaraco/windows/incubator']
 

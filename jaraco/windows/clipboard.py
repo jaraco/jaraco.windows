@@ -1,12 +1,12 @@
-import sys
-import re
-import itertools
-from contextlib import contextmanager
-import io
-import ctypes
-from ctypes import windll
-import textwrap
 import collections
+import ctypes
+import io
+import itertools
+import re
+import sys
+import textwrap
+from contextlib import contextmanager
+from ctypes import windll
 
 from jaraco.windows.api import clipboard, memory
 from jaraco.windows.error import handle_nonzero_success

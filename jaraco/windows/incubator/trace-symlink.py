@@ -1,6 +1,6 @@
-from jaraco.windows.filesystem import trace_symlink_target
-
 from optparse import OptionParser
+
+from jaraco.windows.filesystem import trace_symlink_target
 
 
 def get_args():

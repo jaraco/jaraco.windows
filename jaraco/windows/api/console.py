@@ -2,7 +2,6 @@ import ctypes
 import types
 from ctypes import wintypes
 
-
 kernel32 = ctypes.WinDLL('kernel32', use_last_error=True)
 
 HISTORY_NO_DUP_FLAG = 1

@@ -4,8 +4,9 @@ with various APIs.
 """
 
 import ctypes
-from jaraco.windows import environ  # noqa: F401
 import os  # noqa: F401
+
+from jaraco.windows import environ  # noqa: F401
 
 getenv = ctypes.cdll.msvcrt.getenv
 getenv.restype = ctypes.c_char_p

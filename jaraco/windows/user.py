@@ -1,4 +1,5 @@
 import ctypes
+
 from .api import errors
 from .api.user import GetUserName
 from .error import handle_nonzero_success

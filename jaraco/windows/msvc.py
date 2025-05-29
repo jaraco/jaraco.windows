@@ -1,6 +1,5 @@
 import subprocess
 
-
 default_components = [
     'Microsoft.VisualStudio.Component.CoreEditor',
     'Microsoft.VisualStudio.Workload.CoreEditor',

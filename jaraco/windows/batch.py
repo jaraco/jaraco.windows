@@ -1,7 +1,7 @@
-import subprocess
 import itertools
+import subprocess
 
-from more_itertools import consume, always_iterable
+from more_itertools import always_iterable, consume
 
 
 def extract_environment(env_cmd, initial=None):

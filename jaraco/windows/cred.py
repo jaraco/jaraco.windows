@@ -1,6 +1,7 @@
 import ctypes
 
 import jaraco.windows.api.credential as api
+
 from . import error
 
 CRED_TYPE_GENERIC = 1

@@ -1,7 +1,8 @@
 import ctypes
-from jaraco.windows.error import handle_nonzero_success
-from jaraco.windows.api import system
+
 from jaraco.ui.cmdline import Command
+from jaraco.windows.api import system
+from jaraco.windows.error import handle_nonzero_success
 
 
 def set(value):

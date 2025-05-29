@@ -1,6 +1,5 @@
 import ctypes
 
-
 __import__('jaraco.windows.api.memory')
 
 

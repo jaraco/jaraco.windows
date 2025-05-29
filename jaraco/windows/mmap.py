@@ -1,7 +1,7 @@
 import ctypes.wintypes
 
-from .error import handle_nonzero_success
 from .api import memory
+from .error import handle_nonzero_success
 
 
 class MemoryMap(object):

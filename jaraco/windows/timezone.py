@@ -1,12 +1,12 @@
 #!/usr/bin/env python
 
-import operator
 import ctypes
 import datetime
-from ctypes.wintypes import WORD, WCHAR, BOOL, LONG
+import operator
+from ctypes.wintypes import BOOL, LONG, WCHAR, WORD
 
-from jaraco.windows.util import Extended
 from jaraco.collections import RangeMap
+from jaraco.windows.util import Extended
 
 
 class AnyDict(object):

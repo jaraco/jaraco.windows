@@ -1,7 +1,6 @@
-import struct
 import ctypes.wintypes
-from ctypes.wintypes import DWORD, WCHAR, BYTE, BOOL
-
+import struct
+from ctypes.wintypes import BOOL, BYTE, DWORD, WCHAR
 
 # from mprapi.h
 MAX_INTERFACE_NAME_LEN = 2**8

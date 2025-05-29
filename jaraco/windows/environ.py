@@ -1,12 +1,12 @@
-import sys
-import winreg
 import ctypes
 import ctypes.wintypes
+import sys
+import winreg
 
 from jaraco.ui.editor import EditableFile
-
 from jaraco.windows import error
-from jaraco.windows.api import message, environ
+from jaraco.windows.api import environ, message
+
 from .registry import key_values as registry_key_values
 
 

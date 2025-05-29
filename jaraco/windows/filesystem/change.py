@@ -5,17 +5,17 @@ FileChange
 Copyright © 2004, 2011, 2013 Jason R. Coombs
 """
 
-import os
-import sys
 import datetime
-import re
-from threading import Thread
 import itertools
 import logging
+import os
+import re
+import sys
+from threading import Thread
 
 from more_itertools.recipes import consume
-import jaraco.text
 
+import jaraco.text
 import jaraco.windows.api.filesystem as fs
 from jaraco.windows.api import event
 

@@ -5,7 +5,7 @@ Windows Messaging support
 """
 
 import ctypes
-from ctypes.wintypes import HWND, UINT, WPARAM, LPARAM, DWORD, LPVOID
+from ctypes.wintypes import DWORD, HWND, LPARAM, LPVOID, UINT, WPARAM
 
 LRESULT = LPARAM
 

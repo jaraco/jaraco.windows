@@ -11,8 +11,8 @@ True
 
 import ctypes
 from ctypes import wintypes
-from jaraco.windows.error import handle_nonzero_success
 
+from jaraco.windows.error import handle_nonzero_success
 
 # for type declarations
 __import__('jaraco.windows.api.memory')

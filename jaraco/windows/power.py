@@ -1,5 +1,5 @@
-import itertools
 import contextlib
+import itertools
 
 from more_itertools.recipes import consume, unique_justseen
 
@@ -9,6 +9,7 @@ except ImportError:
     pass
 
 from jaraco.windows.error import handle_nonzero_success
+
 from .api import power
 
 

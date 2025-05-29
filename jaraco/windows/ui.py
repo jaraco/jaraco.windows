@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 import ctypes
+
 from jaraco.windows.util import ensure_unicode
 
 

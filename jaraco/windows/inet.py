@@ -3,9 +3,8 @@ Some routines for retrieving the addresses from the local
 network config.
 """
 
-import itertools
 import ctypes
-
+import itertools
 
 from jaraco.windows.api import errors, inet
 

@@ -1,9 +1,7 @@
 import ctypes
 from ctypes import wintypes
 
-from .api import security
-from .api import privilege
-from .api import process
+from .api import privilege, process, security
 
 
 def get_process_token():
