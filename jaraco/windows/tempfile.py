@@ -12,6 +12,9 @@ class TemporaryDirectory(tempfile.TemporaryDirectory):
     that might be held open.
 
     It tries to delete files/directories multiple times with a short delay.
+
+    >>> with TemporaryDirectory() as td:
+    ...     getfixture('slow_closer')(td)
     """
 
     @retry(
