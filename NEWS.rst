@@ -1,3 +1,12 @@
+v5.10.0
+=======
+
+Features
+--------
+
+- Added tempfile module with TemporaryDirectory, which will attempt a few times to clean up, giving a few seconds for an open handle blocking cleanup to close. (#30)
+
+
 v5.9.1
 ======
 
