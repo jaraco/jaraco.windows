@@ -10,7 +10,7 @@ from typing import ClassVar
 
 
 class CredentialAttribute(ctypes.Structure):
-    _fields_: ClassVar[list[tuple[str, type[ctypes._CData]]]] = []
+    _fields_: ClassVar[list[tuple[str, type[ctypes._CData]]]] = []  # type: ignore[assignment]  #29
 
 
 class Credential(ctypes.Structure):
