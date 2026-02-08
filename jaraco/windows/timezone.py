@@ -6,6 +6,7 @@ import operator
 from ctypes.wintypes import BOOL, LONG, WCHAR, WORD
 
 from jaraco.collections import RangeMap
+
 from jaraco.windows.util import Extended
 
 

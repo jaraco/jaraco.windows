@@ -4,6 +4,7 @@ import sys
 import winreg
 
 from jaraco.ui.editor import EditableFile
+
 from jaraco.windows import error
 from jaraco.windows.api import environ, message
 
