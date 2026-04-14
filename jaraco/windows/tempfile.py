@@ -1,8 +1,7 @@
 import tempfile
 
-from tempora.timing import BackoffDelay
-
 from jaraco.functools import retry
+from tempora.timing import BackoffDelay
 
 from .compat.py310 import PermissionError
 

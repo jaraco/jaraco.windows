@@ -17,8 +17,9 @@ from ctypes import (
 )
 from ctypes.wintypes import LPWSTR
 
-import jaraco.windows.api.filesystem as api
 from jaraco.structures import binary
+
+import jaraco.windows.api.filesystem as api
 from jaraco.windows import reparse
 from jaraco.windows.error import handle_nonzero_success
 

@@ -13,9 +13,9 @@ import re
 import sys
 from threading import Thread
 
+import jaraco.text
 from more_itertools.recipes import consume
 
-import jaraco.text
 import jaraco.windows.api.filesystem as fs
 from jaraco.windows.api import event
 

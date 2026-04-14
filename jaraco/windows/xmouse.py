@@ -1,6 +1,7 @@
 import ctypes
 
 from jaraco.ui.cmdline import Command
+
 from jaraco.windows.api import system
 from jaraco.windows.error import handle_nonzero_success
 
