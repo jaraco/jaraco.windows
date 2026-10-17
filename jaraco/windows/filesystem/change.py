@@ -238,7 +238,7 @@ class ThreadedNotifier(BlockingNotifier, Thread):
         # I tried setting __del__(self) to .quit(), but unfortunately, there
         # are references to this object in the win32api stuff, so __del__
         # never gets called.
-        self.setDaemon(True)
+        self.daemon = True
 
         self.handle = handler
 
