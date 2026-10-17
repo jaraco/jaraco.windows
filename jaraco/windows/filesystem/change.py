@@ -61,10 +61,12 @@ class PatternFilter(FileFilter):
     """
 
     def __init__(self, pattern):
-        self.pattern = re.compile(pattern) if isinstance(pattern, str) else pattern
+        self.pattern = (
+            re.compile(pattern, re.IGNORECASE) if isinstance(pattern, str) else pattern
+        )
 
     def __call__(self, file):
-        return bool(self.pattern.match(file, re.I))
+        return bool(self.pattern.match(file))
 
 
 class GlobFilter(PatternFilter):

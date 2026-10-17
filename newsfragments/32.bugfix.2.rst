@@ -1,0 +1,1 @@
+``PatternFilter`` now matches from the start of the filename and ignores case, as intended, rather than passing ``re.I`` as the match position.
