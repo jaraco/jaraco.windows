@@ -49,7 +49,9 @@ class ModifiedTimeFilter(FileFilter):
 
     def __call__(self, file):
         filepath = self._get_file_path(file)
-        last_mod = datetime.datetime.utcfromtimestamp(os.stat(filepath).st_mtime)
+        last_mod = datetime.datetime.fromtimestamp(
+            os.stat(filepath).st_mtime, datetime.timezone.utc
+        )
         log.debug('{filepath} last modified at {last_mod}.'.format(**vars()))
         return last_mod > self.cutoff
 
@@ -184,7 +186,7 @@ class BlockingNotifier(Notifier):
 
     def get_changed_files(self):
         self._get_change_handle()
-        check_time = datetime.datetime.utcnow()
+        check_time = datetime.datetime.now(datetime.timezone.utc)
         # block (sleep) until something changes in the
         #  target directory or a quit is requested.
         # timeout so we can catch keyboard interrupts or other exceptions
@@ -200,7 +202,7 @@ class BlockingNotifier(Notifier):
             # something has changed.
             log.debug('Change notification received')
             fs.FindNextChangeNotification(self.hChange)
-            next_check_time = datetime.datetime.utcnow()
+            next_check_time = datetime.datetime.now(datetime.timezone.utc)
             log.debug('Looking for all files changed after %s', check_time)
             for file in self.find_files_after(check_time):
                 yield file

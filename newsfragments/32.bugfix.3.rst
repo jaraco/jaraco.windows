@@ -1,0 +1,1 @@
+``ModifiedTimeFilter`` now uses timezone-aware UTC datetimes, replacing the deprecated ``utcfromtimestamp``, so a supplied cutoff must also be timezone-aware.
