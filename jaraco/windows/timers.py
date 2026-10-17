@@ -9,6 +9,10 @@ import time
 from jaraco.windows.api import event as win32event
 
 
+class _Stopped(Exception):
+    """The timer was stopped."""
+
+
 class WaitableTimer:
     """
     t = WaitableTimer()
@@ -47,7 +51,7 @@ class WaitableTimer:
             while period:
                 due_time += period
                 self._wait(due_time - time.time())
-        except Exception:
+        except Exception:  # noqa: BLE001, S110 # the timer thread ends quietly
             pass
 
     def _wait(self, seconds):
@@ -55,7 +59,7 @@ class WaitableTimer:
         if milliseconds > 0:
             res = win32event.WaitForSingleObject(self.stop_event, milliseconds)
             if res == win32event.WAIT_OBJECT_0:
-                raise Exception
+                raise _Stopped
             if res == win32event.WAIT_TIMEOUT:
                 pass
         win32event.SetEvent(self.signal_event)

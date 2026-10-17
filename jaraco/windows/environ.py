@@ -4,6 +4,7 @@ import sys
 import winreg
 
 from jaraco.ui.editor import EditableFile
+
 from jaraco.windows import error
 from jaraco.windows.api import environ, message
 
@@ -28,7 +29,7 @@ def GetEnvironmentVariable(name):
 ###
 
 
-class RegisteredEnvironment(object):
+class RegisteredEnvironment:
     """
     Manages the environment variables as set in the Windows Registry.
     """
@@ -36,16 +37,16 @@ class RegisteredEnvironment(object):
     @classmethod
     def show(class_):
         for name, value, type in registry_key_values(class_.key):
-            sys.stdout.write('='.join((name, value)) + '\n')
+            sys.stdout.write(f'{name}={value}\n')
 
-    NoDefault = type('NoDefault', (object,), dict())
+    NoDefault = type('NoDefault', (object,), {})
 
     @classmethod
     def get(class_, name, default=NoDefault):
         try:
-            value, type = winreg.QueryValueEx(class_.key, name)
+            value, _type = winreg.QueryValueEx(class_.key, name)
             return value
-        except WindowsError:
+        except OSError:
             if default is not class_.NoDefault:
                 return default
             raise ValueError("No such key", name)
@@ -142,7 +143,7 @@ class MachineRegisteredEnvironment(RegisteredEnvironment):
     hklm = winreg.ConnectRegistry(None, winreg.HKEY_LOCAL_MACHINE)
     try:
         key = winreg.OpenKey(hklm, path, 0, winreg.KEY_READ | winreg.KEY_WRITE)
-    except WindowsError:
+    except OSError:
         key = winreg.OpenKey(hklm, path, 0, winreg.KEY_READ)
 
 
@@ -241,7 +242,7 @@ def enver(*args):
         if '=' not in param and not options.edit:
             parser.error("Expected <name>= or <name>=<value>")
             raise SystemExit(2)
-        name, sep, value = param.partition('=')
+        name, _sep, value = param.partition('=')
         method_name = 'set'
         if options.remove_value:
             method_name = 'remove_values'

@@ -7,7 +7,7 @@ import itertools
 import os
 
 
-class CookieMonster(object):
+class CookieMonster:
     "Read cookies out of a user's IE cookies file"
 
     @property
@@ -18,7 +18,7 @@ class CookieMonster(object):
             winreg.HKEY_CURRENT_USER,
             'Software' r'\Microsoft\Windows\CurrentVersion\Explorer\Shell Folders',
         )
-        cookie_dir, type = winreg.QueryValueEx(key, 'Cookies')
+        cookie_dir, _type = winreg.QueryValueEx(key, 'Cookies')
         return cookie_dir
 
     def entries(self, filename):
@@ -42,7 +42,7 @@ class CookieMonster(object):
         expires = (int(ExpireHigh) << 32) | int(ExpireLow)
         created = (int(CreateHigh) << 32) | int(CreateLow)
         flags = int(flags)
-        domain, sep, path = domain.partition('/')
+        domain, _sep, path = domain.partition('/')
         path = '/' + path
         return dict(
             key=key,

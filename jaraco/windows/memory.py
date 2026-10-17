@@ -4,7 +4,7 @@ from ctypes import WinError
 from .api import memory
 
 
-class LockedMemory(object):
+class LockedMemory:
     def __init__(self, handle):
         self.handle = handle
 

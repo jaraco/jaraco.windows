@@ -13,7 +13,7 @@ import win32con
 import win32service
 
 
-class Service(object):
+class Service:
     """
     The Service Class is used for controlling Windows
     services. Just pass the name of the service you wish to control to the
@@ -121,22 +121,22 @@ class Service(object):
         self.stat = win32service.QueryServiceStatus(self.handle)
         if self.stat[1] == win32service.SERVICE_STOPPED:
             if prn == 1:
-                print("The %s service is stopped." % self.lserv)
+                print(f"The {self.lserv} service is stopped.")
             else:
                 return "STOPPED"
         elif self.stat[1] == win32service.SERVICE_START_PENDING:
             if prn == 1:
-                print("The %s service is starting." % self.lserv)
+                print(f"The {self.lserv} service is starting.")
             else:
                 return "STARTING"
         elif self.stat[1] == win32service.SERVICE_STOP_PENDING:
             if prn == 1:
-                print("The %s service is stopping." % self.lserv)
+                print(f"The {self.lserv} service is stopping.")
             else:
                 return "STOPPING"
         elif self.stat[1] == win32service.SERVICE_RUNNING:
             if prn == 1:
-                print("The %s service is running." % self.lserv)
+                print(f"The {self.lserv} service is running.")
             else:
                 return "RUNNING"
 
@@ -203,20 +203,20 @@ class Service(object):
     def infotype(self):
         self.stat = win32service.QueryServiceStatus(self.handle)
         if self.stat[0] and win32service.SERVICE_WIN32_OWN_PROCESS:
-            print("The %s service runs in its own process." % self.lserv)
+            print(f"The {self.lserv} service runs in its own process.")
         if self.stat[0] and win32service.SERVICE_WIN32_SHARE_PROCESS:
-            print("The %s service shares a process with other services." % self.lserv)
+            print(f"The {self.lserv} service shares a process with other services.")
         if self.stat[0] and win32service.SERVICE_INTERACTIVE_PROCESS:
-            print("The %s service can interact with the desktop." % self.lserv)
+            print(f"The {self.lserv} service can interact with the desktop.")
 
     def infoctrl(self):
         self.stat = win32service.QueryServiceStatus(self.handle)
         if self.stat[2] and win32service.SERVICE_ACCEPT_PAUSE_CONTINUE:
-            print("The %s service can be paused." % self.lserv)
+            print(f"The {self.lserv} service can be paused.")
         if self.stat[2] and win32service.SERVICE_ACCEPT_STOP:
-            print("The %s service can be stopped." % self.lserv)
+            print(f"The {self.lserv} service can be stopped.")
         if self.stat[2] and win32service.SERVICE_ACCEPT_SHUTDOWN:
-            print("The %s service can be shutdown." % self.lserv)
+            print(f"The {self.lserv} service can be shutdown.")
 
     def infostartup(self):
         self.isuphandle = win32api.RegOpenKeyEx(
@@ -238,7 +238,7 @@ class Service(object):
     @property
     def suptype(self):
         types = 'boot', 'system', 'automatic', 'manual', 'disabled'
-        lookup = dict((name, number) for number, name in enumerate(types))
+        lookup = {name: number for number, name in enumerate(types)}
         return lookup[self.startuptype]
 
     def setstartup(self, startuptype):
@@ -267,5 +267,5 @@ class Service(object):
             if i[1].lower() == self.userv.lower():
                 return i[0], i[1]
                 break
-        print("Error: The %s service doesn't seem to exist." % self.userv)
+        print(f"Error: The {self.userv} service doesn't seem to exist.")
         return None, None

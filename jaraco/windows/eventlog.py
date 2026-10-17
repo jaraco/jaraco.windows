@@ -7,7 +7,7 @@ import win32evtlogutil
 error = win32api.error  # The error the evtlog module raises.
 
 
-class EventLog(object):
+class EventLog:
     def __init__(self, name="Application", machine_name=None):
         self.machine_name = machine_name
         self.name = name
@@ -35,8 +35,7 @@ class EventLog(object):
                 objects = win32evtlog.ReadEventLog(self.handle, flags, 0)
                 if not objects:
                     break
-                for item in objects:
-                    yield item
+                yield from objects
 
     def __iter__(self):
         return self.get_records()

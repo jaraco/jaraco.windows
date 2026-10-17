@@ -14,7 +14,7 @@ def realpath(path):
         new_unc_prefix = b'\\'
         cwd = os.getcwdb()
     had_prefix = path.startswith(prefix)
-    path, ok = _resolve_path(cwd, path, {})
+    path, _ok = _resolve_path(cwd, path, {})
     # The path returned by _getfinalpathname will always start with \\?\ -
     # strip off that prefix unless it was already provided on the original
     # path.

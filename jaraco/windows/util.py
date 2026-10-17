@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 import ctypes
 
 
@@ -11,7 +9,7 @@ def ensure_unicode(param):
     return param
 
 
-class Extended(object):
+class Extended:
     "Used to add extended capability to structures"
 
     def __eq__(self, other):

@@ -54,7 +54,7 @@ def get_privilege_information():
     params[3] = return_length.value
 
     res = privilege.GetTokenInformation(*params)
-    assert res > 0, "Error in second GetTokenInformation (%d)" % res
+    assert res > 0, f"Error in second GetTokenInformation ({res})"
 
     privileges = ctypes.cast(
         buffer, ctypes.POINTER(privilege.TOKEN_PRIVILEGES)
@@ -67,7 +67,7 @@ def report_privilege_information():
     Report all privilege information assigned to the current process.
     """
     privileges = get_privilege_information()
-    print("found {0} privileges".format(privileges.count))
+    print(f"found {privileges.count} privileges")
     tuple(map(print, privileges))
 
 
@@ -135,7 +135,7 @@ def main():
     assigned = enable_symlink_privilege()
     msg = ['failure', 'success'][assigned]
 
-    print("Symlink privilege assignment completed with {0}".format(msg))
+    print(f"Symlink privilege assignment completed with {msg}")
 
 
 if __name__ == '__main__':

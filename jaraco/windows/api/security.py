@@ -120,7 +120,7 @@ class SECURITY_ATTRIBUTES(ctypes.Structure):
     ]
 
     def __init__(self, *args, **kwargs):
-        super(SECURITY_ATTRIBUTES, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.nLength = ctypes.sizeof(SECURITY_ATTRIBUTES)
 
     @property

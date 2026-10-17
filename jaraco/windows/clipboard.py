@@ -12,7 +12,7 @@ from jaraco.windows.api import clipboard, memory
 from jaraco.windows.error import handle_nonzero_success
 from jaraco.windows.memory import LockedMemory
 
-__all__ = ('GetClipboardData', 'CloseClipboard', 'SetClipboardData', 'OpenClipboard')
+__all__ = ('CloseClipboard', 'GetClipboardData', 'OpenClipboard', 'SetClipboardData')
 
 
 def OpenClipboard(owner=None):
@@ -31,7 +31,7 @@ def CloseClipboard():
     handle_nonzero_success(windll.user32.CloseClipboard())
 
 
-data_handlers = dict()
+data_handlers = {}
 
 
 def handles(*formats):
@@ -48,7 +48,7 @@ def nts(buffer):
     Null Terminated String
     Get the portion of bytestring buffer up to a null character.
     """
-    result, null, rest = buffer.partition('\x00')
+    result, _null, _rest = buffer.partition('\x00')
     return result
 
 
@@ -76,7 +76,7 @@ def as_bitmap(handle):
 
 
 @handles(clipboard.CF_HTML)
-class HTMLSnippet(object):
+class HTMLSnippet:
     """
     HTML Snippet representing the Microsoft `HTML snippet format
     <https://docs.microsoft.com/en-us/windows/win32/dataxchg/html-clipboard-format>`_.
@@ -190,10 +190,10 @@ class HTMLSnippet(object):
 
 def GetClipboardData(type=clipboard.CF_UNICODETEXT):
     if type not in data_handlers:
-        raise NotImplementedError("No support for data of type %d" % type)
+        raise NotImplementedError(f"No support for data of type {type}")
     handle = clipboard.GetClipboardData(type)
     if handle is None:
-        raise TypeError("No clipboard data of type %d" % type)
+        raise TypeError(f"No clipboard data of type {type}")
     return data_handlers[type](handle)
 
 

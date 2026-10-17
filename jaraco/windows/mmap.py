@@ -4,7 +4,7 @@ from .api import memory
 from .error import handle_nonzero_success
 
 
-class MemoryMap(object):
+class MemoryMap:
     """
     A memory map object which can have security attributes overridden.
     """
@@ -32,7 +32,7 @@ class MemoryMap(object):
         )
         handle_nonzero_success(filemap)
         if filemap == INVALID_HANDLE_VALUE:
-            raise Exception("Failed to create file mapping")
+            raise OSError("Failed to create file mapping")
         self.filemap = filemap
         self.view = memory.MapViewOfFile(filemap, FILE_MAP_WRITE, 0, 0, 0)
         return self
@@ -44,7 +44,7 @@ class MemoryMap(object):
         assert isinstance(msg, bytes)
         n = len(msg)
         if self.pos + n >= self.length:  # A little safety.
-            raise ValueError("Refusing to write %d bytes" % n)
+            raise ValueError(f"Refusing to write {n} bytes")
         dest = self.view + self.pos
         length = ctypes.c_size_t(n)
         ctypes.windll.kernel32.RtlMoveMemory(dest, msg, length)

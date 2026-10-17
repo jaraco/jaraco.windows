@@ -43,9 +43,9 @@ class MIB_IFROW(ctypes.Structure):
     )
 
     def _get_binary_property(self, name):
-        val_prop = '{0}_raw'.format(name)
+        val_prop = f'{name}_raw'
         val = getattr(self, val_prop)
-        len_prop = '{0}_length'.format(name)
+        len_prop = f'{name}_length'
         length = getattr(self, len_prop)
         return bytes(val)[:length]
 

@@ -29,7 +29,7 @@ def print_environment_variable(key):
         print(method, end=': ')
         try:
             print(repr(func(key)))
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 # report whatever fails
             print(e)
     print()
 

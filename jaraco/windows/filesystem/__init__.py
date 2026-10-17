@@ -17,8 +17,9 @@ from ctypes import (
 )
 from ctypes.wintypes import LPWSTR
 
-import jaraco.windows.api.filesystem as api
 from jaraco.structures import binary
+
+import jaraco.windows.api.filesystem as api
 from jaraco.windows import reparse
 from jaraco.windows.error import handle_nonzero_success
 
@@ -43,7 +44,7 @@ def mklink():
     except ValueError:
         parser.error("incorrect number of arguments")
     symlink(target, link, options.directory)
-    sys.stdout.write("Symbolic link created: %(link)s --> %(target)s\n" % vars())
+    sys.stdout.write("Symbolic link created: {link} --> {target}\n".format(**vars()))
 
 
 def _is_target_a_directory(link, rel_target):
@@ -101,7 +102,7 @@ def _patch_path(path):
     if path.startswith('\\\\?\\'):
         return path
     abs_path = os.path.abspath(path)
-    if not abs_path[1] == ':':
+    if abs_path[1] != ':':
         # python doesn't include the drive letter, but \\?\ requires it
         abs_path = os.getcwd()[:2] + abs_path
     return '\\\\?\\' + abs_path
@@ -115,7 +116,7 @@ def is_symlink(path):
     try:
         return _is_symlink(next(find_files(path)))
     # comment below workaround for PyCQA/pyflakes#376
-    except OSError as orig_error:  # noqa: F841
+    except OSError as orig_error:
         orig_error.strerror = f"Error accessing {path}: {orig_error.message}"
         raise
 
@@ -274,14 +275,14 @@ def _makelist(ob):
     return ob
 
 
-def SHFileOperation(operation, from_, to=None, flags=[]):
+def SHFileOperation(operation, from_, to=None, flags=()):
     flags = functools.reduce(operator.or_, flags, 0)
     from_ = _make_null_terminated_list(from_)
     to = _make_null_terminated_list(to)
     params = api.SHFILEOPSTRUCT(0, operation, from_, to, flags)
     res = api._SHFileOperation(params)
     if res != 0:
-        raise RuntimeError("SHFileOperation returned %d" % res)
+        raise RuntimeError(f"SHFileOperation returned {res}")
 
 
 def join(*paths):
@@ -382,7 +383,7 @@ def readlink(link):
     p_rdb = cast(bytes, POINTER(api.REPARSE_DATA_BUFFER))
     rdb = p_rdb.contents
     if not rdb.tag == api.IO_REPARSE_TAG_SYMLINK:
-        raise RuntimeError("Expected IO_REPARSE_TAG_SYMLINK, but got %d" % rdb.tag)
+        raise RuntimeError(f"Expected IO_REPARSE_TAG_SYMLINK, but got {rdb.tag}")
 
     handle_nonzero_success(api.CloseHandle(handle))
     return rdb.get_substitute_name()

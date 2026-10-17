@@ -1,4 +1,4 @@
-import jaraco.windows.mmap as mmap
+from jaraco.windows import mmap
 
 
 def test_mmap_simple():

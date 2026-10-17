@@ -1,15 +1,14 @@
-#!/usr/bin/env python
-
 import ctypes
 import datetime
 import operator
 from ctypes.wintypes import BOOL, LONG, WCHAR, WORD
 
 from jaraco.collections import RangeMap
+
 from jaraco.windows.util import Extended
 
 
-class AnyDict(object):
+class AnyDict:
     "A dictionary that returns the same value regardless of key"
 
     def __init__(self, value):
@@ -85,15 +84,15 @@ class DYNAMIC_TIME_ZONE_INFORMATION(TIME_ZONE_INFORMATION):
         its superclass.  Default ctypes implementation seems to
         assume that this class is only initialized with its own
         _fields_ (for non-keyword-args)."""
-        super_self = super(DYNAMIC_TIME_ZONE_INFORMATION, self)
+        super_self = super()
         super_fields = super_self._fields_
         super_args = args[: len(super_fields)]
         self_args = args[len(super_fields) :]
         # convert the super args to keyword args so they're also handled
         for field, arg in zip(super_fields, super_args):
-            field_name, spec = field
+            field_name, _spec = field
             kwargs[field_name] = arg
-        super(DYNAMIC_TIME_ZONE_INFORMATION, self).__init__(*self_args, **kwargs)
+        super().__init__(*self_args, **kwargs)
 
 
 class Info(DYNAMIC_TIME_ZONE_INFORMATION):
@@ -117,7 +116,7 @@ class Info(DYNAMIC_TIME_ZONE_INFORMATION):
         d) a byte structure
         """
         funcs = (
-            super(Info, self).__init__,
+            super().__init__,
             self.__init_from_other,
             self.__init_from_reg_tzi,
             self.__init_from_bytes,
@@ -128,7 +127,7 @@ class Info(DYNAMIC_TIME_ZONE_INFORMATION):
                 return
             except TypeError:
                 pass
-        raise TypeError("Invalid arguments for %s" % self.__class__)
+        raise TypeError(f"Invalid arguments for {self.__class__}")
 
     def __init_from_bytes(self, bytes, **kwargs):
         reg_tzi = REG_TZI_FORMAT()
@@ -157,7 +156,7 @@ class Info(DYNAMIC_TIME_ZONE_INFORMATION):
         # ctypes.memmove(ctypes.addressof(self), other, size)
 
     def __getattribute__(self, attr):
-        value = super(Info, self).__getattribute__(attr)
+        value = super().__getattribute__(attr)
 
         def make_minute_timedelta(m):
             datetime.timedelta(minutes=m)

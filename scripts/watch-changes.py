@@ -12,7 +12,7 @@ def long_handler(file):
         with open(file, 'rb') as f:
             data = f.read()
         print("read", len(data), "bytes from", file)
-    except Exception:
+    except Exception:  # noqa: BLE001 # report and keep watching
         traceback.print_exc()
 
 

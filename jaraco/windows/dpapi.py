@@ -34,7 +34,7 @@ class DATA_BLOB(ctypes.Structure):
     _fields_ = [('data_size', wintypes.DWORD), ('data', ctypes.c_void_p)]
 
     def __init__(self, data=None):
-        super(DATA_BLOB, self).__init__()
+        super().__init__()
         self.set_data(data)
 
     def set_data(self, data):

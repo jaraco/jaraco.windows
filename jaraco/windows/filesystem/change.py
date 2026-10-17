@@ -13,9 +13,9 @@ import re
 import sys
 from threading import Thread
 
+import jaraco.text
 from more_itertools.recipes import consume
 
-import jaraco.text
 import jaraco.windows.api.filesystem as fs
 from jaraco.windows.api import event
 
@@ -26,7 +26,7 @@ class NotifierException(Exception):
     pass
 
 
-class FileFilter(object):
+class FileFilter:
     def set_root(self, root):
         self.root = root
 
@@ -78,7 +78,7 @@ class GlobFilter(PatternFilter):
     """
 
     def __init__(self, expression):
-        super(GlobFilter, self).__init__(self.convert_file_pattern(expression))
+        super().__init__(self.convert_file_pattern(expression))
 
     @staticmethod
     def convert_file_pattern(p):
@@ -110,7 +110,7 @@ class AggregateFilter(FileFilter):
 
 class OncePerModFilter(FileFilter):
     def __init__(self):
-        self.history = list()
+        self.history = []
 
     def __call__(self, file):
         file = os.path.join(self.root, file)
@@ -127,16 +127,16 @@ def files_with_path(files, path):
 
 
 def get_file_paths(walk_result):
-    root, dirs, files = walk_result
+    root, _dirs, files = walk_result
     return files_with_path(files, root)
 
 
-class Notifier(object):
-    def __init__(self, root='.', filters=[]):
+class Notifier:
+    def __init__(self, root='.', filters=()):
         # assign the root, verify it exists
         self.root = root
         if not os.path.isdir(self.root):
-            raise NotifierException('Root directory "%s" does not exist' % self.root)
+            raise NotifierException(f'Root directory "{self.root}" does not exist')
         self.filters = filters
 
         self.watch_subtree = False
@@ -146,7 +146,7 @@ class Notifier(object):
     def __del__(self):
         try:
             fs.FindCloseChangeNotification(self.hChange)
-        except Exception:
+        except Exception:  # noqa: BLE001, S110 # best-effort cleanup
             pass
 
     def _get_change_handle(self):
@@ -204,8 +204,7 @@ class BlockingNotifier(Notifier):
             fs.FindNextChangeNotification(self.hChange)
             next_check_time = datetime.datetime.now(datetime.timezone.utc)
             log.debug('Looking for all files changed after %s', check_time)
-            for file in self.find_files_after(check_time):
-                yield file
+            yield from self.find_files_after(check_time)
             check_time = next_check_time
 
     def find_files_after(self, cutoff):
@@ -231,7 +230,7 @@ class ThreadedNotifier(BlockingNotifier, Thread):
         C:\Autoexec.bat changed.
     """
 
-    def __init__(self, root='.', filters=[], handler=lambda file: None):
+    def __init__(self, root='.', filters=(), handler=lambda file: None):
         # init notifier stuff
         BlockingNotifier.__init__(self, root, filters)
         # init thread stuff
@@ -249,7 +248,7 @@ class ThreadedNotifier(BlockingNotifier, Thread):
             self.handle(file)
 
 
-class StreamHandler(object):
+class StreamHandler:
     """
     StreamHandler: a sample handler object for use with the threaded
     notifier that will announce by writing to the supplied stream
@@ -260,4 +259,4 @@ class StreamHandler(object):
         self.output = output
 
     def __call__(self, filename):
-        self.output.write('%s changed.\n' % filename)
+        self.output.write(f'{filename} changed.\n')

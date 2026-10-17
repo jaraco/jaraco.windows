@@ -1,6 +1,7 @@
 import ctypes
 
 from jaraco.ui.cmdline import Command
+
 from jaraco.windows.api import system
 from jaraco.windows.error import handle_nonzero_success
 
@@ -54,9 +55,7 @@ class DelayParam(Command):
 class Show(Command):
     @classmethod
     def run(cls, args):
-        msg = "xmouse: {enabled} (delay {delay}ms)".format(
-            enabled=get(), delay=get_delay()
-        )
+        msg = f"xmouse: {get()} (delay {get_delay()}ms)"
         print(msg)
 
 
@@ -80,7 +79,7 @@ class Toggle(DelayParam):
     @classmethod
     def run(cls, args):
         value = get()
-        print("xmouse: %s -> %s" % (value, not value))
+        print(f"xmouse: {value} -> {not value}")
         set(not value)
         args.delay and set_delay(args.delay)
 

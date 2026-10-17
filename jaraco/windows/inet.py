@@ -12,20 +12,20 @@ def GetAdaptersAddresses():
     size = ctypes.c_ulong()
     res = inet.GetAdaptersAddresses(0, 0, None, None, size)
     if res != errors.ERROR_BUFFER_OVERFLOW:
-        raise RuntimeError("Error getting structure length (%d)" % res)
+        raise RuntimeError(f"Error getting structure length ({res})")
     print(size.value)
     pointer_type = ctypes.POINTER(inet.IP_ADAPTER_ADDRESSES)
     buffer = ctypes.create_string_buffer(size.value)
     struct_p = ctypes.cast(buffer, pointer_type)
     res = inet.GetAdaptersAddresses(0, 0, None, struct_p, size)
     if res != errors.NO_ERROR:
-        raise RuntimeError("Error retrieving table (%d)" % res)
+        raise RuntimeError(f"Error retrieving table ({res})")
     while struct_p:
         yield struct_p.contents
         struct_p = struct_p.contents.next
 
 
-class AllocatedTable(object):
+class AllocatedTable:
     """
     Both the interface table and the ip address table use the same
     technique to store arrays of structures of variable length. This
@@ -53,7 +53,7 @@ class AllocatedTable(object):
         length = ctypes.wintypes.DWORD()
         res = self.method(None, length, False)
         if res != errors.ERROR_INSUFFICIENT_BUFFER:
-            raise RuntimeError("Error getting table length (%d)" % res)
+            raise RuntimeError(f"Error getting table length ({res})")
         return length.value
 
     def get_table(self):
@@ -67,7 +67,7 @@ class AllocatedTable(object):
         table_p = ctypes.cast(buffer, pointer_type)
         res = self.method(table_p, returned_buffer_length, False)
         if res != errors.NO_ERROR:
-            raise RuntimeError("Error retrieving table (%d)" % res)
+            raise RuntimeError(f"Error retrieving table ({res})")
         return table_p.contents
 
     @property
@@ -94,7 +94,7 @@ class AddressTable(AllocatedTable):
     row_structure = inet.MIB_IPADDRROW
 
 
-class AddressManager(object):
+class AddressManager:
     @staticmethod
     def hardware_address_to_string(addr):
         r"""
