@@ -208,7 +208,7 @@ class BlockingNotifier(Notifier):
         mtf = ModifiedTimeFilter(cutoff)
         af = AggregateFilter(mtf, self.opm_filter, *self.filters)
         results = Notifier._filtered_walk(self.root, af)
-        results = itertools.imap(get_file_paths, results)
+        results = map(get_file_paths, results)
         if self.watch_subtree:
             result = itertools.chain(*results)
         else:

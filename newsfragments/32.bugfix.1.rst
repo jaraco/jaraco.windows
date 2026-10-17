@@ -1,0 +1,1 @@
+Fixed ``BlockingNotifier.find_files_after``, which relied on the Python 2 ``itertools.imap``.
