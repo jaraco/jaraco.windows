@@ -5,6 +5,7 @@ import itertools
 import re
 import sys
 import textwrap
+from collections.abc import Callable
 from contextlib import contextmanager
 from ctypes import windll
 
@@ -31,7 +32,7 @@ def CloseClipboard():
     handle_nonzero_success(windll.user32.CloseClipboard())
 
 
-data_handlers = {}
+data_handlers: dict[int, Callable] = {}
 
 
 def handles(*formats):
