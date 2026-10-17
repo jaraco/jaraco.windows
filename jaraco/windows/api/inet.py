@@ -47,7 +47,7 @@ class MIB_IFROW(ctypes.Structure):
         val = getattr(self, val_prop)
         len_prop = '{0}_length'.format(name)
         length = getattr(self, len_prop)
-        return str(memoryview(val))[:length]
+        return bytes(val)[:length]
 
     @property
     def physical_address(self):

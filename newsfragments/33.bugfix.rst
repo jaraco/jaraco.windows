@@ -1,0 +1,1 @@
+Fixed the MAC and IP address helpers in ``jaraco.windows.inet`` on Python 3. ``MIB_IFROW.physical_address`` and ``description`` now return bytes.

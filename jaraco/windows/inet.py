@@ -4,7 +4,6 @@ network config.
 """
 
 import ctypes
-import itertools
 
 from jaraco.windows.api import errors, inet
 
@@ -98,8 +97,11 @@ class AddressTable(AllocatedTable):
 class AddressManager(object):
     @staticmethod
     def hardware_address_to_string(addr):
-        hex_bytes = (byte.encode('hex') for byte in addr)
-        return ':'.join(hex_bytes)
+        r"""
+        >>> AddressManager.hardware_address_to_string(b'\x00\x1a\xff')
+        '00:1a:ff'
+        """
+        return addr.hex(':')
 
     def get_host_mac_address_strings(self):
         return (
@@ -108,7 +110,7 @@ class AddressManager(object):
         )
 
     def get_host_ip_address_strings(self):
-        return itertools.imap(str, self.get_host_ip_addresses())
+        return map(str, self.get_host_ip_addresses())
 
     def get_host_mac_addresses(self):
         return (entry.physical_address for entry in InterfaceTable().entries)
